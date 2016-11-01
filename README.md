@@ -1,5 +1,5 @@
 # cbe
-Django app for controlling cross industry Common Business Entities
+Cross industry Common Business Entities
 
 [![Build Status](http://circleci-badges-max.herokuapp.com/img/Semprini/cbe?token=f5c87c28c73b5351e837a0769c4f8886f4af3314)](https://circleci.com/gh/Semprini/cbe/)
 
@@ -8,8 +8,9 @@ CBE is a realization of a cross industry standard data model. The app provides R
 Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 
 Entity Domains:
-    Party - Entities relating to individuals and organizations and the roles they play
-    Location - Entities for addresses and places
+- Party - Entities relating to individuals and organizations and the roles they play
+- Location - Entities for addresses and places
+- Business interaction - Entities for how parties interact in the business
 
-The data model is designed to be extended for each industry. PartyRole is the main abstract entity which concrete classes should be derived.
+The data model is designed to be extended for each industry. PartyRole is the main abstract entity from which concrete classes should be derived.
 

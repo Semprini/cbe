@@ -55,6 +55,9 @@ local_settings.py
 migrations/
 db.sqlite3
 
+#Sparx EA
+*.ldb
+
 # Flask stuff:
 instance/
 .webassets-cache
