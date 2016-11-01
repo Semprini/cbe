@@ -12,7 +12,7 @@ Entity Domains:
 - Location - Entities for addresses and places
 - Business interaction - Entities for how parties interact in the business
 
-[[https://github.com/Semprini/cbe/blob/master/docs/classParty.png]]
+[![Party](https://github.com/Semprini/cbe/blob/master/docs/classParty.png)]
 
 The data model is designed to be extended for each industry. PartyRole is the main abstract entity from which concrete classes should be derived.
 
