@@ -1,7 +1,7 @@
 # cbe
 Django app for controlling cross industry Common Business Entities
 
-[![Build Status](http://circleci-badges-max.herokuapp.com/img/Semprini/cbe?token=960fc0363320d2cc2d6265d0375712c398bdd7da)](https://circleci.com/gh/Semprini/cbe/)
+[![Build Status](http://circleci-badges-max.herokuapp.com/img/Semprini/cbe?token=f5c87c28c73b5351e837a0769c4f8886f4af3314)](https://circleci.com/gh/Semprini/cbe/)
 
 CBE is a realization of a cross industry standard data model. The app provides RESTful CRUD and administration for common business entities.
 
