@@ -8,9 +8,11 @@ CBE is a realization of a cross industry standard data model. The app provides R
 Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 
 Entity Domains:
-- Party - Entities relating to individuals and organizations and the roles they play
+- Party - Entities relating to individuals, organizations, how to contact them and the roles they play
 - Location - Entities for addresses and places
 - Business interaction - Entities for how parties interact in the business
+
+[[https://github.com/Semprini/cbe/blob/master/docs/classParty.png]]
 
 The data model is designed to be extended for each industry. PartyRole is the main abstract entity from which concrete classes should be derived.
 
