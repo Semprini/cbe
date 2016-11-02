@@ -28,3 +28,4 @@ Coming soon to a data model near you:
 
 The data model is designed to be extended for each industry. In Party, the PartyRole class is the main abstract entity from which concrete classes like Customer or Supplier should be derived.
 
+Check the wiki for more info. The data model is held in the Docs folder as a Sparx EA model
