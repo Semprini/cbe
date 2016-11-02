@@ -7,6 +7,14 @@ CBE is a realization of a cross industry standard data model. The app provides R
 
 Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 
+To run:
+- clone repo
+- python manage.py migrate (will use a default sqllite db)
+- python manage.py createsuperuser
+- python manage.py runserver
+- browse to http://localhost:8000/admin for the admin interface
+- browse to http://localhost:8000/api for the api interface
+
 Entity Domains:
 - Party - Entities relating to individuals, organizations, how to contact them and the roles they play
 - Location - Entities for addresses and places
