@@ -19,11 +19,12 @@ Entity Domains:
 - Party - Entities relating to individuals, organizations, how to contact them and the roles they play
 - Location - Entities for addresses and places
 - Business interaction - Entities for how parties interact in the business
-- ...more to come
 
-![Party](https://github.com/Semprini/cbe/blob/master/docs/classParty.png)
-![Party](https://github.com/Semprini/cbe/blob/master/docs/classLocation.png)
-![Party](https://github.com/Semprini/cbe/blob/master/docs/classBusinessInteraction.png)
+
+Coming soon to a data model near you:
+- Customer
+- Product
+
 
 The data model is designed to be extended for each industry. In Party, the PartyRole class is the main abstract entity from which concrete classes like Customer or Supplier should be derived.
 
