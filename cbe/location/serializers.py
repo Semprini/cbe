@@ -14,7 +14,7 @@ class CountrySerializer(serializers.HyperlinkedModelSerializer):
  
 class UrbanPropertyAddressSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeFieldSerializer()
-    country = CountrySerializer()
+    #country = CountrySerializer()
         
     class Meta:
         model = UrbanPropertyAddress

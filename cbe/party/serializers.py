@@ -1,23 +1,26 @@
+from django.utils import six, timezone
 from rest_framework import serializers
 
 from cbe.serializer_fields import TypeFieldSerializer, ChoiceFieldSerializer
 from cbe.party.models import Individual, Organisation, GENDER_CHOICES, TelephoneNumber
 from cbe.location.serializers import CountrySerializer
 
+class DisplayChoiceFieldSerializers(serializers.ChoiceField):
+    def __init__(self, *args, **kwargs):
+        super(DisplayChoiceFieldSerializers, self).__init__(*args, **kwargs)
+        self.choice_strings_to_values = dict([
+            (six.text_type(key), key) for key, value in self.choices.items()
+        ])
+
 class IndividualSerializer(serializers.HyperlinkedModelSerializer):
     #party_content_type = serializers.HyperlinkedRelatedField(view_name='contenttype-detail', queryset=ContentType.objects.filter(model__in=('organisation','individual')))
     type = TypeFieldSerializer()
-    gender = ChoiceFieldSerializer(choices=GENDER_CHOICES)
-    nationality = CountrySerializer()
-    
-    def get_gender(self,obj):
-        if obj.gender:
-            return GENDER_CHOICES[obj.gender][1]
-        return None
-        
+    gender = DisplayChoiceFieldSerializers(choices=GENDER_CHOICES)
+    #nationality = CountrySerializer()    
+
     class Meta:
         model = Individual
-        fields = ('type', 'url', 'party_user', 'name','gender','given_names','family_names','middle_names','form_of_address', 'legal_name','marital_status','nationality','place_of_birth')
+        fields = ('type', 'url', 'party_user','given_names','family_names','middle_names','form_of_address', 'gender','legal_name','marital_status','nationality','place_of_birth')
         
         
 class OrganisationSerializer(serializers.HyperlinkedModelSerializer):
