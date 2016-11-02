@@ -22,8 +22,8 @@ from rest_framework import serializers, viewsets
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
-import party.views as PartyViews
-import location.views as LocationViews
+import cbe.party.views as PartyViews
+import cbe.location.views as LocationViews
 
 admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
@@ -48,14 +48,19 @@ class ContentTypeViewSet(viewsets.ModelViewSet):
     queryset = ContentType.objects.all()
     serializer_class = ContentTypeSerializer      
 
+cberouter = DefaultRouter()
+cberouter.register(r'party/individuals', PartyViews.IndividualViewSet)
+cberouter.register(r'party/organisations', PartyViews.OrganisationViewSet)
+cberouter.register(r'party/telephone_numbers', PartyViews.TelephoneNumberViewSet)
+cberouter.register(r'location/country', LocationViews.CountryViewSet)
+cberouter.register(r'location/urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
+
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'content_types', ContentTypeViewSet)
-router.register(r'party/individuals', PartyViews.IndividualViewSet)
-router.register(r'party/organisations', PartyViews.OrganisationViewSet)
-router.register(r'party/telephone_numbers', PartyViews.TelephoneNumberViewSet)
-router.register(r'location/country', LocationViews.CountryViewSet)
-router.register(r'location/urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
+
+for route in cberouter.registry:
+    router.register(route[0],route[1])
     
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),

@@ -2,8 +2,8 @@ from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from location.models import UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, AbsoluteLocalLocation, Country
-from location.serializers import UrbanPropertyAddressSerializer, CountrySerializer
+from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, AbsoluteLocalLocation, Country
+from cbe.location.serializers import UrbanPropertyAddressSerializer, CountrySerializer
 
 
 class CountryViewSet(viewsets.ModelViewSet):

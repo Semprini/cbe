@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.db import models
 
-from location.models import UrbanPropertyAddress, UrbanPropertySubAddress, PoBoxAddress, RuralPropertyAddress, AbsoluteLocalLocation, Country
+from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, PoBoxAddress, RuralPropertyAddress, AbsoluteLocalLocation, Country
 
 
 admin.site.register(Country)

@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
 from cbe.serializer_fields import TypeFieldSerializer, ChoiceFieldSerializer
-from party.models import Individual, Organisation, GENDER_CHOICES, TelephoneNumber
-from location.serializers import CountrySerializer
+from cbe.party.models import Individual, Organisation, GENDER_CHOICES, TelephoneNumber
+from cbe.location.serializers import CountrySerializer
 
 class IndividualSerializer(serializers.HyperlinkedModelSerializer):
     #party_content_type = serializers.HyperlinkedRelatedField(view_name='contenttype-detail', queryset=ContentType.objects.filter(model__in=('organisation','individual')))

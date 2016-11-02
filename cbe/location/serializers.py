@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from cbe.serializer_fields import TypeFieldSerializer
-from location.models import UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, AbsoluteLocalLocation, Country
+from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, AbsoluteLocalLocation, Country
 
 
 class CountrySerializer(serializers.HyperlinkedModelSerializer):

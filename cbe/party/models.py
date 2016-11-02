@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-from location.models import Country
+from cbe.location.models import Country
 
 GENDER_CHOICES = ((0,'Undisclosed'),(1,'Male'),(2,'Female'),(3,'Other'))
 

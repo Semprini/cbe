@@ -3,7 +3,7 @@ from django import forms
 from django.db import models
 from django.contrib.contenttypes.admin import GenericTabularInline
 
-from party.models import Organisation, Individual, PhysicalContact, EmailContact, TelephoneNumber, GenericPartyRole
+from cbe.party.models import Organisation, Individual, PhysicalContact, EmailContact, TelephoneNumber, GenericPartyRole
 
 
 class GenericPartyRoleAdminForm(forms.ModelForm):

@@ -38,9 +38,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'location',
-    'party',
-    'business_interaction',
+    'cbe.location',
+    'cbe.party',
+    'cbe.business_interaction',
 )
 
 MIDDLEWARE_CLASSES = (
