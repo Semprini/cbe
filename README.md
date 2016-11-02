@@ -9,6 +9,7 @@ Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 
 To run:
 - clone repo
+- pip install -r requirements.txt
 - python manage.py migrate (will use a default sqllite db)
 - python manage.py createsuperuser
 - python manage.py runserver
