@@ -5,7 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from cbe.location.models import Country
 
-GENDER_CHOICES = ((0,'Undisclosed'),(1,'Male'),(2,'Female'),(3,'Other'))
+GENDER_CHOICES = (('Undisclosed','Undisclosed'),('Male','Male'),('Female','Female'),('Other','Other'))
+MARITAL_STATUS_CHOICES = (('Undisclosed','Undisclosed'),('Single','Single'),('Married','Married'),('Other','Other'))
 
 class Party(models.Model):
     name = models.CharField(max_length=200)
@@ -19,13 +20,13 @@ class Party(models.Model):
 
         
 class Individual(Party):
-    gender = models.IntegerField( blank=True, null=True, choices=GENDER_CHOICES )
+    gender = models.CharField( max_length=50, blank=True, null=True, choices=GENDER_CHOICES )
     family_names = models.CharField(max_length=200, blank=True)
     given_names = models.CharField(max_length=200, blank=True)
     middle_names = models.CharField(max_length=200, blank=True)
     form_of_address = models.CharField(max_length=100, blank=True)
     legal_name = models.CharField(max_length=200, blank=True)
-    marital_status = models.CharField(max_length=100, blank=True)
+    marital_status = models.CharField(max_length=100, blank=True, choices=MARITAL_STATUS_CHOICES)
     nationality = models.ForeignKey(Country, blank=True, null=True)
     place_of_birth = models.CharField(max_length=200, blank=True)
 

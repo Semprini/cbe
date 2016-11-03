@@ -35,7 +35,7 @@ class BusinessInteraction(models.Model):
 class BusinessInteractionItem(models.Model):
     business_interaction = models.ForeignKey(BusinessInteraction)
     quantity = models.IntegerField(null=True, blank=True)
-    action = models.IntegerField(null=True, blank=True, choices=((1,'add'),(2,'update'),(3,'delete')) )
+    action = models.CharField(null=True, blank=True, max_length=50, choices=(('add','add'),('update','update'),('delete','delete')) )
 
 
 class BusinessInteractionRole(models.Model):

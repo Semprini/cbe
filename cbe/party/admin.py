@@ -54,7 +54,8 @@ class TelephoneNumberInline(GenericTabularInline):
 class GenericPartyRoleAdmin(admin.ModelAdmin):
     list_display = ('party', 'name')
     form = GenericPartyRoleAdminForm
-    inlines = [ PhysicalContactInline, EmailContactInline, TelephoneNumberInline]    
+    inlines = [ PhysicalContactInline, EmailContactInline, TelephoneNumberInline]
+    fields = ('valid_to','name','party')
     
     def save_model(self, request, obj, form, change):
         splitparty = form.cleaned_data['party'].split('::')
