@@ -5,6 +5,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_init, post_save
 
+ACTION_CHOICES=(('add','add'),('update','update'),('delete','delete'))
 
 class BusinessInteraction(models.Model):
     interaction_date = models.DateField(null=True, blank=True)
@@ -33,9 +34,9 @@ class BusinessInteraction(models.Model):
 
 
 class BusinessInteractionItem(models.Model):
-    business_interaction = models.ForeignKey(BusinessInteraction)
+    business_interaction = models.ForeignKey(BusinessInteraction, related_name='business_interaction_items')
     quantity = models.IntegerField(null=True, blank=True)
-    action = models.CharField(null=True, blank=True, max_length=50, choices=(('add','add'),('update','update'),('delete','delete')) )
+    action = models.CharField(null=True, blank=True, max_length=50, choices=ACTION_CHOICES )
 
 
 class BusinessInteractionRole(models.Model):

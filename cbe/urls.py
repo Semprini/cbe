@@ -24,6 +24,7 @@ from django.contrib.contenttypes.models import ContentType
 
 import cbe.party.views as PartyViews
 import cbe.location.views as LocationViews
+import cbe.business_interaction.views as BusinessInteractionViews
 
 admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
@@ -54,6 +55,8 @@ cberouter.register(r'party/organisations', PartyViews.OrganisationViewSet)
 cberouter.register(r'party/telephone_numbers', PartyViews.TelephoneNumberViewSet)
 cberouter.register(r'location/country', LocationViews.CountryViewSet)
 cberouter.register(r'location/urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
+cberouter.register(r'business_interaction/business_interaction', BusinessInteractionViews.BusinessInteractionViewSet)
+cberouter.register(r'business_interaction/business_interaction_item', BusinessInteractionViews.BusinessInteractionItemViewSet)
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)

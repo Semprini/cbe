@@ -1,5 +1,14 @@
+from django.utils import six, timezone
 from rest_framework import serializers
 
+class DisplayChoiceFieldSerializers(serializers.ChoiceField):
+    def __init__(self, *args, **kwargs):
+        super(DisplayChoiceFieldSerializers, self).__init__(*args, **kwargs)
+        self.choice_strings_to_values = dict([
+            (six.text_type(key), key) for key, value in self.choices.items()
+        ])
+        
+        
 class TypeFieldSerializer(serializers.Field):
     def __init__(self, *args, **kwargs):
         # Don't pass the 'serializer' arg up to the superclass - BOLLOCKS
