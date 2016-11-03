@@ -50,11 +50,14 @@ class ContentTypeViewSet(viewsets.ModelViewSet):
     serializer_class = ContentTypeSerializer      
 
 cberouter = DefaultRouter()
-cberouter.register(r'party/individuals', PartyViews.IndividualViewSet)
-cberouter.register(r'party/organisations', PartyViews.OrganisationViewSet)
-cberouter.register(r'party/telephone_numbers', PartyViews.TelephoneNumberViewSet)
+cberouter.register(r'party/individual', PartyViews.IndividualViewSet)
+cberouter.register(r'party/organisation', PartyViews.OrganisationViewSet)
+cberouter.register(r'party/generic_party_role', PartyViews.GenericPartyRoleViewSet)
+cberouter.register(r'party/telephone_number', PartyViews.TelephoneNumberViewSet)
+
 cberouter.register(r'location/country', LocationViews.CountryViewSet)
 cberouter.register(r'location/urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
+
 cberouter.register(r'business_interaction/business_interaction', BusinessInteractionViews.BusinessInteractionViewSet)
 cberouter.register(r'business_interaction/business_interaction_item', BusinessInteractionViews.BusinessInteractionItemViewSet)
 

@@ -2,8 +2,8 @@ from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from cbe.party.models import Individual, Organisation, TelephoneNumber
-from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer
+from cbe.party.models import Individual, Organisation, TelephoneNumber, GenericPartyRole
+from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer, GenericPartyRoleSerializer
 
 
 class IndividualViewSet(viewsets.ModelViewSet):
@@ -25,3 +25,11 @@ class TelephoneNumberViewSet(viewsets.ModelViewSet):
     queryset = TelephoneNumber.objects.all()
     serializer_class = TelephoneNumberSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )        
+    
+    
+class GenericPartyRoleViewSet(viewsets.ModelViewSet):
+    queryset = GenericPartyRole.objects.all()
+    serializer_class = GenericPartyRoleSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )   
+    
+    

@@ -15,7 +15,7 @@ class BusinessInteractionItemSerializer(serializers.HyperlinkedModelSerializer):
         
 class BusinessInteractionSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeFieldSerializer()
-    #business_interaction_items = serializers.HyperlinkedRelatedField( many=True, read_only=True, view_name='business_interaction_item-detail' )
+    #business_interaction_items = serializers.HyperlinkedRelatedField( many=True, read_only=True, view_name='business_interaction_items-detail' )
     business_interaction_items = BusinessInteractionItemSerializer(many=True, read_only=True)
         
     class Meta:

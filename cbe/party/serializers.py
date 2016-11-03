@@ -1,7 +1,8 @@
+from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
 from cbe.serializer_fields import TypeFieldSerializer, DisplayChoiceFieldSerializers
-from cbe.party.models import Individual, Organisation, GENDER_CHOICES, MARITAL_STATUS_CHOICES, TelephoneNumber
+from cbe.party.models import Individual, Organisation, GENDER_CHOICES, MARITAL_STATUS_CHOICES, TelephoneNumber, GenericPartyRole
 from cbe.location.serializers import CountrySerializer
 
 
@@ -24,10 +25,20 @@ class OrganisationSerializer(serializers.HyperlinkedModelSerializer):
         model = Organisation
         fields = ('type', 'url', 'party_user', 'name',)   
 
-
+        
 class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeFieldSerializer()
+    party_role = serializers.HyperlinkedRelatedField(view_name='genericpartyrole-detail', queryset=GenericPartyRole.objects.all())
     
     class Meta:
         model = TelephoneNumber
-        fields = ('type','url','number')
+        fields = ('type', 'url', 'party_role', 'number')
+
+        
+class GenericPartyRoleSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeFieldSerializer()
+    telephonenumbers = TelephoneNumberSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = GenericPartyRole
+        fields = ('type','url','valid_from','valid_to','name','telephonenumbers')        

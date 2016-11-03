@@ -132,7 +132,7 @@ class ContactMedium(models.Model):
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
     
-    party_role_content_type = models.ForeignKey(ContentType, related_name="%(app_label)s_%(class)s_ownership", null=True) 
+    party_role_content_type = models.ForeignKey(ContentType, related_name="%(class)s", null=True) 
     party_role_object_id = models.PositiveIntegerField(null=True)
     party_role = GenericForeignKey('party_role_content_type', 'party_role_object_id')
 
