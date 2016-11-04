@@ -26,7 +26,7 @@ class Individual(Party):
     middle_names = models.CharField(max_length=200, blank=True)
     form_of_address = models.CharField(max_length=100, blank=True)
     legal_name = models.CharField(max_length=200, blank=True)
-    marital_status = models.CharField(max_length=100, blank=True, choices=MARITAL_STATUS_CHOICES)
+    marital_status = models.CharField(max_length=100, null=True, blank=True, choices=MARITAL_STATUS_CHOICES)
     nationality = models.ForeignKey(Country, blank=True, null=True)
     place_of_birth = models.CharField(max_length=200, blank=True)
 

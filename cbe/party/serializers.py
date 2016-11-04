@@ -1,21 +1,21 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
-from cbe.serializer_fields import TypeFieldSerializer, DisplayChoiceFieldSerializers
+from cbe.serializer_fields import TypeFieldSerializer
 from cbe.party.models import Individual, Organisation, GENDER_CHOICES, MARITAL_STATUS_CHOICES, TelephoneNumber, GenericPartyRole
 from cbe.location.serializers import CountrySerializer
 
 
 class IndividualSerializer(serializers.HyperlinkedModelSerializer):
-    #party_content_type = serializers.HyperlinkedRelatedField(view_name='contenttype-detail', queryset=ContentType.objects.filter(model__in=('organisation','individual')))
     type = TypeFieldSerializer()
-    gender = DisplayChoiceFieldSerializers(choices=GENDER_CHOICES)
-    marital_status = DisplayChoiceFieldSerializers(choices=MARITAL_STATUS_CHOICES)
-    #nationality = CountrySerializer()    
+    
+    gender = serializers.ChoiceField(choices=GENDER_CHOICES, required=False, allow_blank=True)
+    marital_status = serializers.ChoiceField(choices=MARITAL_STATUS_CHOICES, required=False, allow_blank=True)
 
     class Meta:
         model = Individual
         fields = ('type', 'url', 'party_user','given_names','family_names','middle_names','form_of_address', 'gender','legal_name','marital_status','nationality','place_of_birth')
+     
         
         
 class OrganisationSerializer(serializers.HyperlinkedModelSerializer):
