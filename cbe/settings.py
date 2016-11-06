@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'cbe.location',
     'cbe.party',
     'cbe.business_interaction',
+    'cbe.customer',
 )
 
 MIDDLEWARE_CLASSES = (
