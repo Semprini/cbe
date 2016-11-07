@@ -12,7 +12,7 @@ from cbe.location.models import UrbanPropertyAddress, Country
 class CustomerTestCase(TestCase):
     def setUp(self):
         self.country = Country.objects.create(code="NZL", name="New Zealand")
-        self.address = UrbanPropertyAddress.objects.create(locality='Auckland Central', postcode='1022')
+        self.address = UrbanPropertyAddress.objects.create(street_number_first=1, street_name='Credibility', street_type='Street', locality='Auckland Central', postcode='1022', city='Auckland')
 
         
     def test_names(self):
@@ -20,4 +20,4 @@ class CustomerTestCase(TestCase):
         Make sure the names display as expected
         """
         self.assertEqual("{}".format(self.country), "New Zealand")
-        self.assertEqual("{}".format(self.address), ', Auckland Central')
+        self.assertEqual("{}".format(self.address), '1 Credibility Street, Auckland Central, Auckland')
