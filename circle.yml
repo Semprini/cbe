@@ -6,8 +6,13 @@ dependencies:
   override:
     - pip install -r requirements.txt
     - pip install coveralls
-    
-notify:
-  webhooks:
-    - url: https://coveralls.io/webhook?repo_token=OzYJ2l7VZHJf5lZQSnGR5Znap66FgDVzk
+
+
+test:
+    override:
+        - coverage run --source=cbe.location,cbe.party,cbe.business_interaction,cbe.customer manage.py test
+    post:
+        - coveralls
+            
+
     
