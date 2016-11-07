@@ -11,6 +11,7 @@ from cbe.party.models import Individual
 from cbe.customer.models import Customer
 from cbe.customer.views import CustomerViewSet
 
+
 class CustomerTestCase(TestCase):
     def setUp(self):
         self.individual = Individual.objects.create(given_names="John", family_names="Doe")

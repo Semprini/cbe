@@ -9,10 +9,11 @@ from django.db.models.signals import post_init, post_save
 from cbe.party.models import GenericPartyRole, PartyRole
 from cbe.business_interaction.models import BusinessInteraction
 
+customer_status_choices = (('new','new'),('active','active'), ('inactive','inactive'), ('prospective','prospective'))
 
 class Customer(PartyRole):
     customer_number = models.CharField(primary_key=True, max_length=200)
-    customer_status = models.CharField(max_length=100)
+    customer_status = models.CharField(max_length=100, choices=customer_status_choices)
     
     def save(self, *args, **kwargs):
         self.name = "Customer"
@@ -27,8 +28,6 @@ class CustomerAccountContact(PartyRole):
     def save(self, *args, **kwargs):
         self.name = "CustomerAccountContact"
         super(CustomerAccountContact, self).save(*args, **kwargs)  
-
-   
         
         
 class CustomerAccount(models.Model):
