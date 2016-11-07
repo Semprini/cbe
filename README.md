@@ -21,6 +21,9 @@ browse to http://localhost:8000/admin for the admin interface
 browse to http://localhost:8000/api for the api interface
 ```
 
+How is this different to an API from a product?
+The API/Persistence/Admin uses generic foreign keys to express relationships that would never be part of a product. The persistence layer has pointers to abstract classes which provides a faithful realization of the data model. This enables the data to be used in all business contexts.
+
 Entity Domains:
 - Party - Entities relating to individuals, organizations, how to contact them and the roles they play
 - Location - Entities for addresses and places
@@ -28,7 +31,7 @@ Entity Domains:
 
 
 Coming soon to a data model near you:
-- Customer
+- More roles for PartyRole and BusinessInteraction
 - Product
 
 
