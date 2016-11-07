@@ -1,3 +1,8 @@
 machine:
   python:
     version: 3.5.1
+    
+notify:
+  webhooks:
+    - url: https://coveralls.io/webhook?repo_token=OzYJ2l7VZHJf5lZQSnGR5Znap66FgDVzk
+    
