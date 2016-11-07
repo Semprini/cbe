@@ -26,12 +26,12 @@ class CustomerTestCase(TestCase):
         self.assertEqual(c1.customer_status, 'Open')
 
         
-class PartyTests(APITestCase):
+class  CustomerTests(APITestCase):
     def setUp(self):
         self.superuser = User.objects.create_superuser('john', 'john@snow.com', 'johnpassword')
         self.client.login(username='john', password='johnpassword')
         self.individual = Individual.objects.create(given_names="John", family_names="Doe")
-        self.customer = Customer.objects.create(party=self.individual, customer_number="1", customer_status="Open")
+        self.customer = Customer.objects.create(party=self.individual, customer_number="1", customer_status="new")
         self.factory = APIRequestFactory()
 
         
@@ -53,7 +53,7 @@ class PartyTests(APITestCase):
         url = '/api/customer/customer/'
         data = {
             "customer_number": "3",
-            "customer_status": "open",
+            "customer_status": "new",
             "party": {
                 "type": "Individual",
                 "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk)},
@@ -69,7 +69,7 @@ class PartyTests(APITestCase):
         url = '/api/customer/customer/'
         data = {
             "customer_number": "3",
-            "customer_status": "open",
+            "customer_status": "new",
             "party": {
                 "type": "Individual",
                 'given_names': 'test John', 'family_names':'Doe'},
@@ -85,7 +85,7 @@ class PartyTests(APITestCase):
         url = '/api/customer/customer/{}/'.format(self.customer.pk)
         data = {
             "customer_number": "3",
-            "customer_status": "wibble",
+            "customer_status": "active",
             "party": {
                 "type": "Individual",
                 'given_names': 'test John', 'family_names':'Doe'},
@@ -93,7 +93,7 @@ class PartyTests(APITestCase):
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-        data = {"customer_status": "foo",}
+        data = {"customer_status": "inactive",}
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
