@@ -16,17 +16,17 @@ class BusinessInteraction(models.Model):
     @staticmethod
     def check_state(sender, **kwargs):
         instance = kwargs.get('instance')
-        created = kwargs.get('created')
+        changes = {}
         for field in instance.previous_state.keys():
             if instance.previous_state[field] != getattr(instance, field):
-                print("CHANGE %s from %s to %s"%(field, instance.previous_state[field], getattr(instance, field)))
-
+                changes['{}'.format(field)] = (instance.previous_state[field], getattr(instance, field))
+        return changes
+                
     @staticmethod
     def remember_state(sender, fields, **kwargs):
         instance = kwargs.get('instance')
         for field in fields:
             instance.previous_state[field] = getattr(instance, field)
-        print("state saved %s"%fields)
 
 #NOTE FIXED DJANGO /django/dispatch/dispatcher.py line 99 & 104ish to use getfullargspec
 #post_save.connect(BusinessInteraction.check_state, sender=BusinessInteraction)

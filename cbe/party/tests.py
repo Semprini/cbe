@@ -28,7 +28,16 @@ class PartyTests(TestCase):
         self.assertEqual('{}'.format(self.organisation), 'Pen Inc.')
         self.assertEqual('{}'.format(self.phone), '021123456')
         self.assertEqual('{}'.format(self.email), 'test@test.com')
+        
+    def test_role_asignment(self):
+        """
+        Make sure the party roles can be assigned to individuals and organisations
+        """
         self.assertEqual('{}'.format(self.role), 'Pen Inc. as a Generic')
+        self.role.individual = self.individual
+        self.assertEqual('{}'.format(self.role.party), 'Mr John Hubert Doe')
+        self.role.organisation = self.organisation
+        self.assertEqual('{}'.format(self.role.party), 'Pen Inc.')
 
         
 class PartyAPITests(APITestCase):

@@ -15,9 +15,6 @@ class Party(models.Model):
     class Meta:
         abstract = True
     
-    def __str__(self):
-        return self.name
-
         
 class Individual(Party):
     gender = models.CharField( max_length=50, blank=True, null=True, choices=GENDER_CHOICES )
@@ -68,11 +65,10 @@ class PartyRole(models.Model):
     class Meta:
         abstract = True
 
-    #NOT SURE IF THIS IS NEEDED!!!
     @property
     def individual(self):
-        if self.party:
-            return party
+        if type(self.party) is Individual:
+            return self.party
 
     @individual.setter
     def individual(self, value):
@@ -87,6 +83,24 @@ class PartyRole(models.Model):
             del self.party
             self.party = None
     
+
+    @property
+    def organisation(self):
+        if type(self.party) is Organisation:
+            return self.party
+
+    @organisation.setter
+    def organisation(self, value):
+        if type(value) is Organisation:
+            self.party = value
+        else:
+            raise Exception("Invalid type of party provided as organisation to PartyRole: %s"%type(value))
+
+    @organisation.deleter
+    def organisation(self):
+        if type(self.party) is Organisation:
+            del self.party
+            self.party = None
 
     #individual = models.ForeignKey(Individual, blank=True, null=True, editable=False)
     #organisation = models.ForeignKey(Organisation, blank=True, null=True, editable=False)
@@ -117,10 +131,7 @@ class PartyRole(models.Model):
     #        del self.organisation
         
     def __str__(self):
-        if self.party:
-            return "%s as a %s"%(self.party,self.name)
-        else:
-            return self.name
+        return "%s as a %s"%(self.party,self.name)
         
     
 class GenericPartyRole(PartyRole):
