@@ -151,7 +151,7 @@ class EmailContact(ContactMedium):
     email_address = models.EmailField(max_length=200) #, unique=True) 
 
     def __str__(self):
-        return self.eMailAddress
+        return self.email_address
 
         
 class PhysicalContact(ContactMedium):

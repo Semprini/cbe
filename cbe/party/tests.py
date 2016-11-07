@@ -7,12 +7,16 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
 from rest_framework.test import APITestCase
 
-from cbe.party.models import Individual
+from cbe.party.models import Individual, Organisation, TelephoneNumber, EmailContact, GenericPartyRole
 from cbe.party.views import IndividualViewSet
 
-class IndividualTestCase(TestCase):
+class PartyTests(TestCase):
     def setUp(self):
-        self.individual = Individual.objects.create(given_names="John", family_names="Doe")
+        self.individual = Individual.objects.create(given_names="John", family_names="Doe", form_of_address='Mr', middle_names='Hubert')
+        self.organisation = Organisation.objects.create(name='Pen Inc.')
+        self.phone = TelephoneNumber(number="021123456")
+        self.email = EmailContact(email_address="test@test.com")
+        self.role = GenericPartyRole(party=self.organisation, name="Generic")
 
         
     def test_names(self):
@@ -20,10 +24,14 @@ class IndividualTestCase(TestCase):
         Make sure the names display as expected
         """
         john = Individual.objects.get(given_names="John", family_names="Doe")
-        self.assertEqual(john.name, 'John Doe')
+        self.assertEqual('{}'.format(john), 'Mr John Hubert Doe')
+        self.assertEqual('{}'.format(self.organisation), 'Pen Inc.')
+        self.assertEqual('{}'.format(self.phone), '021123456')
+        self.assertEqual('{}'.format(self.email), 'test@test.com')
+        self.assertEqual('{}'.format(self.role), 'Pen Inc. as a Generic')
 
         
-class PartyTests(APITestCase):
+class PartyAPITests(APITestCase):
     def setUp(self):
         self.superuser = User.objects.create_superuser('john', 'john@snow.com', 'johnpassword')
         self.client.login(username='john', password='johnpassword')

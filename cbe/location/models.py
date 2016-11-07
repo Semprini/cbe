@@ -55,7 +55,23 @@ class UrbanPropertyAddress(GeographicAddress):
     street_type = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return "%d%s "%(self.street_number_first, self.street_number_first_suffix) + "%s "%self.street_name + "%s"%self.street_type + ", %s"%self.locality + ", %s"%self.city
+        ret = ""
+        if self.street_number_first is not None:
+            ret += "%d%s "%(self.street_number_first, self.street_number_first_suffix)
+
+        if self.street_name != "":
+            ret += "%s "%self.street_name
+            
+        if self.street_type != "":
+            ret += "%s"%self.street_type
+
+        if self.locality != "":
+            ret += ", %s"%self.locality
+
+        if self.city != "":
+            ret += ", %s"%self.city
+        
+        return  ret
     
     
 class UrbanPropertySubAddress(GeographicAddress):
