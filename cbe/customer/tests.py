@@ -24,6 +24,7 @@ class CustomerTestCase(TestCase):
         """
         c1 = Customer.objects.get(customer_number=1)
         self.assertEqual(c1.customer_status, 'Open')
+        self.assertEqual("{}".format(c1), '1:{}'.format(c1.party))
 
         
 class  CustomerTests(APITestCase):
