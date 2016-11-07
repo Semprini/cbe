@@ -31,9 +31,9 @@ class CustomerAccountContact(PartyRole):
         
         
 class CustomerAccount(models.Model):
+    account_number = models.CharField(primary_key=True, max_length=200)
     customer = models.ForeignKey(Customer)
     
-    account_number = models.CharField(max_length=200)
     account_status = models.CharField(max_length=100)
     account_type = models.CharField(max_length=200)
     name = models.CharField(max_length=300)
