@@ -77,13 +77,7 @@ class PartyRole(models.Model):
         else:
             raise Exception("Invalid type of party provided as individual to PartyRole: %s"%type(value))
 
-    @individual.deleter
-    def individual(self):
-        if type(self.party) is Individual:
-            del self.party
-            self.party = None
     
-
     @property
     def organisation(self):
         if type(self.party) is Organisation:
@@ -96,11 +90,6 @@ class PartyRole(models.Model):
         else:
             raise Exception("Invalid type of party provided as organisation to PartyRole: %s"%type(value))
 
-    @organisation.deleter
-    def organisation(self):
-        if type(self.party) is Organisation:
-            del self.party
-            self.party = None
 
     #individual = models.ForeignKey(Individual, blank=True, null=True, editable=False)
     #organisation = models.ForeignKey(Organisation, blank=True, null=True, editable=False)

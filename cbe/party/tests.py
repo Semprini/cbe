@@ -38,6 +38,11 @@ class PartyTests(TestCase):
         self.assertEqual('{}'.format(self.role.party), 'Mr John Hubert Doe')
         self.role.organisation = self.organisation
         self.assertEqual('{}'.format(self.role.party), 'Pen Inc.')
+        
+        with self.assertRaises(Exception):
+            self.role.individual = self.organisation
+        with self.assertRaises(Exception):
+            self.role.organisation = self.individual
 
         
 class PartyAPITests(APITestCase):
