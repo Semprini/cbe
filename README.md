@@ -3,7 +3,7 @@ Cross industry Common Business Entities
 
 [![Build Status](http://circleci-badges-max.herokuapp.com/img/Semprini/cbe?token=f5c87c28c73b5351e837a0769c4f8886f4af3314)](https://circleci.com/gh/Semprini/cbe/)
 
-CBE is a realization of a cross industry standard data model. The app provides RESTful CRUD and administration for common business entities persisted on a relational DB.
+CBE is a realization of a cross industry standard data model. The app provides RESTful CRUD and administration for common business entities persisted on a relational DB. The rationale is discussed in the [Wiki](https://github.com/Semprini/cbe/wiki)
 
 The CBE projects goal is to provide a generic schema/API/persistence layer which can be used for all the common functions in an enterprise and extended for each industry/business.
 
