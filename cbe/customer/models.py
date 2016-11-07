@@ -11,7 +11,7 @@ from cbe.business_interaction.models import BusinessInteraction
 
 
 class Customer(PartyRole):
-    customer_number = models.CharField(max_length=200)
+    customer_number = models.CharField(primary_key=True, max_length=200)
     customer_status = models.CharField(max_length=100)
     
     def save(self, *args, **kwargs):

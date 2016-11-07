@@ -57,10 +57,10 @@ class PartyRelatedField(serializers.Field):
     
     
     def to_internal_value(self, data):
-        print( "%s:%s"%(type(data),data) )
+        #print( "%s:%s"%(type(data),data) )
         #print(self.serializer.__dict__)
         args = {}
-        # Validate args - just exlude url at this stage
+        # Validate args - just exlude url and type at this stage
         for key, value in data.items():
             if key != "url" and key != "type":
                 args[key] = value
@@ -69,23 +69,21 @@ class PartyRelatedField(serializers.Field):
             # Existing resouce
             resolved_func, unused_args, resolved_kwargs = resolve(urlparse(data['url']).path)
             party = resolved_func.cls.serializer_class.Meta.model.objects.get(pk=resolved_kwargs['pk'])
-            print("PARTY FOUND:%s"%party)
+            #print("PARTY FOUND:%s"%party)
             for key, value in args.items():
                 setattr(party,key,value)
         else:
             # New resource
             # TODO: some way of specifying which type of party
-            if key["type"] == "Individual":
+            if data["type"] == "Individual":
                 party = Individual(**args)
-                print("IND CREATED:%s"%party)
-            elif key["type"] == "Organisation":
+            elif data["type"] == "Organisation":
                 party = Organisation(**args)
-                print("ORG CREATED:%s"%party)
             else:
                 raise Exception
             
         party.save()
-        return party #Customer(customer_number='111',customer_status='Active', party=party)
+        return party
 
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
@@ -103,8 +101,9 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     #Meta.fields += expandable_fields.keys()        
         
     def create(self, validated_data):
-        validated_data.pop('__class__')
-        print( "VALIDATED:%s"%validated_data)
+        #validated_data.pop('__class__')
+        validated_data.pop('customeraccount_set')
+        #print( "VALIDATED:%s"%validated_data)
         return Customer.objects.create(**validated_data)
         
     #def create(self, validated_data):
