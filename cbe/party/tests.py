@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 
 from django.contrib.admin.options import ( HORIZONTAL, VERTICAL, ModelAdmin, TabularInline, )
 from django.contrib.admin.sites import AdminSite
-from django.contrib.admin.widgets import AdminDateWidget, AdminRadioSelect
 from django.core.checks import Error
 from django.forms.models import BaseModelFormSet
 from django.forms.widgets import Select

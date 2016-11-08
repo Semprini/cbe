@@ -57,9 +57,8 @@ class PartyRelatedField(serializers.Field):
     
     
     def to_internal_value(self, data):
-        #print( "%s:%s"%(type(data),data) )
-        #print(self.serializer.__dict__)
         args = {}
+
         # Validate args - just exlude url and type at this stage
         for key, value in data.items():
             if key != "url" and key != "type":
@@ -69,7 +68,6 @@ class PartyRelatedField(serializers.Field):
             # Existing resouce
             resolved_func, unused_args, resolved_kwargs = resolve(urlparse(data['url']).path)
             party = resolved_func.cls.serializer_class.Meta.model.objects.get(pk=resolved_kwargs['pk'])
-            #print("PARTY FOUND:%s"%party)
             for key, value in args.items():
                 setattr(party,key,value)
         else:
