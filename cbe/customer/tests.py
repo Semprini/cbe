@@ -6,7 +6,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
 from rest_framework.test import APITestCase
 
-from cbe.party.models import Individual
+from cbe.party.models import Individual, Organisation
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.customer.views import CustomerViewSet
 
@@ -60,6 +60,7 @@ class  CustomerAPITests(APITestCase):
         self.superuser = User.objects.create_superuser('john', 'john@snow.com', 'johnpassword')
         self.client.login(username='john', password='johnpassword')
         self.individual = Individual.objects.create(given_names="John", family_names="Doe")
+        self.organisation = Organisation.objects.create(name='Pen Inc.')
         self.customer = Customer.objects.create(party=self.individual, customer_number="1", customer_status="new")
         self.factory = APIRequestFactory()
 
@@ -90,6 +91,31 @@ class  CustomerAPITests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+        data = {
+            "customer_number": "4",
+            "customer_status": "new",
+            "party": {
+                "type": "Organisation",
+                "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},
+            "customeraccount_set": [] }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        
+    def test_fail_create_customer_party_type(self):
+        """
+        Ensure incorrect party types are not accepted.
+        """
+        url = '/api/customer/customer/'
+        data = {
+            "customer_number": "3",
+            "customer_status": "new",
+            "party": {
+                "type": "Foo"},
+            "customeraccount_set": [] }
+        with self.assertRaises(Exception):
+            response = self.client.post(url, data, format='json')
+        
         
     def test_create_customer_create_party(self):
         """
@@ -105,6 +131,16 @@ class  CustomerAPITests(APITestCase):
             "customeraccount_set": [] }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = {
+            "customer_number": "4",
+            "customer_status": "new",
+            "party": {
+                "type": "Organisation",
+                'name': 'Pen Inc. 2'},
+            "customeraccount_set": [] }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)        
         
         
     def test_putnpatch_customer(self):

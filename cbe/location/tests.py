@@ -9,7 +9,7 @@ from rest_framework.test import APITestCase
 from cbe.location.models import UrbanPropertyAddress, Country
 
 
-class CustomerTestCase(TestCase):
+class LocationTestCase(TestCase):
     def setUp(self):
         self.country = Country.objects.create(code="NZL", name="New Zealand")
         self.address = UrbanPropertyAddress.objects.create(street_number_first=1, street_name='Credibility', street_type='Street', locality='Auckland Central', postcode='1022', city='Auckland')

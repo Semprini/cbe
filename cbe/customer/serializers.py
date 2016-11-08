@@ -15,23 +15,23 @@ from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, 
 
 #from SID.customer.customer.serializers_customeraccount import CustomerAccountSerializer
 
-class ContactMediumRelatedField(serializers.Field):
-    """
-    A custom field 
-    """
-    def __init__(self, *args, **kwargs):
-        super(ContactMediumRelatedField, self).__init__(*args, **kwargs)
+# class ContactMediumRelatedField(serializers.Field):
+    # """
+    # A custom field 
+    # """
+    # def __init__(self, *args, **kwargs):
+        # super(ContactMediumRelatedField, self).__init__(*args, **kwargs)
 
-    def to_representation(self, value):
-        """
-        Serialize party instances using a TelephoneNumber or x serializer,
-        """
-        if isinstance(value, TelephoneNumber):
-            serializer = TelephoneNumberSerializer(value, context=self.context)
-        else:
-            raise Exception('Unexpected type of tagged object')
+    # def to_representation(self, value):
+        # """
+        # Serialize party instances using a TelephoneNumber or x serializer,
+        # """
+        # if isinstance(value, TelephoneNumber):
+            # serializer = TelephoneNumberSerializer(value, context=self.context)
+        # else:
+            # raise Exception('Unexpected type of tagged object')
 
-        return serializer.data
+        # return serializer.data
         
 
 class PartyRelatedField(serializers.Field):
