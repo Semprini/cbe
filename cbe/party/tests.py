@@ -2,6 +2,15 @@ from django.test import TestCase
 #from django.urls import reverse
 from django.contrib.auth.models import User
 
+from django.contrib.admin.options import ( HORIZONTAL, VERTICAL, ModelAdmin, TabularInline, )
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.widgets import AdminDateWidget, AdminRadioSelect
+from django.core.checks import Error
+from django.forms.models import BaseModelFormSet
+from django.forms.widgets import Select
+from django.test import SimpleTestCase, TestCase
+from django.utils import six
+
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
@@ -11,6 +20,16 @@ from cbe.party.models import Individual, Organisation, TelephoneNumber, EmailCon
 from cbe.party.views import IndividualViewSet
 from cbe.party.admin import GenericPartyRoleAdminForm, GenericPartyRoleAdmin
 
+class MockRequest(object):
+    pass
+
+
+class MockSuperUser(object):
+    def has_perm(self, perm):
+        return True
+
+request = MockRequest()
+request.user = MockSuperUser()
 
 class PartyTests(TestCase):
     def setUp(self):
@@ -55,18 +74,17 @@ class PartyAdminTests(TestCase):
         self.phone = TelephoneNumber.objects.create(number="021123456")
         self.email = EmailContact.objects.create(email_address="test@test.com")
         self.role = GenericPartyRole.objects.create(party=self.organisation, name="Generic")
-        
-        self.superuser = User.objects.create_superuser('john', 'john@snow.com', 'johnpassword')
-        self.client.login(username='john', password='johnpassword')
+                
+        self.site = AdminSite()
         
     def test_genericpartyrole(self):
         """
         Test the genericpartyrole object admin.
         """
-        url = '/admin/party/genericpartyrole/{}/'.format(self.role.pk)
-        response = self.client.get(url)
-        print(response.__dict__)
-        #self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ma = ModelAdmin(GenericPartyRole, self.site)
+
+        self.assertEqual(list(ma.get_form(request).base_fields), ['valid_to', 'name', 'party_content_type', 'party_object_id'])
+        self.assertEqual(list(ma.get_fields(request)), ['valid_to', 'name', 'party_content_type', 'party_object_id'])
 
         
 class PartyAPITests(APITestCase):
