@@ -64,7 +64,7 @@ class PartyAdminTests(TestCase):
         Test the genericpartyrole object admin.
         """
         url = '/admin/party/genericpartyrole/{}/'.format(self.role.pk)
-        response = self.client.get(url, format='json')
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         
