@@ -80,14 +80,14 @@ class PartyAdminTests(TestCase):
     
     def assertIsValid(self, model_admin, model):
         admin_obj = model_admin(model, AdminSite())
-        errors = admin_obj.check(model)
+        errors = admin_obj.check()
         expected = []
         self.assertEqual(errors, expected)
         
         
-    def test_genericpartyrole(self):
+    def test_genericpartyrole_fields(self):
         """
-        Test the genericpartyrole object admin.
+        Test the genericpartyrole fields.
         """
         ma = GenericPartyRoleAdmin(GenericPartyRole, self.site)
         
@@ -96,14 +96,25 @@ class PartyAdminTests(TestCase):
         self.assertEqual(list(ma.get_fields(request)), ['valid_to', 'name', 'party'])
         self.assertEqual(list(ma.get_form(request).base_fields), ['valid_to', 'name', 'party'])
         self.assertIsValid(GenericPartyRoleAdmin, GenericPartyRole)
-        
+       
+
+    def test_genericpartyrole_form(self):
+        """
+        Test the genericpartyrole admin form .
+        """
+        ma = GenericPartyRoleAdmin(GenericPartyRole, self.site)
+                
         mf = GenericPartyRoleAdminForm(instance=self.role)
         self.assertEqual(mf.base_fields['party'].choices[1], ('1::Individual::Mr John Hubert Doe', 'Mr John Hubert Doe'))
         
-        mf.cleaned_data = {'party':"1::Individual::Mr John Hubert Doe, Mr John Hubert Doe",}
+        mf.cleaned_data = {'party':"1::Individual::Mr John Hubert Doe,Mr John Hubert Doe",}
         ma.save_model('',self.role,mf,False)
         self.assertEqual(self.role.party,self.individual)
         
+        mf.cleaned_data = {'party':"1::Organisation::Pen Inc.,Pen Inc.",}
+        ma.save_model('',self.role,mf,False)
+        self.assertEqual(self.role.party,self.organisation)
+
         
 class PartyAPITests(APITestCase):
     def setUp(self):

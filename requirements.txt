@@ -1,4 +1,4 @@
-django==1.8.5
+django>=1.10.3
 djangorestframework>=3.5.2
 markdown>=2.6.7
 django-filter>=0.15.3
