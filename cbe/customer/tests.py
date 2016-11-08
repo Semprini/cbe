@@ -8,7 +8,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
 from rest_framework.test import APITestCase
 
-from cbe.party.models import Individual, Organisation
+from cbe.party.models import Individual, Organisation, GenericPartyRole
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.customer.views import CustomerViewSet
 from cbe.customer.admin import CustomerAccountAdminForm
@@ -50,22 +50,16 @@ class CustomerAccountAdminTests(TestCase):
         self.customer = Customer.objects.create(party=self.individual, customer_number="1", customer_status="Open")
         self.customer_account = CustomerAccount.objects.create(account_number="1", account_status="Open", account_type="test", name="Test Account", customer=self.customer)
         self.site = AdminSite()
-    
-    
-    def assertIsValid(self, model_admin, model):
-        admin_obj = model_admin(model, AdminSite())
-        errors = admin_obj.check()
-        expected = []
-        self.assertEqual(errors, expected)
        
 
     def test_customeraccountadmin_form(self):
         """
         Test the CustomerAccountAdminForm admin form .
         """
-        
+        gpr = GenericPartyRole.objects.create(party=self.individual, name="Contact")
         mf = CustomerAccountAdminForm(instance=self.customer_account)        
         self.assertFalse('contact_content_type' in list(mf.base_fields))
+        self.assertEqual(mf.base_fields['customer_account_contact'].choices[1],('1::GenericPartyRole::John Doe as a Contact', 'Contact : John Doe'))
         
         
 class CustomerAccountContactTestCase(TestCase):
