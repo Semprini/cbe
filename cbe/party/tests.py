@@ -82,6 +82,8 @@ class PartyAdminTests(TestCase):
         Test the genericpartyrole object admin.
         """
         ma = GenericPartyRoleAdmin(GenericPartyRole, self.site)
+        
+        self.assertTrue(ma.has_add_permission(request))
 
         self.assertEqual(list(ma.get_form(request).base_fields), ['valid_to', 'name', 'party'])
         self.assertEqual(list(ma.get_fields(request)), ['valid_to', 'name', 'party'])
