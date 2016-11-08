@@ -9,14 +9,16 @@ from rest_framework.test import APITestCase
 
 from cbe.party.models import Individual, Organisation, TelephoneNumber, EmailContact, GenericPartyRole
 from cbe.party.views import IndividualViewSet
+from cbe.party.admin import GenericPartyRoleAdminForm, GenericPartyRoleAdmin
+
 
 class PartyTests(TestCase):
     def setUp(self):
         self.individual = Individual.objects.create(given_names="John", family_names="Doe", form_of_address='Mr', middle_names='Hubert')
         self.organisation = Organisation.objects.create(name='Pen Inc.')
-        self.phone = TelephoneNumber(number="021123456")
-        self.email = EmailContact(email_address="test@test.com")
-        self.role = GenericPartyRole(party=self.organisation, name="Generic")
+        self.phone = TelephoneNumber.objects.create(number="021123456")
+        self.email = EmailContact.objects.create(email_address="test@test.com")
+        self.role = GenericPartyRole.objects.create(party=self.organisation, name="Generic")
 
         
     def test_names(self):
@@ -29,20 +31,41 @@ class PartyTests(TestCase):
         self.assertEqual('{}'.format(self.phone), '021123456')
         self.assertEqual('{}'.format(self.email), 'test@test.com')
         
+        
     def test_role_asignment(self):
         """
         Make sure the party roles can be assigned to individuals and organisations
         """
         self.assertEqual('{}'.format(self.role), 'Pen Inc. as a Generic')
         self.role.individual = self.individual
-        self.assertEqual('{}'.format(self.role.party), 'Mr John Hubert Doe')
+        self.assertEqual('{}'.format(self.role.party), '{}'.format(self.role.individual))
         self.role.organisation = self.organisation
-        self.assertEqual('{}'.format(self.role.party), 'Pen Inc.')
+        self.assertEqual('{}'.format(self.role.party), '{}'.format(self.role.organisation))
         
         with self.assertRaises(Exception):
             self.role.individual = self.organisation
         with self.assertRaises(Exception):
             self.role.organisation = self.individual
+
+            
+class PartyAdminTests(TestCase):
+    def setUp(self):
+        self.individual = Individual.objects.create(given_names="John", family_names="Doe", form_of_address='Mr', middle_names='Hubert')
+        self.organisation = Organisation.objects.create(name='Pen Inc.')
+        self.phone = TelephoneNumber.objects.create(number="021123456")
+        self.email = EmailContact.objects.create(email_address="test@test.com")
+        self.role = GenericPartyRole.objects.create(party=self.organisation, name="Generic")
+        
+        self.superuser = User.objects.create_superuser('john', 'john@snow.com', 'johnpassword')
+        self.client.login(username='john', password='johnpassword')
+        
+    def test_genericpartyrole(self):
+        """
+        Test the genericpartyrole object admin.
+        """
+        url = '/admin/party/genericpartyrole/{}/'.format(self.role.pk)
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         
 class PartyAPITests(APITestCase):
