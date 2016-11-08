@@ -28,7 +28,6 @@ class GenericPartyRoleAdminForm(forms.ModelForm):
         instance = kwargs.get('instance')
         if instance:
             if instance.party:
-                print( instance.party )
                 self.initial['party'] = "%d::%s::%s"%(instance.party.id,instance.party.__class__.__name__,instance.party)
 
 
