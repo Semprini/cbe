@@ -1,7 +1,10 @@
 # Common Business Entities (CBE)
 
-[![Build Status](http://circleci-badges-max.herokuapp.com/img/Semprini/cbe?token=f5c87c28c73b5351e837a0769c4f8886f4af3314)](https://circleci.com/gh/Semprini/cbe/)
-[![Coverage Status](https://coveralls.io/repos/github/Semprini/cbe/badge.svg?branch=master)](https://coveralls.io/github/Semprini/cbe?branch=master)
+![Licence](https://img.shields.io/github/license/semprini/cbe.svg)
+[![GitHub version](https://badge.fury.io/gh/semprini%2Fcbe.svg)](https://badge.fury.io/gh/semprini%2Fcbe)
+![Build Status](https://img.shields.io/circleci/project/github/Semprini/cbe.svg)
+![Coverage Status](https://img.shields.io/coveralls/Semprini/cbe.svg)
+
 
 CBE is a realization of a cross industry standard data model. The app provides RESTful CRUD and administration for common business entities persisted on a relational DB. The rationale is discussed in the [Wiki](https://github.com/Semprini/cbe/wiki)
 
