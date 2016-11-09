@@ -5,7 +5,7 @@
 
 CBE is a realization of a cross industry standard data model. The app provides RESTful CRUD and administration for common business entities persisted on a relational DB. The rationale is discussed in the [Wiki](https://github.com/Semprini/cbe/wiki)
 
-The CBE projects goal is to provide a generic schema/API/persistence layer which can be used for all the common functions in an enterprise and extended for each industry/business.
+The CBE projects goal is to provide a generic schema/API/persistence layer which can be used for all the common functions in an enterprise and extended for each industry/business. CBE can be used to underpin microservice, SOA, EDA or MDM architecture.
 
 Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 
@@ -28,11 +28,13 @@ Entity Domains:
 - Party - Entities relating to individuals, organizations, how to contact them and the roles they play
 - Location - Entities for addresses and places
 - Business interaction - Entities for how parties interact in the business
+- Customer - The parties that a business sells products or services to
 
 
 Coming soon to a data model near you:
 - More roles for PartyRole and BusinessInteraction
 - Product
+- Trouble Ticket
 
 
 The data model is designed to be extended for each industry. In Party, the PartyRole class is the main abstract entity from which concrete classes like Customer or Supplier should be derived.
