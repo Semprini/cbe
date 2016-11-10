@@ -37,11 +37,13 @@ class PhysicalContactInline(GenericTabularInline):
     ct_field = 'party_role_content_type'
     ct_fk_field = 'party_role_object_id'
     
+    
 class EmailContactInline(GenericTabularInline):
     model = EmailContact
     extra = 0
     ct_field = 'party_role_content_type'
     ct_fk_field = 'party_role_object_id'
+    
     
 class TelephoneNumberInline(GenericTabularInline):
     model = TelephoneNumber
@@ -49,6 +51,7 @@ class TelephoneNumberInline(GenericTabularInline):
     ct_field = 'party_role_content_type'
     ct_fk_field = 'party_role_object_id'
 
+    
 #TODO: Validate the role name vs other roles (E.g. Customer) and force users to admin the correct role.
 class GenericPartyRoleAdmin(admin.ModelAdmin):
     list_display = ('party', 'name')
@@ -64,11 +67,15 @@ class GenericPartyRoleAdmin(admin.ModelAdmin):
             obj.party = Organisation.objects.get(id=splitparty[0])
         obj.save()
 
+
+class TelephoneNumberAdmin(admin.ModelAdmin):
+    list_display = ('party_role', 'number')
+
     
 admin.site.register(Organisation)
 admin.site.register(Individual)
 admin.site.register(PhysicalContact)
 admin.site.register(EmailContact)
-admin.site.register(TelephoneNumber)
+admin.site.register(TelephoneNumber, TelephoneNumberAdmin)
 admin.site.register(GenericPartyRole, GenericPartyRoleAdmin)
 

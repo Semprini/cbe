@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'cbe.party',
     'cbe.business_interaction',
     'cbe.customer',
+    'cbe.trouble',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -118,7 +119,8 @@ STATIC_URL = '/static/'
 
 # Try to use a local settings file if available
 try:
-    from local_settings import *
-except:
+    from cbe.local_settings import *
+except ImportError:
     pass
+
     
