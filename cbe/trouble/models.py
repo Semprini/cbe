@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
+#from django.contrib.contenttypes.fields import GenericForeignKey
+#from django.contrib.contenttypes.models import ContentType
 
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem
 
@@ -20,6 +20,7 @@ class TroubleTicket(BusinessInteraction):
 class TroubleTicketItem(BusinessInteractionItem):
     def __str__(self):
         return "%s:%s"%(self.business_interaction, self.action)
+    
     
 # class Problem(models.Model):
     # underlying_problems = models.ManyToManyField('Problem', blank=True)

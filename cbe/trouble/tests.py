@@ -6,7 +6,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
 from rest_framework.test import APITestCase
 
-from cbe.trouble.models import TroubleTicket, TroubleTicketItem
+from cbe.trouble.models import TroubleTicket, TroubleTicketItem, TROUBLE_TICKET_CHOICES
 
 class TroubleTests(TestCase):
     def setUp(self):
@@ -17,6 +17,6 @@ class TroubleTests(TestCase):
         """
         Check that the trouble names display as expected
         """
-        name = '{}'.format(self.trouble)
-        self.assertEqual(name.split(':')[0], "New")
-        self.assertEqual('{}'.format(self.item).split(':')[5], "Test Item")
+        self.assertEqual('{}'.format(self.trouble.__str__()).split(':')[0], "Queued")
+        self.assertTrue( self.trouble.trouble_detection_date )
+        self.assertEqual('{}'.format(self.item.__str__()).split(':')[5], "Test Item")
