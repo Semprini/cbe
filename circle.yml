@@ -13,7 +13,8 @@ test:
         - coverage run --source=cbe.location,cbe.party,cbe.business_interaction,cbe.customer,cbe.trouble manage.py test
     post:
         - coveralls
-        - coverage xml -o $CIRCLE_TEST_REPORTS/coverage.xml
+        - mkdir $CIRCLE_TEST_REPORTS/django
+        - coverage xml -o $CIRCLE_TEST_REPORTS/django/coverage.xml
             
 
     
