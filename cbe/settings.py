@@ -99,10 +99,10 @@ REST_FRAMEWORK = {
 }
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-# NOSE_ARGS = [
+NOSE_ARGS = [
     # '--with-coverage',
     # '--cover-package=cbe.location,cbe.party,cbe.business_interaction,cbe.customer,cbe.trouble',
-# ]
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
