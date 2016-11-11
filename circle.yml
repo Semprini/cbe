@@ -13,6 +13,7 @@ test:
         - coverage run --source=cbe.location,cbe.party,cbe.business_interaction,cbe.customer,cbe.trouble manage.py test
     post:
         - coveralls
+        - coverage html -d $CIRCLE_ARTIFACTS
             
 
     
