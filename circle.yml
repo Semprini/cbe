@@ -5,15 +5,15 @@ machine:
 dependencies:
   override:
     - pip install -r requirements.txt
-    - pip install coveralls
+    #- pip install coveralls
 
 
-test:
-    #override:
-    #    - coverage run --source=cbe.location,cbe.party,cbe.business_interaction,cbe.customer,cbe.trouble manage.py test
-    post:
-        - coveralls
-        - mkdir -p $CIRCLE_TEST_REPORTS/django/
-        - coverage xml -o $CIRCLE_TEST_REPORTS/django/coverage.xml
+# test:
+    # override:
+        # - coverage run --source=cbe.location,cbe.party,cbe.business_interaction,cbe.customer,cbe.trouble manage.py test
+    # post:
+        # - coveralls
+        # - mkdir -p $CIRCLE_TEST_REPORTS/django/
+        # - coverage xml -o $CIRCLE_TEST_REPORTS/django/coverage.xml
             
     
