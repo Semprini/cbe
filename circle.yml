@@ -9,8 +9,8 @@ dependencies:
 
 
 test:
-    # override:
-        # - coverage run --source=cbe.location,cbe.party,cbe.business_interaction,cbe.customer,cbe.trouble manage.py test
+    override:
+        - coverage run --source=cbe.location,cbe.party,cbe.business_interaction,cbe.customer,cbe.trouble manage.py test
     post:
         - coveralls
         # - mkdir -p $CIRCLE_TEST_REPORTS/django/
