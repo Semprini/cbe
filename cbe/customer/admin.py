@@ -9,6 +9,8 @@ from cbe.party.admin import GenericPartyRoleAdminForm, GenericPartyRoleAdmin, Ph
 from cbe.business_interaction.admin import BusinessInteractionRoleInline
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountRelationship, CustomerOrder, CustomerAccountContact
 
+
+
 class CustomerAdminForm(GenericPartyRoleAdminForm):
 
     class Meta:

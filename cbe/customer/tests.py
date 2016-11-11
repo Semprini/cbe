@@ -11,7 +11,19 @@ from rest_framework.test import APITestCase
 from cbe.party.models import Individual, Organisation, GenericPartyRole
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.customer.views import CustomerViewSet
-from cbe.customer.admin import CustomerAccountAdminForm
+from cbe.customer.admin import CustomerAccountAdmin,CustomerAccountAdminForm
+
+
+class MockRequest(object):
+    pass
+
+
+class MockSuperUser(object):
+    def has_perm(self, perm):
+        return True
+
+request = MockRequest()
+request.user = MockSuperUser()
 
 
 class CustomerTestCase(TestCase):
@@ -56,6 +68,14 @@ class CustomerAccountAdminTests(TestCase):
         """
         Test the CustomerAccountAdminForm admin form .
         """
+        
+        caa = CustomerAccountAdmin(CustomerAccount, self.site)
+        
+        self.assertTrue(caa.has_add_permission(request))
+
+        self.assertTrue('account_number' in list(caa.get_fields(request)))
+        self.assertTrue('account_number' in list(caa.get_form(request).base_fields))        
+        
         gpr = GenericPartyRole.objects.create(party=self.individual, name="Contact")
         mf = CustomerAccountAdminForm(instance=self.customer_account)        
         self.assertFalse('contact_content_type' in list(mf.base_fields))
