@@ -11,7 +11,7 @@ from cbe.trouble.models import TroubleTicket, TroubleTicketItem, TROUBLE_TICKET_
 class TroubleTests(TestCase):
     def setUp(self):
         self.trouble = TroubleTicket.objects.create(trouble_ticket_state=TROUBLE_TICKET_CHOICES[0][0], description="Test")
-        self.item = TroubleTicketItem.objects.create( business_interaction=self.trouble, action="Test Item" )
+        self.item = TroubleTicketItem.objects.create( trouble_ticket=self.trouble, business_interaction=self.trouble, action="Test Item" )
 
     def test_names(self):
         """
