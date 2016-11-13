@@ -75,8 +75,11 @@ class ResourceAlarm(models.Model):
     # clearSystemId
     # backedUpStatus
 
+    def __str__(self):
+        return "{}:{}".format(self.id, self.alarmType)
+
     
-class TrackingRecords(models.Model):
+class TrackingRecord(models.Model):
     problem = models.ForeignKey(Problem)
     description = models.TextField(blank=True, null=True)
     system = models.CharField(max_length=100)
@@ -84,4 +87,6 @@ class TrackingRecords(models.Model):
     # user
     resource_alarm = models.ForeignKey(ResourceAlarm, blank=True, null=True)
     
+    def __str__(self):
+        return "{}:{}:{}:{}".format(self.id, self.problem, self.system, self.time)
         

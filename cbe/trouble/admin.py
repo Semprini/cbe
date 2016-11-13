@@ -3,12 +3,12 @@ from django import forms
 from django.db import models
 from django.contrib.contenttypes.admin import GenericTabularInline
 
-from cbe.trouble.models import TroubleTicket, TroubleTicketItem, Problem, ResourceAlarm, TrackingRecords
+from cbe.trouble.models import TroubleTicket, TroubleTicketItem, Problem, ResourceAlarm, TrackingRecord
 
 
 
-class TrackingRecordsInline(admin.TabularInline):
-    model = TrackingRecords
+class TrackingRecordInline(admin.TabularInline):
+    model = TrackingRecord
     extra = 0
 
 
@@ -35,7 +35,7 @@ class ResourceAlarmAdmin(admin.ModelAdmin):
     list_display = ('alarmType', 'perceivedSeverity', 'probableCause', 'specificProblem','alarmReportingTime')
 
 
-class TrackingRecordsAdmin(admin.ModelAdmin):
+class TrackingRecordAdmin(admin.ModelAdmin):
     list_display = ('problem', 'system', 'time', 'resource_alarm')
     
 
@@ -43,4 +43,4 @@ admin.site.register(TroubleTicket, TroubleTicketAdmin)
 admin.site.register(TroubleTicketItem, TroubleTicketItemAdmin)
 admin.site.register(Problem, ProblemAdmin)
 admin.site.register(ResourceAlarm, ResourceAlarmAdmin)
-admin.site.register(TrackingRecords, TrackingRecordsAdmin)
+admin.site.register(TrackingRecord, TrackingRecordAdmin)
