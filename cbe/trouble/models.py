@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
-#from django.contrib.contenttypes.fields import GenericForeignKey
-#from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem
 
@@ -18,49 +18,54 @@ class TroubleTicket(BusinessInteraction):
 
         
 class TroubleTicketItem(BusinessInteractionItem):
-    def __str__(self):
-        return "%s:%s"%(self.business_interaction, self.action)
-    
-    
-# class Problem(models.Model):
-    # underlying_problems = models.ManyToManyField('Problem', blank=True)
-    
-    # affected_locations_content_type = models.ForeignKey(ContentType, related_name="%(app_label)s_%(class)s_ownership") 
-    # affected_locations_object_id = models.PositiveIntegerField()
-    # affected_locations = GenericForeignKey('affected_locations_content_type', 'affected_locations_object_id', null=True, blank=True)
-    
-    # associated_trouble_tickets
+    trouble_ticket = models.ForeignKey(TroubleTicket)#, related_name="item_trouble_ticket")
 
-    # originatingSytem
+    def __str__(self):
+        return "%s:%s"%(self.trouble_ticket, self.action)
+    
+
+class Problem(models.Model):
+    underlying_problems = models.ManyToManyField('Problem', blank=True)
+    
+    affected_locations_content_type = models.ForeignKey(ContentType, related_name="%(app_label)s_%(class)s_ownership", null=True, blank=True) 
+    affected_locations_object_id = models.PositiveIntegerField(null=True, blank=True)
+    affected_locations = GenericForeignKey('affected_locations_content_type', 'affected_locations_object_id')
+    
+    associated_trouble_tickets = models.ManyToManyField(TroubleTicket, blank=True)
+
+    originatingSytem = models.CharField(max_length=100)
     # impactImportanceFactor
     # priority
-    # description
+    description = models.TextField()
     # firstAlert
     # category
     # responsibleParty
     # problemEscalation
     # comments
-    # timeRaised
-    # timeChanged
-    # reason
+    timeRaised = models.DateTimeField( auto_now_add=True )
+    timeChanged = models.DateTimeField( auto_now=True )
+    reason = models.CharField(max_length=200)
     # ackStatus
     # clearStatus
     # activityStatus
     # impactPattterns
+
+    def __str__(self):
+        return "{}:{} at {}".format(self.originatingSytem, self.reason, self.timeRaised)
     
     
-# class ResourceAlarm(models.Model):
-    # alarmType
-    # perceivedSeverity
-    # probableCause
-    # specificProblem
+class ResourceAlarm(models.Model):
+    alarmType = models.CharField(max_length=100)
+    perceivedSeverity = models.CharField(max_length=100, blank=True, null=True)
+    probableCause = models.CharField(max_length=100, blank=True, null=True)
+    specificProblem = models.ForeignKey(Problem, blank=True, null=True)
     # managedObjectClass
     # alarmRaisedTime
     # alarmClearedTime
     # proposedRepairActions
-    # additionalText
-    # alarmReportingTime
-    # alarmChangedTime
+    additionalText = models.TextField(blank=True, null=True)
+    alarmReportingTime = models.DateTimeField( auto_now_add=True )
+    alarmChangedTime = models.DateTimeField( auto_now=True )
     # systemDN
     # ackState
     # ackTime
@@ -71,12 +76,12 @@ class TroubleTicketItem(BusinessInteractionItem):
     # backedUpStatus
 
     
-# class TrackingRecords(models.Model):
-    # problem
-    # description
-    # system
-    # time
+class TrackingRecords(models.Model):
+    problem = models.ForeignKey(Problem)
+    description = models.TextField(blank=True, null=True)
+    system = models.CharField(max_length=100)
+    time = models.DateTimeField( auto_now_add=True )
     # user
-    # resource_alarm
+    resource_alarm = models.ForeignKey(ResourceAlarm, blank=True, null=True)
     
         
