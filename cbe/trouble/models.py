@@ -1,8 +1,9 @@
 from django.db import models
 from django.utils import timezone
-
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+
+from gm2m import GM2MField
 
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem
 
@@ -27,9 +28,7 @@ class TroubleTicketItem(BusinessInteractionItem):
 class Problem(models.Model):
     underlying_problems = models.ManyToManyField('Problem', blank=True)
     
-    affected_locations_content_type = models.ForeignKey(ContentType, related_name="%(app_label)s_%(class)s_ownership", null=True, blank=True) 
-    affected_locations_object_id = models.PositiveIntegerField(null=True, blank=True)
-    affected_locations = GenericForeignKey('affected_locations_content_type', 'affected_locations_object_id')
+    affected_locations = GM2MField()
     
     associated_trouble_tickets = models.ManyToManyField(TroubleTicket, blank=True)
 

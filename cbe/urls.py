@@ -26,6 +26,7 @@ import cbe.party.views as PartyViews
 import cbe.location.views as LocationViews
 import cbe.business_interaction.views as BusinessInteractionViews
 import cbe.customer.views as CustomerViews
+import cbe.trouble.views as TroubleViews
 
 admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
@@ -65,6 +66,8 @@ cberouter.register(r'business_interaction/business_interaction_item', BusinessIn
 cberouter.register(r'customer/customer', CustomerViews.CustomerViewSet)
 cberouter.register(r'customer/account', CustomerViews.CustomerAccountViewSet)
 cberouter.register(r'customer/customer_account_contact', CustomerViews.CustomerAccountContactViewSet)
+
+cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)

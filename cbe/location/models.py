@@ -94,6 +94,9 @@ class PoBoxAddress(GeographicAddress):
     box_number = models.CharField(max_length=200, blank=True)
     locality = models.CharField(max_length=200, blank=True)
 
+    def __str__(self):
+        return "PO Box {}, {}".format(self.box_number, self.locality)
+
     
 class LocalAddress(Place):
     geographic_address_content_type = models.ForeignKey(ContentType, related_name="%(app_label)s_%(class)s_ownership", blank=True, null=True) 

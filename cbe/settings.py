@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_nose',
     'rest_framework',
+    'gm2m',
     'cbe.business_interaction',
     'cbe.customer',
     'cbe.location',

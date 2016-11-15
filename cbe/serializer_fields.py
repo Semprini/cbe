@@ -3,6 +3,7 @@ from rest_framework import serializers
 #from cbe.location.models import 
 
 
+
 class PlaceRelatedField(serializers.RelatedField):
     """
     A custom field to use for the place generic relationship.
