@@ -116,7 +116,7 @@ class CustomerAccountContactSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CustomerAccountContact
-        fields = ( 'type', 'url', 'party')
+        fields = ( 'type', 'url', 'party', 'customeraccount_set')
     
 
 class CustomerAccountSerializer(serializers.HyperlinkedModelSerializer):
