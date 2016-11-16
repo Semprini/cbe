@@ -6,7 +6,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
 from rest_framework.test import APITestCase
 
-from cbe.location.models import UrbanPropertyAddress, Country, PoBoxAddress
+from cbe.location.models import UrbanPropertyAddress, Country, PoBoxAddress, import_countries
 
 
 class LocationTestCase(TestCase):
@@ -23,3 +23,10 @@ class LocationTestCase(TestCase):
         self.assertEqual("{}".format(self.country), "New Zealand")
         self.assertEqual("{}".format(self.address), '1 Credibility Street, Auckland Central, Auckland')
         self.assertEqual("{}".format(self.po), 'PO Box 123, Space')
+
+    def test_countries(self):
+        """
+        Test the country import
+        """
+        import_countries('ABW|Aruba^AFG|Afghanistan')
+        self.assertTrue( Country.objects.get(code='ABW').name == 'Aruba' )
