@@ -6,14 +6,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
 
-class Country(models.Model):
-    code = models.CharField(max_length=20, primary_key=True)
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-        
-
 class Place(models.Model):
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
@@ -21,7 +13,7 @@ class Place(models.Model):
     class Meta:
         abstract = True
 
-
+        
 #class GeographicPlace(Place):
 #
 #    class Meta:
@@ -34,6 +26,36 @@ class Place(models.Model):
 #        abstract = True
 
         
+class Country(Place):
+    code = models.CharField(max_length=20, primary_key=True)
+    name = models.CharField(max_length=200)
+    
+    iso2_code = models.CharField(max_length=2, blank=True)
+    iso_numeric = models.IntegerField(max_length=2, null=True)
+    
+    #capital
+    #population
+    #continent
+    #currency - new ABE
+    #phone
+    #postal code format
+    #languages
+    #neighbours
+    #timezones
+
+    def __str__(self):
+        return self.name
+
+        
+    def country_geo_data(self, filename = None):
+        pass
+
+
+class City(Place):
+    country = models.ForeignKey(Country)
+    name = models.CharField(max_length=200)
+
+
 class GeographicAddress(Place):
     country = models.ForeignKey(Country, blank=True, null=True)
     city = models.CharField(max_length=200, blank=True)
