@@ -31,7 +31,7 @@ class Country(Place):
     name = models.CharField(max_length=200)
     
     iso2_code = models.CharField(max_length=2, blank=True)
-    iso_numeric = models.IntegerField(max_length=2, null=True)
+    iso_numeric = models.IntegerField(null=True)
     
     #capital
     #population

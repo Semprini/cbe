@@ -5,18 +5,24 @@ from rest_framework import serializers
 
 
 #class PlaceRelatedFieldSerializer(serializers.RelatedField):
-class PlaceRelatedFieldSerializer(serializers.StringRelatedField):
+class PlaceRelatedField(serializers.StringRelatedField):
     """
     A custom field to use for the place generic relationship.
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, serializer_dict, *args, **kwargs):
         
-        kwargs['source'] = '__class__.__name__'
-        super(PlaceRelatedFieldSerializer, self).__init__(*args, **kwargs)
+        super(PlaceRelatedField, self).__init__(*args, **kwargs)
 
+        self.serializer_dict = serializer_dict
+        for s in self.serializer_dict.values():
+                    s.bind('',self)
 
-    def to_representation(self, value):
-        return value
+    def to_representation(self, instance):
+        for key in self.serializer_dict.keys():
+            if isinstance(instance, key):
+                #s = self.serializer_dict[key]()
+                return self.serializer_dict[key].to_representation(instance=instance)
+        return '{}'.format(instance)
 
     # def to_representation(self, value):
     #     """
@@ -68,3 +74,5 @@ class ChoiceFieldSerializer(serializers.Field):
             if choice[1] == data:
                 return choice[0]
         return None        
+
+
