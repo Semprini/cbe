@@ -24,6 +24,7 @@ class LocationTestCase(TestCase):
         self.assertEqual("{}".format(self.address), '1 Credibility Street, Auckland Central, Auckland')
         self.assertEqual("{}".format(self.po), 'PO Box 123, Space')
 
+
     def test_countries(self):
         """
         Test the country import

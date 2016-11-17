@@ -4,21 +4,30 @@ from rest_framework import serializers
 
 
 
-class PlaceRelatedField(serializers.RelatedField):
+#class PlaceRelatedFieldSerializer(serializers.RelatedField):
+class PlaceRelatedFieldSerializer(serializers.StringRelatedField):
     """
     A custom field to use for the place generic relationship.
     """
+    def __init__(self, *args, **kwargs):
+        
+        kwargs['source'] = '__class__.__name__'
+        super(PlaceRelatedFieldSerializer, self).__init__(*args, **kwargs)
+
 
     def to_representation(self, value):
-        """
-        Serialize tagged objects to a simple textual representation.
-        """
-        #if isinstance(value, Bookmark):
-        #    return 'Bookmark: ' + value.url
-        #elif isinstance(value, Note):
-        #    return 'Note: ' + value.text
-        #raise Exception('Unexpected type of tagged object')
-        return '{}'.format(value)
+        return value
+
+    # def to_representation(self, value):
+    #     """
+    #     Serialize tagged objects to a simple textual representation.
+    #     """
+    #     if isinstance(value, Bookmark):
+    #         return 'Bookmark: ' + value.url
+    #     elif isinstance(value, Note):
+    #         return 'Note: ' + value.text
+    #     raise Exception('Unexpected type of tagged object')
+    #     return '{}'.format(value)
         
         
 class DisplayChoiceFieldSerializers(serializers.ChoiceField):
