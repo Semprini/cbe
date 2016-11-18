@@ -24,6 +24,26 @@ class PlaceRelatedField(serializers.StringRelatedField):
                 return self.serializer_dict[key].to_representation(instance=instance)
         return '{}'.format(instance)
 
+        
+    def to_internal_value(self, data):
+        if type(data) is not dict:
+            print(data)
+            return None
+            
+        datatype = data['type']
+        print(datatype)
+        
+        for key in self.serializer_dict.keys():
+            if datatype == key.__name__:
+                ret = self.serializer_dict[key].to_internal_value(data)
+                print(ret)
+                return ret
+        #import sys
+        #datatype = getattr(sys.modules[__name__], datatype)
+        #if datatype in self.serializer_dict.keys():
+        
+        return None  
+        
     # def to_representation(self, value):
     #     """
     #     Serialize tagged objects to a simple textual representation.
@@ -57,7 +77,6 @@ class TypeFieldSerializer(serializers.Field):
         return value
         
     def to_internal_value(self, data):
-        print( "TYPEFIELD:%s"%data )
         return None
         
         

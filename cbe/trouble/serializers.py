@@ -3,14 +3,14 @@ from rest_framework import serializers
 
 from cbe.serializer_fields import TypeFieldSerializer,PlaceRelatedField
 from cbe.trouble.models import Problem
-from cbe.location.models import UrbanPropertyAddress
-from cbe.location.serializers import CountrySerializer, UrbanPropertyAddressSerializer
+from cbe.location.models import UrbanPropertyAddress, PoBoxAddress
+from cbe.location.serializers import CountrySerializer, UrbanPropertyAddressSerializer, PoBoxAddressSerializer
 
 
 class ProblemSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeFieldSerializer()
     underlying_problems = serializers.HyperlinkedRelatedField(many=True,read_only=True,view_name='problem-detail')
-    affected_locations = PlaceRelatedField(many=True, serializer_dict={UrbanPropertyAddress:UrbanPropertyAddressSerializer(),})
+    affected_locations = PlaceRelatedField(many=True, serializer_dict={UrbanPropertyAddress:UrbanPropertyAddressSerializer(),PoBoxAddress:PoBoxAddressSerializer(),})
 
     class Meta:
         model = Problem

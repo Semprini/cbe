@@ -3,7 +3,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, AbsoluteLocalLocation, Country
-from cbe.location.serializers import UrbanPropertyAddressSerializer, CountrySerializer
+from cbe.location.serializers import UrbanPropertyAddressSerializer, CountrySerializer, PoBoxAddressSerializer
 
 
 class CountryViewSet(viewsets.ModelViewSet):
@@ -18,3 +18,9 @@ class UrbanPropertyAddressViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     #                      IsOwnerOrReadOnly,)
 
+    
+class PoBoxAddressViewSet(viewsets.ModelViewSet):
+    queryset = PoBoxAddress.objects.all()
+    serializer_class = PoBoxAddressSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    #                      IsOwnerOrReadOnly,)    

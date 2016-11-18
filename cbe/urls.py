@@ -59,6 +59,7 @@ cberouter.register(r'party/telephone_number', PartyViews.TelephoneNumberViewSet)
 
 cberouter.register(r'location/country', LocationViews.CountryViewSet)
 cberouter.register(r'location/urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
+cberouter.register(r'location/po_box_address', LocationViews.PoBoxAddressViewSet)
 
 cberouter.register(r'business_interaction/business_interaction', BusinessInteractionViews.BusinessInteractionViewSet)
 cberouter.register(r'business_interaction/business_interaction_item', BusinessInteractionViews.BusinessInteractionItemViewSet)
