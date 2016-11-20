@@ -36,8 +36,10 @@ class PlaceRelatedField(serializers.StringRelatedField):
         for key in self.serializer_dict.keys():
             if datatype == key.__name__:
                 ret = self.serializer_dict[key].to_internal_value(data)
-                print(ret)
-                return ret
+                a=key()
+                for k,v in ret.items():
+                    setattr(a,k,v)
+                return a
         #import sys
         #datatype = getattr(sys.modules[__name__], datatype)
         #if datatype in self.serializer_dict.keys():
