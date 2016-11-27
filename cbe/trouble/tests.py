@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.contrib.admin.sites import AdminSite
 
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
@@ -27,3 +28,29 @@ class TroubleTests(TestCase):
         self.assertEqual('{}'.format(self.alarm), "1:Test Alarm")
         self.assertEqual('{}'.format(self.problem).split(':')[0], 'Test System')
         self.assertEqual('{}'.format(self.tracking).split(':')[0:2], ["1","Test System"])
+
+
+class  TroubleAPITests(APITestCase):
+    def setUp(self):
+        self.superuser = User.objects.create_superuser('john', 'john@snow.com', 'johnpassword')
+        self.client.login(username='john', password='johnpassword')
+        #self.factory = APIRequestFactory()
+        
+    def test_create_problem(self):
+        """
+        Ensure we can create a new problem object.
+        """
+        url = '/api/trouble/problem/'
+        data = {
+                "type": "Problem",
+                #"url": "http://127.0.0.1:8000/api/trouble/problem/1/",
+                "underlying_problems": [],
+                "originatingSytem": "Test System",
+                "description": "test problem",
+                "reason": "boo",
+                "affected_locations": []
+            }
+        response = self.client.post(url, data, format='json')
+        print(response.content)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        

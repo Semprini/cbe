@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 #from expand.serializers import HyperlinkedExpandModelSerializer
 
-from cbe.serializer_fields import TypeFieldSerializer
+from cbe.serializer_fields import TypeField
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.party.models import Individual, Organisation, TelephoneNumber
 from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer
@@ -86,7 +86,7 @@ class PartyRelatedField(serializers.Field):
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     party = PartyRelatedField()
-    type = TypeFieldSerializer()
+    type = TypeField()
     #party_content_type = serializers.PrimaryKeyRelatedField(write_only=True, queryset=ContentType.objects.filter(model__in=('organisation','individual')))
 
     class Meta:
@@ -110,7 +110,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CustomerAccountContactSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeFieldSerializer()
+    type = TypeField()
     party = PartyRelatedField()
     #contact_medium = ContactMediumRelatedField()
 
@@ -120,7 +120,7 @@ class CustomerAccountContactSerializer(serializers.HyperlinkedModelSerializer):
     
 
 class CustomerAccountSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeFieldSerializer()
+    type = TypeField()
 
     class Meta:
         model = CustomerAccount
