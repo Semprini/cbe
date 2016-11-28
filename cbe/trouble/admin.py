@@ -28,7 +28,7 @@ class TroubleTicketItemAdmin(admin.ModelAdmin):
     
 
 class ProblemAdmin(admin.ModelAdmin):
-    list_display = ('originatingSytem', 'timeRaised', 'timeChanged', 'reason')
+    list_display = ('originating_system', 'time_raised', 'time_changed', 'reason')
 
 
 class ResourceAlarmAdmin(admin.ModelAdmin):

@@ -32,7 +32,7 @@ class Problem(models.Model):
     
     associated_trouble_tickets = models.ManyToManyField(TroubleTicket, blank=True)
 
-    originatingSytem = models.CharField(max_length=100)
+    originating_system = models.CharField(max_length=100)
     # impactImportanceFactor
     # priority
     description = models.TextField()
@@ -41,8 +41,8 @@ class Problem(models.Model):
     # responsibleParty
     # problemEscalation
     # comments
-    timeRaised = models.DateTimeField( auto_now_add=True )
-    timeChanged = models.DateTimeField( auto_now=True )
+    time_raised = models.DateTimeField( auto_now_add=True )
+    time_changed = models.DateTimeField( auto_now=True )
     reason = models.CharField(max_length=200)
     # ackStatus
     # clearStatus
@@ -50,7 +50,7 @@ class Problem(models.Model):
     # impactPattterns
 
     def __str__(self):
-        return "{}:{} at {}".format(self.originatingSytem, self.reason, self.timeRaised)
+        return "{}:{} at {}".format(self.originating_system, self.reason, self.time_raised)
     
     
 class ResourceAlarm(models.Model):
