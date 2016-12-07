@@ -3,7 +3,7 @@ from django.core.urlresolvers import resolve
 from django.contrib.contenttypes.models import ContentType
 from django.utils import six, timezone
 from rest_framework import serializers
-from genericm2m.models import RelatedObject
+#from genericm2m.models import RelatedObject
 
 
 class GenericRelatedField(serializers.StringRelatedField):
@@ -19,11 +19,9 @@ class GenericRelatedField(serializers.StringRelatedField):
 
             
     def to_representation(self, instance):
-        if type(instance) == RelatedObject:
-            object = instance.object
-            for key in self.serializer_dict.keys():
-                if isinstance(object, key):
-                    return self.serializer_dict[key].to_representation(instance=object)
+        for key in self.serializer_dict.keys():
+            if isinstance(instance, key):
+                return self.serializer_dict[key].to_representation(instance=instance)
         return '{}'.format(instance)
 
         

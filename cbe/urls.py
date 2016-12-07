@@ -71,7 +71,7 @@ cberouter.register(r'customer/customer_account_contact', CustomerViews.CustomerA
 cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 
 router = DefaultRouter()
-router.register(r'users', UserViewSet)
+router.register(r'auth/users', UserViewSet)
 router.register(r'content_types', ContentTypeViewSet)
 
 for route in cberouter.registry:

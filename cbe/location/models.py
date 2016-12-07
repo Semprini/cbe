@@ -4,7 +4,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from genericm2m.models import RelatedObjectsDescriptor
 
 class Place(models.Model):
     valid_from = models.DateField(null=True, blank=True)

@@ -15,7 +15,7 @@ class ProblemSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Problem
-        fields = ('type', 'url', 'underlying_problems','originating_system','description','time_raised','time_changed','reason', 'affected_locations',)
+        fields = ('type', 'url', 'underlying_problems','originating_system','description','time_raised','time_changed','reason','affected_locations' )
      
      
     def create(self, validated_data):
@@ -23,7 +23,7 @@ class ProblemSerializer(serializers.HyperlinkedModelSerializer):
         problem = Problem.objects.create(**validated_data)
         
         for object in al:
-            problem.affected_locations.connect(object)
+            problem.affected_locations.add(object)
         
         return problem
 
@@ -33,7 +33,7 @@ class ProblemSerializer(serializers.HyperlinkedModelSerializer):
         instance.description = validated_data.get('description', instance.description)
         instance.reason = validated_data.get('reason', instance.reason)
         
-        #TODO: Connect any new affected locations
+        #TODO: Connect any new affected locations (PUT vs PATCH)
         
         instance.save()
         return instance        
