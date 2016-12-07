@@ -1,9 +1,7 @@
 from urllib.parse import urlparse
 from django.core.urlresolvers import resolve
 from django.utils import six
-#from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
-#from genericm2m.models import RelatedObject
 
 
 class GenericRelatedField(serializers.StringRelatedField):
@@ -53,15 +51,11 @@ class GenericRelatedField(serializers.StringRelatedField):
         return object
         
         
-class DisplayChoiceField(serializers.ChoiceField):
-    def __init__(self, *args, **kwargs):
-        super(DisplayChoiceField, self).__init__(*args, **kwargs)
-        self.choice_strings_to_values = dict([
-            (six.text_type(key), key) for key, value in self.choices.items()
-        ])
-        
         
 class TypeField(serializers.Field):
+    """
+        Read only Field which displays the object type from the class name
+    """
     def __init__(self, *args, **kwargs):
         
         kwargs['source'] = '__class__.__name__'
@@ -71,8 +65,6 @@ class TypeField(serializers.Field):
     def to_representation(self, value):
         return value
         
-    #def to_internal_value(self, data):
-    #    return None
         
         
        
