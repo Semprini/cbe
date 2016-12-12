@@ -51,13 +51,17 @@ class Country(Place):
 
 
 class City(Place):
-    country = models.ForeignKey(Country)
+    code = models.CharField(max_length=5, primary_key=True)
     name = models.CharField(max_length=200)
+    country = models.ForeignKey(Country)
+
+    def __str__(self):
+        return self.name
 
 
 class GeographicAddress(Place):
     country = models.ForeignKey(Country, blank=True, null=True)
-    city = models.CharField(max_length=200, blank=True)
+    city = models.ForeignKey(City, blank=True, null=True)
     state_or_province = models.CharField(max_length=200, blank=True)
 
     class Meta:

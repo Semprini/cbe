@@ -6,13 +6,14 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
 from rest_framework.test import APITestCase
 
-from cbe.location.models import UrbanPropertyAddress, Country, PoBoxAddress, import_countries
+from cbe.location.models import UrbanPropertyAddress, Country, City, PoBoxAddress, import_countries
 
 
 class LocationTestCase(TestCase):
     def setUp(self):
         self.country = Country.objects.create(code="NZL", name="New Zealand")
-        self.address = UrbanPropertyAddress.objects.create(street_number_first=1, street_name='Credibility', street_type='Street', locality='Auckland Central', postcode='1022', city='Auckland')
+        self.city = City.objects.create(code="AKL", name="Auckland", country=self.country)
+        self.address = UrbanPropertyAddress.objects.create(street_number_first=1, street_name='Credibility', street_type='Street', locality='Auckland Central', postcode='1022', city=self.city)
         self.po = PoBoxAddress.objects.create(box_number="123",locality="Space")
 
         

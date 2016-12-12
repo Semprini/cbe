@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.db import models
 
-from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, PoBoxAddress, RuralPropertyAddress, AbsoluteLocalLocation, Country
+from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, PoBoxAddress, RuralPropertyAddress, AbsoluteLocalLocation, Country, City
 
 
 class CountryAdmin(admin.ModelAdmin):
@@ -16,7 +16,12 @@ class CountryAdmin(admin.ModelAdmin):
             country.country_geo_data()
     country_geo_data.short_description = "Create geographic data for selected countries"
 
-    
+
+class CityAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+
+admin.site.register(City, CityAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(UrbanPropertyAddress)
 admin.site.register(UrbanPropertySubAddress)
