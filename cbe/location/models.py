@@ -93,7 +93,7 @@ class UrbanPropertyAddress(GeographicAddress):
         if self.locality != "":
             ret += ", %s"%self.locality
 
-        if self.city != "":
+        if self.city is not None:
             ret += ", %s"%self.city
         
         return  ret
