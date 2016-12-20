@@ -32,12 +32,11 @@ Entity Domains:
 - Location - Entities for addresses and places
 - Business interaction - Entities for how parties interact in the business
 - Customer - The parties that a business sells products or services to
-
+- Trouble - Tracking problems and issues
 
 Coming soon to a data model near you:
 - More roles for PartyRole and BusinessInteraction
 - Product
-- Trouble Ticket
 
 
 The data model is designed to be extended for each industry. In Party, the PartyRole class is the main abstract entity from which concrete classes like Customer or Supplier should be derived.
