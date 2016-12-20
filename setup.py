@@ -26,6 +26,6 @@ setup(name='cbe',
         'cbe.party.serializers',
         'cbe.party.views',
         'cbe.party.tests',
-        'cbe.urls','cbe.serializer_fields','cbe.permissions','cbe.tests','cbe.views','cbe.settings',
+        'cbe.urls','cbe.serializer_fields','cbe.permissions','cbe.tests','cbe.views','cbe.settings','cbe.serializers','cbe.tests',
         ],
       )
