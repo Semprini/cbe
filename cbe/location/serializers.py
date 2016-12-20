@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cbe.serializer_fields import TypeField
+from cbe.utils.serializer_fields import TypeField
 from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, AbsoluteLocalLocation, Country, City
 
 

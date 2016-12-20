@@ -1,8 +1,8 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
-from cbe.serializer_fields import GenericRelatedField
-from cbe.serializers import GenericHyperlinkedSerializer
+from cbe.utils.serializer_fields import GenericRelatedField
+from cbe.utils.serializers import GenericHyperlinkedSerializer
 
 from cbe.trouble.models import Problem
 from cbe.location.models import UrbanPropertyAddress, PoBoxAddress

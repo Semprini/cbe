@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 #from expand.serializers import HyperlinkedExpandModelSerializer
 
-from cbe.serializer_fields import TypeField
+from cbe.utils.serializer_fields import TypeField
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.party.models import Individual, Organisation, TelephoneNumber
 from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer

@@ -97,6 +97,10 @@ REST_FRAMEWORK = {
     ],
     'PAGE_SIZE': 10,
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'cbe.utils.api.BrowsableAPIRendererWithoutForms',
+    ),
 }
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

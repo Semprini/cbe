@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cbe.serializer_fields import TypeField, GenericRelatedField
+from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem, ACTION_CHOICES
 
         

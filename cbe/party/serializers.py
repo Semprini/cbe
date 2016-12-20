@@ -1,7 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
-from cbe.serializer_fields import TypeField
+from cbe.utils.serializer_fields import TypeField
 from cbe.party.models import Individual, Organisation, GENDER_CHOICES, MARITAL_STATUS_CHOICES, TelephoneNumber, GenericPartyRole
 from cbe.location.serializers import CountrySerializer
 
