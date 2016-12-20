@@ -1,6 +1,6 @@
 from distutils.core import setup
 setup(name='cbe',
-      version='0.2-alpha',
+      version='0.3-alpha',
       py_modules=[
         'cbe.business_interaction.__init__',
         'cbe.business_interaction.admin',
@@ -26,6 +26,7 @@ setup(name='cbe',
         'cbe.party.serializers',
         'cbe.party.views',
         'cbe.party.tests',
-        'cbe.urls','cbe.utils.serializer_fields','cbe.utils.serializers','cbe.utils.permissions','cbe.tests','cbe.views','cbe.settings',
+        'cbe.utils.serializer_fields','cbe.utils.serializers','cbe.utils.permissions','cbe.utils.api',
+        'cbe.urls','cbe.tests','cbe.views','cbe.settings',
         ],
       )
