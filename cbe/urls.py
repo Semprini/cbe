@@ -32,42 +32,57 @@ admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
 
 # Serializers define the API representation.
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
 
+
 class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = ContentType
         fields = ('url', 'app_label', 'model', 'name', )
-        
+
 # ViewSets define the view behavior.
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer        
+    serializer_class = UserSerializer
+
 
 class ContentTypeViewSet(viewsets.ModelViewSet):
     queryset = ContentType.objects.all()
-    serializer_class = ContentTypeSerializer      
+    serializer_class = ContentTypeSerializer
 
 cberouter = DefaultRouter()
 cberouter.register(r'party/individual', PartyViews.IndividualViewSet)
 cberouter.register(r'party/organisation', PartyViews.OrganisationViewSet)
-cberouter.register(r'party/generic_party_role', PartyViews.GenericPartyRoleViewSet)
-cberouter.register(r'party/telephone_number', PartyViews.TelephoneNumberViewSet)
+cberouter.register(
+    r'party/generic_party_role', PartyViews.GenericPartyRoleViewSet)
+cberouter.register(
+    r'party/telephone_number', PartyViews.TelephoneNumberViewSet)
 
 cberouter.register(r'location/country', LocationViews.CountryViewSet)
 cberouter.register(r'location/city', LocationViews.CityViewSet)
-cberouter.register(r'location/urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
-cberouter.register(r'location/po_box_address', LocationViews.PoBoxAddressViewSet)
+cberouter.register(
+    r'location/urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
+cberouter.register(
+    r'location/po_box_address', LocationViews.PoBoxAddressViewSet)
 
-cberouter.register(r'business_interaction/business_interaction', BusinessInteractionViews.BusinessInteractionViewSet)
-cberouter.register(r'business_interaction/business_interaction_item', BusinessInteractionViews.BusinessInteractionItemViewSet)
+cberouter.register(r'business_interaction/business_interaction',
+                   BusinessInteractionViews.BusinessInteractionViewSet)
+cberouter.register(r'business_interaction/business_interaction_item',
+                   BusinessInteractionViews.BusinessInteractionItemViewSet)
 
 cberouter.register(r'customer/customer', CustomerViews.CustomerViewSet)
 cberouter.register(r'customer/account', CustomerViews.CustomerAccountViewSet)
-cberouter.register(r'customer/customer_account_contact', CustomerViews.CustomerAccountContactViewSet)
+cberouter.register(r'customer/customer_account_contact',
+                   CustomerViews.CustomerAccountContactViewSet)
 
 cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 
@@ -76,10 +91,11 @@ router.register(r'auth/users', UserViewSet)
 router.register(r'content_types', ContentTypeViewSet)
 
 for route in cberouter.registry:
-    router.register(route[0],route[1])
-    
+    router.register(route[0], route[1])
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-auth/',
+        include('rest_framework.urls', namespace='rest_framework')),
 ]

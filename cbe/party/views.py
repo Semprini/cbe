@@ -12,24 +12,23 @@ class IndividualViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     #                      IsOwnerOrReadOnly,)
 
-    #def perform_create(self, serializer):
+    # def perform_create(self, serializer):
     #    serializer.save(owner=self.request.user)
-    
+
+
 class OrganisationViewSet(viewsets.ModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )    
-    
-    
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+
+
 class TelephoneNumberViewSet(viewsets.ModelViewSet):
     queryset = TelephoneNumber.objects.all()
     serializer_class = TelephoneNumberSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )        
-    
-    
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+
+
 class GenericPartyRoleViewSet(viewsets.ModelViewSet):
     queryset = GenericPartyRole.objects.all()
     serializer_class = GenericPartyRoleSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )   
-    
-    
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )

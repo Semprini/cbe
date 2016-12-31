@@ -11,10 +11,8 @@ class BusinessInteractionViewSet(viewsets.ModelViewSet):
     serializer_class = BusinessInteractionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
 
-    
+
 class BusinessInteractionItemViewSet(viewsets.ModelViewSet):
     queryset = BusinessInteractionItem.objects.all()
     serializer_class = BusinessInteractionItemSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )    
-    
-    
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )

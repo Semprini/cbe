@@ -131,5 +131,3 @@ try:
     from cbe.local_settings import *
 except ImportError:
     pass
-
-    

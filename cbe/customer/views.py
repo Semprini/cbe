@@ -7,16 +7,17 @@ from cbe.customer.serializers import CustomerAccountContactSerializer, CustomerS
 
 #from expand.views import ExpandModelViewSet
 
+
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     #                      IsOwnerOrReadOnly,)
 
-    #def perform_create(self, serializer):
+    # def perform_create(self, serializer):
     #    serializer.save(owner=self.request.user)
-    
-    
+
+
 class CustomerAccountViewSet(viewsets.ModelViewSet):
     queryset = CustomerAccount.objects.all()
     serializer_class = CustomerAccountSerializer
@@ -25,4 +26,3 @@ class CustomerAccountViewSet(viewsets.ModelViewSet):
 class CustomerAccountContactViewSet(viewsets.ModelViewSet):
     queryset = CustomerAccountContact.objects.all()
     serializer_class = CustomerAccountContactSerializer
-        

@@ -11,24 +11,27 @@ class GenericPartyRoleAdminForm(forms.ModelForm):
 
     class Meta:
         exclude = []
-        model = GenericPartyRole 
+        model = GenericPartyRole
 
     def __init__(self, *args, **kwargs):
-        choices = (('',''),)
+        choices = (('', ''),)
         for individual in Individual.objects.all():
-            choices += (("%d::%s::%s"%(individual.id, individual.__class__.__name__, individual),"%s"%individual),)
-        
+            choices += (("%d::%s::%s" % (individual.id,
+                                         individual.__class__.__name__, individual), "%s" % individual),)
+
         for organisation in Organisation.objects.all():
-            choices += (("%d::%s::%s"%(organisation.id, organisation.__class__.__name__, organisation),"%s"%organisation),)
+            choices += (("%d::%s::%s" % (organisation.id,
+                                         organisation.__class__.__name__, organisation), "%s" % organisation),)
 
         self.base_fields['party'].choices = choices
 
         forms.ModelForm.__init__(self, *args, **kwargs)
-            
+
         instance = kwargs.get('instance')
         if instance:
             if instance.party:
-                self.initial['party'] = "%d::%s::%s"%(instance.party.id,instance.party.__class__.__name__,instance.party)
+                self.initial['party'] = "%d::%s::%s" % (
+                    instance.party.id, instance.party.__class__.__name__, instance.party)
 
 
 class PhysicalContactInline(GenericTabularInline):
@@ -36,29 +39,31 @@ class PhysicalContactInline(GenericTabularInline):
     extra = 0
     ct_field = 'party_role_content_type'
     ct_fk_field = 'party_role_object_id'
-    
-    
+
+
 class EmailContactInline(GenericTabularInline):
     model = EmailContact
     extra = 0
     ct_field = 'party_role_content_type'
     ct_fk_field = 'party_role_object_id'
-    
-    
+
+
 class TelephoneNumberInline(GenericTabularInline):
     model = TelephoneNumber
     extra = 0
     ct_field = 'party_role_content_type'
     ct_fk_field = 'party_role_object_id'
 
-    
-#TODO: Validate the role name vs other roles (E.g. Customer) and force users to admin the correct role.
+
+# TODO: Validate the role name vs other roles (E.g. Customer) and force
+# users to admin the correct role.
 class GenericPartyRoleAdmin(admin.ModelAdmin):
     list_display = ('party', 'name')
     form = GenericPartyRoleAdminForm
-    inlines = [ PhysicalContactInline, EmailContactInline, TelephoneNumberInline]
-    fields = ('valid_to','name','party')
-    
+    inlines = [PhysicalContactInline,
+               EmailContactInline, TelephoneNumberInline]
+    fields = ('valid_to', 'name', 'party')
+
     def save_model(self, request, obj, form, change):
         splitparty = form.cleaned_data['party'].split('::')
         if splitparty[1] == "Individual":
@@ -71,11 +76,10 @@ class GenericPartyRoleAdmin(admin.ModelAdmin):
 class TelephoneNumberAdmin(admin.ModelAdmin):
     list_display = ('party_role', 'number')
 
-    
+
 admin.site.register(Organisation)
 admin.site.register(Individual)
 admin.site.register(PhysicalContact)
 admin.site.register(EmailContact)
 admin.site.register(TelephoneNumber, TelephoneNumberAdmin)
 admin.site.register(GenericPartyRole, GenericPartyRoleAdmin)
-

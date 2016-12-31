@@ -17,16 +17,16 @@ class CityViewSet(viewsets.ModelViewSet):
     serializer_class = CitySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
 
-    
+
 class UrbanPropertyAddressViewSet(viewsets.ModelViewSet):
     queryset = UrbanPropertyAddress.objects.all()
     serializer_class = UrbanPropertyAddressSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     #                      IsOwnerOrReadOnly,)
 
-    
+
 class PoBoxAddressViewSet(viewsets.ModelViewSet):
     queryset = PoBoxAddress.objects.all()
     serializer_class = PoBoxAddressSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
-    #                      IsOwnerOrReadOnly,)    
+    #                      IsOwnerOrReadOnly,)

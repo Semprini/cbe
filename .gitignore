@@ -96,3 +96,15 @@ ENV/
 # IDE
 *.sublime-project
 *.sublime-workspace
+
+# Visual Studio
+*.pyproj
+*.pyproj.user
+*.sln
+obj/
+.vs/
+bin/
+UpgradeLog.htm
+web.config
+web.debug.config
+web.config

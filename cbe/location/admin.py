@@ -7,11 +7,11 @@ from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, P
 
 class CountryAdmin(admin.ModelAdmin):
     list_display = ('code', 'name',)
-    actions = ['country_geo_data',]
-    
+    actions = ['country_geo_data', ]
+
     def country_geo_data(self, request, queryset):
         self.message_user(request, "Working on geo data in the background...")
-        #TODO: Async processing
+        # TODO: Async processing
         for country in queryset:
             country.country_geo_data()
     country_geo_data.short_description = "Create geographic data for selected countries"
@@ -28,4 +28,3 @@ admin.site.register(UrbanPropertySubAddress)
 admin.site.register(PoBoxAddress)
 admin.site.register(RuralPropertyAddress)
 admin.site.register(AbsoluteLocalLocation)
-
