@@ -18,7 +18,7 @@ git clone https://github.com/Semprini/cbe.git
 cd cbe
 pip install -r requirements.txt
 python manage.py migrate (will use a default sqllite db)
-python manage.py createsuperuser
+python manage.py createsuperuser <username> <email> <password>
 python manage.py runserver
 browse to http://localhost:8000/admin for the admin interface
 browse to http://localhost:8000/api for the api interface
