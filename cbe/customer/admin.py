@@ -13,7 +13,7 @@ from cbe.customer.models import Customer, CustomerAccount, CustomerAccountRelati
 class CustomerAdminForm(GenericPartyRoleAdminForm):
 
     class Meta:
-        exclude = []
+        exclude = ['contact_mediums',]
         model = Customer
 
 

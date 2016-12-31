@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+from gm2m import GM2MField
+
 from cbe.location.models import Country
 
 GENDER_CHOICES = (('Undisclosed', 'Undisclosed'),
@@ -66,9 +68,7 @@ class PartyRole(models.Model):
     party_object_id = models.PositiveIntegerField()
     party = GenericForeignKey('party_content_type', 'party_object_id')
 
-    #contact_medium_content_type = models.ForeignKey(ContentType, related_name="%(app_label)s_%(class)s_contact_ownership", null=True, blank=True)
-    #contact_medium_object_id = models.PositiveIntegerField(null=True, blank=True)
-    #contact_medium = GenericForeignKey('contact_medium_content_type', 'contact_medium_object_id')
+    contact_mediums = GM2MField()
 
     class Meta:
         abstract = True
@@ -80,7 +80,7 @@ class PartyRole(models.Model):
 
     @individual.setter
     def individual(self, value):
-        if type(value) is Individual:
+        if type(value) is Individual or value == None:
             self.party = value
         else:
             raise Exception(
@@ -93,38 +93,11 @@ class PartyRole(models.Model):
 
     @organisation.setter
     def organisation(self, value):
-        if type(value) is Organisation:
+        if type(value) is Organisation or value == None:
             self.party = value
         else:
             raise Exception(
                 "Invalid type of party provided as organisation to PartyRole: %s" % type(value))
-
-    #individual = models.ForeignKey(Individual, blank=True, null=True, editable=False)
-    #organisation = models.ForeignKey(Organisation, blank=True, null=True, editable=False)
-
-    #@property
-    # def party(self):
-    #    if self.individual:
-    #        return self.individual
-    #    return self.organisation
-
-    #@party.setter
-    # def party(self, value):
-    #    if type(value) is Individual:
-    #        self.individual = value
-    #        self.organisation = None
-    #    elif type(value) is Organisation:
-    #        self.individual = None
-    #        self.organisation = value
-    #    else:
-    #        raise Exception("Invalid type of party provided to PartyRole: %s"%type(value))
-
-    #@party.deleter
-    # def party(self):
-    #    if self.individual:
-    #        del self.individual
-    #    else:
-    #        del self.organisation
 
     def __str__(self):
         return "%s as a %s" % (self.party, self.name)

@@ -10,7 +10,7 @@ class GenericPartyRoleAdminForm(forms.ModelForm):
     party = forms.ChoiceField()
 
     class Meta:
-        exclude = []
+        exclude = ['contact_mediums',]
         model = GenericPartyRole
 
     def __init__(self, *args, **kwargs):
