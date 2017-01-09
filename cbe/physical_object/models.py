@@ -22,7 +22,7 @@ class ManufacturedObject(PhysicalObject):
 class Structure(ManufacturedObject):
 
     def __str__(self):
-        return self.physical_object_type
+        return "{} by {}".format(self.physical_object_type, self.make)
 
     def save(self, *args, **kwargs):
         if self.physical_object_type is None or self.physical_object_type == "":
