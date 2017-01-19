@@ -36,3 +36,4 @@ class PoBoxAddressSerializer(serializers.HyperlinkedModelSerializer):
         model = PoBoxAddress
         fields = ('type', 'url', 'country', 'city',
                   'state_or_province', 'locality', 'box_number',)
+
