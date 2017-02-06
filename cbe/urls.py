@@ -28,6 +28,8 @@ import cbe.business_interaction.views as BusinessInteractionViews
 import cbe.customer.views as CustomerViews
 import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
+import cbe.product.views as ProductViews
+import cbe.sale.views as SaleViews
 
 admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
@@ -74,6 +76,8 @@ cberouter.register(
     r'location/urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
 cberouter.register(
     r'location/po_box_address', LocationViews.PoBoxAddressViewSet)
+cberouter.register(
+    r'location/absolute_local_location', LocationViews.AbsoluteLocalLocationViewSet)
 
 cberouter.register(r'business_interaction/business_interaction',
                    BusinessInteractionViews.BusinessInteractionViewSet)
@@ -89,6 +93,16 @@ cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 
 cberouter.register(r'physical_object/structure', PhysicalObjectViews.StructureViewSet)
 cberouter.register(r'physical_object/vehicle', PhysicalObjectViews.VehicleViewSet)
+
+cberouter.register(r'product/product_offering', ProductViews.ProductOfferingViewSet)
+cberouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)
+cberouter.register(r'product/promotion', ProductViews.PromotionViewSet)
+
+cberouter.register(r'sale/sale', SaleViews.SaleViewSet)
+cberouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
+cberouter.register(r'sale/tender', SaleViews.TenderViewSet)
+cberouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
+
 
 router = DefaultRouter()
 router.register(r'auth/users', UserViewSet)

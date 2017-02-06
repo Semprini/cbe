@@ -46,6 +46,8 @@ INSTALLED_APPS = (
     'cbe.party',
     'cbe.trouble',
     'cbe.physical_object',
+    'cbe.product',
+    'cbe.sale',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -87,7 +89,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
 }
 
 REST_FRAMEWORK = {
@@ -116,7 +118,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+#USE_TZ = True
+USE_TZ = False
 
 LANGUAGE_CODE = 'en-us'
 

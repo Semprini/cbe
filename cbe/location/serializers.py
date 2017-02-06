@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField
-from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, AbsoluteLocalLocation, Country, City
+from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, AbsoluteLocalLocation, Country, City, AbsoluteLocalLocation
 
 
 class CitySerializer(serializers.HyperlinkedModelSerializer):
@@ -37,3 +37,10 @@ class PoBoxAddressSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'country', 'city',
                   'state_or_province', 'locality', 'box_number',)
 
+
+class AbsoluteLocalLocationSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+
+    class Meta:
+        model = AbsoluteLocalLocation
+        fields = ('type', 'url', 'name', 'x', 'y', 'z', )
