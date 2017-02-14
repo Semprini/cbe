@@ -106,8 +106,8 @@ for route in cberouter.registry:
     router.register(route[0], route[1])
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/', include(router.urls)),
-    url(r'^api-auth/',
+    url(r'^cbe/admin/', include(admin.site.urls)),
+    url(r'^cbe/api/', include(router.urls)),
+    url(r'^cbe/api-auth/',
         include('rest_framework.urls', namespace='rest_framework')),
 ]
