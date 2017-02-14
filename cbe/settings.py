@@ -47,7 +47,6 @@ INSTALLED_APPS = (
     'cbe.trouble',
     'cbe.physical_object',
     'cbe.product',
-    'cbe.sale',
 )
 
 MIDDLEWARE_CLASSES = (

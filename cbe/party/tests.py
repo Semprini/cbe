@@ -88,7 +88,7 @@ class PartyAdminTests(TestCase):
 
     def assertIsValid(self, model_admin, model):
         admin_obj = model_admin(model, AdminSite())
-        errors = admin_obj.check()
+        errors = admin_obj.check(model)
         expected = []
         self.assertEqual(errors, expected)
 

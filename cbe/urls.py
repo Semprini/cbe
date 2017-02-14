@@ -29,7 +29,6 @@ import cbe.customer.views as CustomerViews
 import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
 import cbe.product.views as ProductViews
-import cbe.sale.views as SaleViews
 
 admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
@@ -97,11 +96,6 @@ cberouter.register(r'physical_object/vehicle', PhysicalObjectViews.VehicleViewSe
 cberouter.register(r'product/product_offering', ProductViews.ProductOfferingViewSet)
 cberouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)
 cberouter.register(r'product/promotion', ProductViews.PromotionViewSet)
-
-cberouter.register(r'sale/sale', SaleViews.SaleViewSet)
-cberouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
-cberouter.register(r'sale/tender', SaleViews.TenderViewSet)
-cberouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
 
 
 router = DefaultRouter()

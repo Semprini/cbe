@@ -33,7 +33,7 @@ class TroubleTests(TestCase):
             '{}'.format(self.trouble.__str__()).split(':')[0], "Queued")
         self.assertTrue(self.trouble.trouble_detection_date)
         self.assertEqual(
-            '{}'.format(self.item.__str__()).split(':')[5], "Test Item")
+            '{}'.format(self.item.__str__()).split(':')[4], "Test Item")
 
         self.assertEqual('{}'.format(self.alarm), "1:Test Alarm")
         self.assertEqual(
