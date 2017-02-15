@@ -28,6 +28,7 @@ import cbe.business_interaction.views as BusinessInteractionViews
 import cbe.customer.views as CustomerViews
 import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
+import cbe.supplier_partner.views as SupplierPartnerViews
 
 
 admin.site.site_title = 'CBE'
@@ -92,6 +93,10 @@ cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 
 cberouter.register(r'physical_object/structure', PhysicalObjectViews.StructureViewSet)
 cberouter.register(r'physical_object/vehicle', PhysicalObjectViews.VehicleViewSet)
+
+cberouter.register(r'supplier_partner/supplier', SupplierPartnerViews.SupplierViewSet)
+cberouter.register(r'supplier_partner/partner', SupplierPartnerViews.PartnerViewSet)
+cberouter.register(r'supplier_partner/buyer', SupplierPartnerViews.BuyerViewSet)
 
 router = DefaultRouter()
 router.register(r'auth/users', UserViewSet)
