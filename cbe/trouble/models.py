@@ -32,7 +32,8 @@ class TroubleTicketItem(BusinessInteractionItem):
 class Problem(models.Model):
     underlying_problems = models.ManyToManyField('Problem', blank=True)
 
-    affected_locations = GM2MField()
+    affected_locations = GM2MField() #TODO: Restrict to place derivatives
+    affected_resources = GM2MField() #TODO: Restrict to resource derivatives
 
     associated_trouble_tickets = models.ManyToManyField(
         TroubleTicket, blank=True)
