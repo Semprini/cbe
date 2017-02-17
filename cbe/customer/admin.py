@@ -82,7 +82,7 @@ class CustomerAccountAdmin(admin.ModelAdmin):
 class CustomerOrderAdmin(admin.ModelAdmin):
     list_display = (
         'interaction_date', 'interaction_status', 'customer_order_type')
-    inlines = [BusinessInteractionRoleInline, ]
+    #inlines = [BusinessInteractionRoleInline, ]
 
 
 admin.site.register(CustomerOrder, CustomerOrderAdmin)

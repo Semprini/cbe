@@ -24,7 +24,7 @@ from django.contrib.contenttypes.models import ContentType
 
 import cbe.party.views as PartyViews
 import cbe.location.views as LocationViews
-import cbe.business_interaction.views as BusinessInteractionViews
+#import cbe.business_interaction.views as BusinessInteractionViews
 import cbe.customer.views as CustomerViews
 import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
@@ -79,10 +79,10 @@ cberouter.register(
 cberouter.register(
     r'location/absolute_local_location', LocationViews.AbsoluteLocalLocationViewSet)
 
-cberouter.register(r'business_interaction/business_interaction',
-                   BusinessInteractionViews.BusinessInteractionViewSet)
-cberouter.register(r'business_interaction/business_interaction_item',
-                   BusinessInteractionViews.BusinessInteractionItemViewSet)
+# cberouter.register(r'business_interaction/business_interaction',
+                   # BusinessInteractionViews.BusinessInteractionViewSet)
+# cberouter.register(r'business_interaction/business_interaction_item',
+                   # BusinessInteractionViews.BusinessInteractionItemViewSet)
 
 cberouter.register(r'customer/customer', CustomerViews.CustomerViewSet)
 cberouter.register(r'customer/account', CustomerViews.CustomerAccountViewSet)
@@ -93,6 +93,7 @@ cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 
 cberouter.register(r'physical_object/structure', PhysicalObjectViews.StructureViewSet)
 cberouter.register(r'physical_object/vehicle', PhysicalObjectViews.VehicleViewSet)
+cberouter.register(r'physical_object/device', PhysicalObjectViews.DeviceViewSet)
 
 cberouter.register(r'supplier_partner/supplier', SupplierPartnerViews.SupplierViewSet)
 cberouter.register(r'supplier_partner/partner', SupplierPartnerViews.PartnerViewSet)
