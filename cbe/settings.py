@@ -48,6 +48,8 @@ INSTALLED_APPS = (
     'cbe.trouble',
     'cbe.physical_object',
     'cbe.supplier_partner',
+    'cbe.human_resources',
+    'cbe.resource',
 )
 
 MIDDLEWARE_CLASSES = (

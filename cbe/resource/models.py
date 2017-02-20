@@ -1,10 +1,14 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+
+from gm2m import GM2MField
 
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem
 
-def POWER_STATES = (('on', 'on'), ('off', 'off'), ('starting', 'starting'), ('stopping', 'stopping'))
+POWER_STATES = (('on', 'on'), ('off', 'off'), ('starting', 'starting'), ('stopping', 'stopping'))
 
-class Resource(models.model):
+class Resource(models.Model):
     usage_state = models.IntegerField()
     name = models.CharField(max_length=100,null=True, blank=True )
 
