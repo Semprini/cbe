@@ -9,6 +9,32 @@ function executeExpression ($expression) {
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
 }
 
+function executeRetry ($expression) {
+	$wait = 10
+	$retryMax = 10
+	$retryCount = 0
+	while (( $retryCount -le $retryMax ) -and ($exitCode -ne 0)) {
+		$exitCode = 0
+		$error.clear()
+		Write-Host "[$scriptName][$retryCount] $expression"
+		try {
+			Invoke-Expression $expression
+		    if(!$?) { Write-Host "[$scriptName] `$? = $?"; $exitCode = 1 }
+		} catch { echo $_.Exception|format-list -force; $exitCode = 2 }
+	    if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; $exitCode = 3 }
+	    if ( $lastExitCode -ne 0 ) { Write-Host "[$scriptName] `$lastExitCode = $lastExitCode "; $exitCode = $lastExitCode }
+	    if ($exitCode -ne 0) {
+			if ($retryCount -ge $retryMax ) {
+				Write-Host "[$scriptName] Retry maximum ($retryCount) reached, exiting with code $exitCode"; exit $exitCode
+			} else {
+				$retryCount += 1
+				Write-Host "[$scriptName] Wait $wait seconds, then retry $retryCount of $retryMax"
+				sleep $wait
+			}
+		}
+    }
+}
+
 # Create or reuse mount directory
 function mountWim ($media, $wimIndex, $mountDir) {
 	Write-Host "[$scriptName] Validate WIM source ${media}:${wimIndex} using Deployment Image Servicing and Management (DISM)"
@@ -90,38 +116,60 @@ switch ($version) {
 		$defaultMount = 'C:\mountdir'
 		
 		Write-Host
-		if ( Test-Path $media ) {
-			Write-Host "[$scriptName] Media path ($media) found"
-			if ($wimIndex) {
-				Write-Host "[$scriptName] Index ($wimIndex) passed, treating media as Windows Imaging Format (WIM)"
-				if ( Test-Path "$defaultMount" ) {
-					if ( Test-Path "$defaultMount\windows" ) {
-						Write-Host "[$scriptName] Default mount path found ($defaultMount\windows), found, mount not attempted."
+		if ( $media ) {
+			if ( Test-Path $media ) {
+				Write-Host "[$scriptName] Media path ($media) found"
+				if ($wimIndex) {
+					Write-Host "[$scriptName] Index ($wimIndex) passed, treating media as Windows Imaging Format (WIM)"
+					if ( Test-Path "$defaultMount" ) {
+						if ( Test-Path "$defaultMount\windows" ) {
+							Write-Host "[$scriptName] Default mount path found ($defaultMount\windows), assume already mounted, mount not attempted."
+						} else {
+							mountWim "$media" "$wimIndex" "$defaultMount"
+						}
 					} else {
+						Write-Host "[$scriptName] Create default mount directory to $defaultMount"
+						mkdir $defaultMount
 						mountWim "$media" "$wimIndex" "$defaultMount"
 					}
+					$sourceOption = "/Source:$defaultMount\windows\WinSxS"
 				} else {
-					Write-Host "[$scriptName] Create default mount directory to $defaultMount"
-					mkdir $defaultMount
-					mountWim "$media" "$wimIndex" "$defaultMount"
+					$sourceOption = "/Source:$media"
+					Write-Host "[$scriptName] Media path found, using source option $sourceOption"
 				}
-				$sourceOption = "/Source:$defaultMount\windows\WinSxS"
+				
+				executeExpression "DISM /Online /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess $sourceOption"
+			    if ( $lastExitCode -ne 0 ) {
+					Write-Host "[$scriptName] Install failed, attempt to remove KB"
+					executeExpression "wusa.exe /uninstall /KB:2966828 /quiet /norestart"
+					executeExpression "DISM /Online /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess $sourceOption"
+				    if ( $lastExitCode -ne 0 ) {
+						Write-Host "[$scriptName] Install failed, fallback to WSUS download"
+						executeRetry "Dism /Unmount-Image /MountDir:$defaultMount /Discard /Quiet"
+				    }
+				}
+	
+				if ( Test-Path "$defaultMount\windows" ) {
+					Write-Host "[$scriptName] Dismount default mount path ($defaultMount)"
+					executeExpression "Dism /Unmount-Image /MountDir:$defaultMount /Discard /Quiet"
+				}
 			} else {
-				$sourceOption = "/Source:$media"
-				Write-Host "[$scriptName] Media path found, using source option $sourceOption"
+				Write-Host "[$scriptName] Media passed but not found, attempt download from internet"
+				executeExpression "DISM /Online /Enable-Feature /FeatureName:NetFx3 /All"
+			    if ( $lastExitCode -ne 0 ) {
+					Write-Host "[$scriptName] Install failed, attempt to remove KB"
+					executeExpression "wusa.exe /uninstall /KB:2966828 /quiet /norestart"
+					executeRetry "DISM /Online /Enable-Feature /FeatureName:NetFx3 /All"
+				}
 			}
-			
-			executeExpression "DISM /Online /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess $sourceOption"
-
-			if ( Test-Path "$defaultMount\windows" ) {
-				Write-Host "[$scriptName] Dismount default mount path ($defaultMount)"
-				executeExpression "Dism /Unmount-Image /MountDir:$defaultMount /Discard /Quiet"
-			}
-
 		} else {
-		    Write-Host "[$scriptName] media path not found, will attempt to download and install from offline installer."
-			$file = 'dotnetfx35.exe'
-			$uri = 'https://download.microsoft.com/download/2/0/E/20E90413-712F-438C-988E-FDAA79A8AC3D/' + $file
+			Write-Host "[$scriptName] Media not passed, attempt download from internet"
+			executeExpression "DISM /Online /Enable-Feature /FeatureName:NetFx3 /All"
+		    if ( $lastExitCode -ne 0 ) {
+				Write-Host "[$scriptName] Install failed, attempt to remove KB"
+				executeExpression "wusa.exe /uninstall /KB:2966828 /quiet /norestart"
+				executeRetry "DISM /Online /Enable-Feature /FeatureName:NetFx3 /All"
+			}
 		}
 	}
     default {
@@ -155,6 +203,7 @@ if ($file) {
 		exit 201
 	}
 }
+
 Write-Host
 Write-Host "[$scriptName] ---------- stop -----------"
 Write-Host
