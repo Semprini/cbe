@@ -6,9 +6,13 @@
 [![Coverage Status](https://coveralls.io/repos/github/Semprini/cbe/badge.svg?branch=master)](https://coveralls.io/github/Semprini/cbe?branch=master)
 
 
-CBE is a realization of a cross industry standard data model. The app provides RESTful CRUD and administration for common business entities persisted on a relational DB. The rationale is discussed in the [Wiki](https://github.com/Semprini/cbe/wiki)
+CBE provides RESTful CRUD and administration for common business entities persisted on a relational DB. The rationale is discussed in the [Wiki](https://github.com/Semprini/cbe/wiki)
 
 The CBE projects goal is to provide a generic schema/API/persistence layer which can be used for all the common functions in an enterprise and extended for each industry/business. CBE can be used to underpin microservice, SOA, EDA or MDM architecture.
+
+Industry Specific Extension Projects
+ - [Retail](https://github.com/Semprini/cbe-retail)
+ - [Telco](https://github.com/Semprini/cbe-telco)
 
 Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 

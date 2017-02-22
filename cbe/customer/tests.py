@@ -153,13 +153,13 @@ class CustomerAPITests(APITestCase):
         """
         Ensure we can create a new Customer object.
         """
-        url = '/api/customer/customer/'
+        url = '/cbe/api/customer/customer/'
         data = {
             "customer_number": "3",
             "customer_status": "new",
             "party": {
                 "type": "Individual",
-                "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk),
+                "url": "http://127.0.0.1:8000/cbe/api/party/individual/{}/".format(self.individual.pk),
                 'given_names': 'Bob'},
             "customeraccount_set": []}
         response = self.client.post(url, data, format='json')
@@ -171,7 +171,7 @@ class CustomerAPITests(APITestCase):
             "customer_status": "new",
             "party": {
                 "type": "Organisation",
-                "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},
+                "url": "http://127.0.0.1:8000/cbe/api/party/organisation/{}/".format(self.organisation.pk)},
             "customeraccount_set": []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -180,7 +180,7 @@ class CustomerAPITests(APITestCase):
         """
         Ensure incorrect party types are not accepted.
         """
-        url = '/api/customer/customer/'
+        url = '/cbe/api/customer/customer/'
         data = {
             "customer_number": "3",
             "customer_status": "new",
@@ -194,7 +194,7 @@ class CustomerAPITests(APITestCase):
         """
         Ensure we can create a new Customer object.
         """
-        url = '/api/customer/customer/'
+        url = '/cbe/api/customer/customer/'
         data = {
             "customer_number": "3",
             "customer_status": "new",
@@ -219,7 +219,7 @@ class CustomerAPITests(APITestCase):
         """
         Ensure we can update the Individual.
         """
-        url = '/api/customer/customer/{}/'.format(self.customer.pk)
+        url = '/cbe/api/customer/customer/{}/'.format(self.customer.pk)
         data = {
             "customer_number": "3",
             "customer_status": "active",

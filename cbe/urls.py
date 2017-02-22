@@ -24,12 +24,12 @@ from django.contrib.contenttypes.models import ContentType
 
 import cbe.party.views as PartyViews
 import cbe.location.views as LocationViews
-import cbe.business_interaction.views as BusinessInteractionViews
+#import cbe.business_interaction.views as BusinessInteractionViews
 import cbe.customer.views as CustomerViews
 import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
-import cbe.product.views as ProductViews
-import cbe.sale.views as SaleViews
+import cbe.supplier_partner.views as SupplierPartnerViews
+
 
 admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
@@ -79,10 +79,10 @@ cberouter.register(
 cberouter.register(
     r'location/absolute_local_location', LocationViews.AbsoluteLocalLocationViewSet)
 
-cberouter.register(r'business_interaction/business_interaction',
-                   BusinessInteractionViews.BusinessInteractionViewSet)
-cberouter.register(r'business_interaction/business_interaction_item',
-                   BusinessInteractionViews.BusinessInteractionItemViewSet)
+# cberouter.register(r'business_interaction/business_interaction',
+                   # BusinessInteractionViews.BusinessInteractionViewSet)
+# cberouter.register(r'business_interaction/business_interaction_item',
+                   # BusinessInteractionViews.BusinessInteractionItemViewSet)
 
 cberouter.register(r'customer/customer', CustomerViews.CustomerViewSet)
 cberouter.register(r'customer/account', CustomerViews.CustomerAccountViewSet)
@@ -93,16 +93,11 @@ cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 
 cberouter.register(r'physical_object/structure', PhysicalObjectViews.StructureViewSet)
 cberouter.register(r'physical_object/vehicle', PhysicalObjectViews.VehicleViewSet)
+cberouter.register(r'physical_object/device', PhysicalObjectViews.DeviceViewSet)
 
-cberouter.register(r'product/product_offering', ProductViews.ProductOfferingViewSet)
-cberouter.register(r'product/product_category', ProductViews.ProductCategoryViewSet)
-cberouter.register(r'product/promotion', ProductViews.PromotionViewSet)
-
-cberouter.register(r'sale/sale', SaleViews.SaleViewSet)
-cberouter.register(r'sale/sale_item', SaleViews.SaleItemViewSet)
-cberouter.register(r'sale/tender', SaleViews.TenderViewSet)
-cberouter.register(r'sale/tender_type', SaleViews.TenderTypeViewSet)
-
+cberouter.register(r'supplier_partner/supplier', SupplierPartnerViews.SupplierViewSet)
+cberouter.register(r'supplier_partner/partner', SupplierPartnerViews.PartnerViewSet)
+cberouter.register(r'supplier_partner/buyer', SupplierPartnerViews.BuyerViewSet)
 
 router = DefaultRouter()
 router.register(r'auth/users', UserViewSet)
@@ -112,8 +107,8 @@ for route in cberouter.registry:
     router.register(route[0], route[1])
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/', include(router.urls)),
-    url(r'^api-auth/',
+    url(r'^cbe/admin/', include(admin.site.urls)),
+    url(r'^cbe/api/', include(router.urls)),
+    url(r'^cbe/api-auth/',
         include('rest_framework.urls', namespace='rest_framework')),
 ]

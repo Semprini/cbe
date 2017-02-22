@@ -33,7 +33,7 @@ class TroubleTests(TestCase):
             '{}'.format(self.trouble.__str__()).split(':')[0], "Queued")
         self.assertTrue(self.trouble.trouble_detection_date)
         self.assertEqual(
-            '{}'.format(self.item.__str__()).split(':')[5], "Test Item")
+            '{}'.format(self.item.__str__()).split(':')[4], "Test Item")
 
         self.assertEqual('{}'.format(self.alarm), "1:Test Alarm")
         self.assertEqual(
@@ -58,7 +58,7 @@ class TroubleAPITests(APITestCase):
         """
         Ensure we can create a new problem object.
         """
-        url = '/api/trouble/problem/'
+        url = '/cbe/api/trouble/problem/'
         data = {
             "type": "Problem",
             "underlying_problems": [],
@@ -66,7 +66,7 @@ class TroubleAPITests(APITestCase):
             "description": "test problem",
             "reason": "boo",
             "affected_locations": [
-                    "http://127.0.0.1:8000/api/location/po_box_address/{}/".format(
+                    "http://127.0.0.1:8000/cbe/api/location/po_box_address/{}/".format(
                         self.address.pk)
             ]
         }
@@ -77,7 +77,7 @@ class TroubleAPITests(APITestCase):
         """
         Ensure we can update an existing problem object.
         """
-        url = '/api/trouble/problem/{}/'.format(self.problem.pk)
+        url = '/cbe/api/trouble/problem/{}/'.format(self.problem.pk)
         data = {
             "originating_system": "Test System",
             "description": "test problem",

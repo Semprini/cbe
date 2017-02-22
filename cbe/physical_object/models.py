@@ -6,7 +6,7 @@ class PhysicalObject(models.Model):
     start_date = models.DateTimeField(null=True,blank=True)
     end_date = models.DateTimeField(null=True,blank=True)
     physical_object_type = models.CharField(max_length=100)
-    #place
+    #TODO: add location
 
     class Meta:
         abstract = True
@@ -14,7 +14,12 @@ class PhysicalObject(models.Model):
         
 class ManufacturedObject(PhysicalObject):
     make = models.ForeignKey(Organisation)
+    series = models.CharField(max_length=100,blank=True, null=True)
+    model = models.CharField(max_length=100,blank=True, null=True)
+    serial_number = models.CharField(max_length=100,blank=True, null=True)
 
+    #TODO: Compound objects
+    
     class Meta:
         abstract = True
         
@@ -31,8 +36,6 @@ class Structure(ManufacturedObject):
         
         
 class Vehicle(ManufacturedObject):
-    series = models.CharField(max_length=100)
-    model = models.CharField(max_length=100,blank=True, null=True)
     year = models.IntegerField(blank=True, null=True)
     
     engine_capacity = models.IntegerField(blank=True, null=True)
@@ -54,4 +57,9 @@ class Vehicle(ManufacturedObject):
         if self.physical_object_type is None or self.physical_object_type == "":
             self.physical_object_type = "Vehicle"          
         super(Vehicle, self).save(*args, **kwargs)
-         
+
+
+class Device(ManufacturedObject):
+    pass
+    
+        
