@@ -29,21 +29,21 @@ Vagrant.configure(2) do |allhosts|
     end
   end
 
-  allhosts.vm.define 'buildserver' do |buildserver|
-    buildserver.vm.box = 'mwrock/Windows2016'
-    buildserver.vm.communicator = 'winrm'
-    buildserver.vm.provision 'shell', path: './automation/remote/capabilities.ps1'
+  allhosts.vm.define 'build' do |build|
+    build.vm.box = 'mwrock/Windows2016'
+    build.vm.communicator = 'winrm'
+    build.vm.provision 'shell', path: './automation/remote/capabilities.ps1'
     # Oracle VirtualBox, relaxed configuration for Desktop environment
-    buildserver.vm.provider 'virtualbox' do |virtualbox, override|
+    build.vm.provider 'virtualbox' do |virtualbox, override|
       virtualbox.gui = false
       override.vm.network 'private_network', ip: '172.16.17.101'
       override.vm.network 'forwarded_port', guest: 3389, host: 13389 # Remote Desktop
       override.vm.network 'forwarded_port', guest: 5985, host: 15985 # WinRM HTTP
       override.vm.network 'forwarded_port', guest: 5986, host: 15986 # WinRM HTTPS
       override.vm.provision 'shell', path: './automation/provisioning/addHOSTS.ps1', args: '172.16.17.103 target.sky.net'
+      override.vm.provision 'shell', path: './automation/provisioning/trustedHosts.ps1', args: 'target.sky.net'
       override.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
       override.vm.provision 'shell', path: './automation/provisioning/CDAF_Desktop_Certificate.ps1'
-      override.vm.provision 'shell', path: './automation/provisioning/trustedHosts.ps1', args: 'target.sky.net'
       override.vm.provision 'shell', path: './automation/provisioning/CredSSP.ps1', args: 'server'
       override.vm.provision 'shell', path: './automation/provisioning/CredSSP.ps1', args: 'client'
       override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1'

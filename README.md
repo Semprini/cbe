@@ -16,7 +16,8 @@ Industry Specific Extension Projects
 
 Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 
-To run:
+## To run
+
 ```shell
 git clone https://github.com/Semprini/cbe.git
 cd cbe
@@ -28,7 +29,30 @@ browse to http://localhost:8000/admin for the admin interface
 browse to http://localhost:8000/api for the api interface
 ```
 
-How is this different to an API from a product?
+## Virtual Desktop Environment
+
+To use a virtual environment requires VirtualBox and Vagrant, from the workspace run:
+
+    vagrant up
+    
+### Direct PowerShell Access
+
+To access the buildserver using native remote PowerShell.
+Allow credential delegation, on-off step needed on the host when using VirtualBox/Vagrant. 
+
+    ./automation/provisioning/runner.bat CredSSP.ps1 client
+
+Once delegation configured, the build emulation can be executed.
+
+    $securePassword = ConvertTo-SecureString 'vagrant' -asplaintext -force
+    $cred = New-Object System.Management.Automation.PSCredential ('vagrant', $securePassword)
+    enter-pssession 127.0.0.1 -port 15985 -Auth CredSSP -credential $cred
+    cd C:\vagrant
+	.\automation\cdEmulate.bat
+
+
+# How is this different to an API from a product?
+
 The API/Persistence/Admin uses generic foreign keys to express relationships that would never be part of a product. The persistence layer has pointers to abstract classes which provides a faithful realization of the data model. This enables the data to be used in all business contexts.
 
 Entity Domains:
