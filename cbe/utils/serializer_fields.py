@@ -3,6 +3,9 @@ from django.core.urlresolvers import resolve
 from django.utils import six
 from rest_framework import serializers
 
+from cbe.party.models import Individual, Organisation, TelephoneNumber
+#from cbe.party.serializers import IndividualSerializer, OrganisationSerializer
+
 
 class GenericRelatedField(serializers.StringRelatedField):
 
@@ -17,6 +20,7 @@ class GenericRelatedField(serializers.StringRelatedField):
         for s in self.serializer_dict.values():
             s.bind('', self)
 
+
     def to_representation(self, instance):
         # find a serializer correspoding to the instance class
         for key in self.serializer_dict.keys():
@@ -25,11 +29,16 @@ class GenericRelatedField(serializers.StringRelatedField):
                 return self.serializer_dict[key].to_representation(instance=instance)
         return '{}'.format(instance)
 
+
     def to_internal_value(self, data):
         # If provided as string, must be url to resource. Create dict
         # containing just url
         if type(data) == str:
             data = {'url': data}
+
+        print(data)
+        print(data)
+        print(data)
 
         # Existing resource can be specified as url
         if 'url' in data:
@@ -37,6 +46,9 @@ class GenericRelatedField(serializers.StringRelatedField):
             resolved_func, unused_args, resolved_kwargs = resolve(
                 urlparse(data['url']).path)
             object = resolved_func.cls.queryset.get(pk=resolved_kwargs['pk'])
+            print(object)
+            print(object)
+            print(object)
         else:
             # If url is not specified then object is new and must have a 'type'
             # field to allow us to create correct object from list of
@@ -48,6 +60,8 @@ class GenericRelatedField(serializers.StringRelatedField):
         # Deserialize data into attributes of object and apply
         if object.__class__ in self.serializer_dict.keys():
             serializer = self.serializer_dict[object.__class__]
+            print(serializer.__dict__)
+            print(serializer.__dict__)
             print(serializer.__dict__)
             serializer.partial = True
             obj_internal_value = serializer.to_internal_value(data)

@@ -5,34 +5,10 @@ from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
-#from expand.serializers import HyperlinkedExpandModelSerializer
-
-from cbe.utils.serializer_fields import TypeField
+from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.party.models import Individual, Organisation, TelephoneNumber
 from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer
-#import SID.customer.customer.serializers_customeraccount as blort
-
-#from SID.customer.customer.serializers_customeraccount import CustomerAccountSerializer
-
-# class ContactMediumRelatedField(serializers.Field):
-# """
-# A custom field
-# """
-# def __init__(self, *args, **kwargs):
-# super(ContactMediumRelatedField, self).__init__(*args, **kwargs)
-
-# def to_representation(self, value):
-# """
-# Serialize party instances using a TelephoneNumber or x serializer,
-# """
-# if isinstance(value, TelephoneNumber):
-# serializer = TelephoneNumberSerializer(value, context=self.context)
-# else:
-# raise Exception('Unexpected type of tagged object')
-
-# return serializer.data
-
 
 class PartyRelatedField(serializers.Field):
 
@@ -87,36 +63,32 @@ class PartyRelatedField(serializers.Field):
 
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
+    #party = GenericRelatedField( many=False, serializer_dict={
+    #        Individual: IndividualSerializer(),
+    #        Organisation: OrganisationSerializer(),
+    #    })
     party = PartyRelatedField()
     type = TypeField()
-    #party_content_type = serializers.PrimaryKeyRelatedField(write_only=True, queryset=ContentType.objects.filter(model__in=('organisation','individual')))
 
     class Meta:
         model = Customer
-        # 'party_content_type', ) #'party_object_id')
         fields = ('type', 'url', 'customer_number',
                   'customer_status', 'party', 'customeraccount_set')
 
-    # expandable_fields = {
-    #                    'customeraccount': (CustomerAccountSerializer, (), {'source': 'customeraccount_set'}),
-    #                    }
-    #Meta.fields += expandable_fields.keys()
-
     def create(self, validated_data):
-        # validated_data.pop('__class__')
         validated_data.pop('customeraccount_set')
-        #print( "VALIDATED:%s"%validated_data)
+        print( validated_data )
         return Customer.objects.create(**validated_data)
 
-    # def create(self, validated_data):
-    #    print( "VALIDATED:%s"%validated_data)
-    #    return None #HighScore.objects.create(**validated_data)
 
 
 class CustomerAccountContactSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
-    party = PartyRelatedField()
-    #contact_medium = ContactMediumRelatedField()
+    party = GenericRelatedField( many=False,
+        serializer_dict={ 
+            Individual: IndividualSerializer(),
+            Organisation: OrganisationSerializer(),
+        })
 
     class Meta:
         model = CustomerAccountContact
@@ -131,18 +103,8 @@ class CustomerAccountSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'customer', 'account_number', 'account_status',
                   'account_type', 'name', 'pin', 'credit_limit', 'customer_account_contact',)
 
-    expandable_fields = {
-        'customer': (CustomerSerializer, (), {}),
-        #'customer_account_contact': (CustomerAccountContactSerializer, (), {}),
-    }
-    #Meta.fields += tuple(expandable_fields.keys())
 
-
-#>>> ContentType.objects.get(model='organisation').pk
-# 46
-#>>> ContentType.objects.get(model='individual').pk
-# 45
-a = """
+sample_json = """
 {
     "type": "Customer",
     "customer_number": "512332",

@@ -57,7 +57,7 @@ class BusinessInteractionRole(models.Model):
 
     name = models.CharField(max_length=100, null=True, blank=True)
 
-    # This can be resource or party (role?)
+    # This can be resource or party role
     interaction_role_content_type = models.ForeignKey(
         ContentType, null=True, blank=True, related_name="%(app_label)s_%(class)s_role_ownership")
     interaction_role_object_id = models.PositiveIntegerField(
@@ -65,5 +65,9 @@ class BusinessInteractionRole(models.Model):
     interaction_role = GenericForeignKey(
         'interaction_role_content_type', 'interaction_role_object_id')
 
-    def __str__(self):
-        return "%s involved in %s as a %s" % (self.interaction_role, self.business_interaction, self.name)
+    #def __str__(self):
+    #    return "%s involved in %s as a %s" % (self.interaction_role, self.business_interaction, self.name)
+
+    class Meta:
+        abstract = True
+        

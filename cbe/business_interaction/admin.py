@@ -5,9 +5,9 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem, BusinessInteractionRole
 
 
-class BusinessInteractionRoleInline(admin.TabularInline):
-     model = BusinessInteractionRole
-     extra = 1
+# class BusinessInteractionRoleInline(admin.TabularInline):
+     # model = BusinessInteractionRole
+     # extra = 1
 
 
 # class BusinessInteractionItemInline(admin.TabularInline):

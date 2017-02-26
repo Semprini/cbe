@@ -6,7 +6,6 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 
 from cbe.party.models import Organisation, Individual, PhysicalContact, EmailContact, TelephoneNumber, GenericPartyRole
 from cbe.party.admin import GenericPartyRoleAdminForm, GenericPartyRoleAdmin, PhysicalContactInline, EmailContactInline, TelephoneNumberInline
-from cbe.business_interaction.admin import BusinessInteractionRoleInline
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountRelationship, CustomerOrder, CustomerAccountContact
 
 

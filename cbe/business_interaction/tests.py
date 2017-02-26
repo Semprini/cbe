@@ -10,22 +10,22 @@ from rest_framework.test import APITestCase
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem, BusinessInteractionRole
 
 
-class BusinessInteractionTests(TestCase):
+# class BusinessInteractionTests(TestCase):
 
-    def setUp(self):
-        self.role = BusinessInteractionRole.objects.create(
-            #business_interaction=self.interaction, 
-            name="Test Role")
+    # def setUp(self):
+        # self.role = BusinessInteractionRole.objects.create(
+            # business_interaction=self.interaction, 
+            # name="Test Role")
 
-    def test_names(self):
-        """
-        Check that the names display as expected
-        """
-        name = '{}'.format(self.role)
-        self.assertEqual(name, "None involved in None as a Test Role")
-        #self.assertEqual('{}'.format(self.item).split(':')[5], "Test Item")
-        #self.assertEqual(
-        #    '{}'.format(self.role).split(':')[4], "Test at None as a Test Role")
+    # def test_names(self):
+        # """
+        # Check that the names display as expected
+        # """
+        # name = '{}'.format(self.role)
+        # self.assertEqual(name, "None involved in None as a Test Role")
+        # self.assertEqual('{}'.format(self.item).split(':')[5], "Test Item")
+        # self.assertEqual(
+           # '{}'.format(self.role).split(':')[4], "Test at None as a Test Role")
 
     # def test_state_change(self):
         # """
