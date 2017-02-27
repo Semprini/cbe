@@ -11,7 +11,7 @@ from rest_framework.test import APITestCase
 from cbe.party.models import Individual, Organisation, GenericPartyRole
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.customer.views import CustomerViewSet
-from cbe.customer.admin import CustomerAccountAdmin, CustomerAccountAdminForm
+from cbe.customer.admin import CustomerAccountAdmin
 
 
 class MockRequest(object):
@@ -74,26 +74,6 @@ class CustomerAccountAdminTests(TestCase):
             account_number="1", account_status="Open", account_type="test", name="Test Account", customer=self.customer)
         self.site = AdminSite()
 
-    def test_customeraccountadmin_form(self):
-        """
-        Test the CustomerAccountAdminForm admin form .
-        """
-
-        caa = CustomerAccountAdmin(CustomerAccount, self.site)
-
-        self.assertTrue(caa.has_add_permission(request))
-
-        self.assertTrue('account_number' in list(caa.get_fields(request)))
-        self.assertTrue(
-            'account_number' in list(caa.get_form(request).base_fields))
-
-        gpr = GenericPartyRole.objects.create(
-            party=self.individual, name="Contact")
-        mf = CustomerAccountAdminForm(instance=self.customer_account)
-        self.assertFalse('contact_content_type' in list(mf.base_fields))
-        self.assertEqual(mf.base_fields['customer_account_contact'].choices[
-                         1], ('1::GenericPartyRole::John Doe as a Contact', 'Contact : John Doe'))
-
 
 class CustomerAccountContactTestCase(TestCase):
 
@@ -153,13 +133,13 @@ class CustomerAPITests(APITestCase):
         """
         Ensure we can create a new Customer object.
         """
-        url = '/cbe/api/customer/customer/'
+        url = '/api/customer/customer/'
         data = {
             "customer_number": "3",
             "customer_status": "new",
             "party": {
                 "type": "Individual",
-                "url": "http://127.0.0.1:8000/cbe/api/party/individual/{}/".format(self.individual.pk),
+                "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk),
                 'given_names': 'Bob'},
             "customeraccount_set": []}
         response = self.client.post(url, data, format='json')
@@ -171,7 +151,7 @@ class CustomerAPITests(APITestCase):
             "customer_status": "new",
             "party": {
                 "type": "Organisation",
-                "url": "http://127.0.0.1:8000/cbe/api/party/organisation/{}/".format(self.organisation.pk)},
+                "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},
             "customeraccount_set": []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -180,7 +160,7 @@ class CustomerAPITests(APITestCase):
         """
         Ensure incorrect party types are not accepted.
         """
-        url = '/cbe/api/customer/customer/'
+        url = '/api/customer/customer/'
         data = {
             "customer_number": "3",
             "customer_status": "new",
@@ -194,7 +174,7 @@ class CustomerAPITests(APITestCase):
         """
         Ensure we can create a new Customer object.
         """
-        url = '/cbe/api/customer/customer/'
+        url = '/api/customer/customer/'
         data = {
             "customer_number": "3",
             "customer_status": "new",
@@ -219,7 +199,7 @@ class CustomerAPITests(APITestCase):
         """
         Ensure we can update the Individual.
         """
-        url = '/cbe/api/customer/customer/{}/'.format(self.customer.pk)
+        url = '/api/customer/customer/{}/'.format(self.customer.pk)
         data = {
             "customer_number": "3",
             "customer_status": "active",
