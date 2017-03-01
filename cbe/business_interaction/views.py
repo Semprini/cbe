@@ -9,10 +9,10 @@ from cbe.business_interaction.models import BusinessInteraction, BusinessInterac
 # class BusinessInteractionViewSet(viewsets.ModelViewSet):
     # queryset = BusinessInteraction.objects.all()
     # serializer_class = BusinessInteractionSerializer
-    # permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    # permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
 
 
 # class BusinessInteractionItemViewSet(viewsets.ModelViewSet):
     # queryset = BusinessInteractionItem.objects.all()
     # serializer_class = BusinessInteractionItemSerializer
-    # permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    # permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
