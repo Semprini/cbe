@@ -108,3 +108,7 @@ UpgradeLog.htm
 web.config
 web.debug.config
 web.config
+/TasksLocal/
+/TasksRemote/
+/*.zip
+/manifest.txt
