@@ -47,6 +47,8 @@ Vagrant.configure(2) do |allhosts|
       override.vm.provision 'shell', path: './automation/provisioning/CredSSP.ps1', args: 'server'
       override.vm.provision 'shell', path: './automation/provisioning/CredSSP.ps1', args: 'client'
       override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1'
+      override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1'
+      override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', args: 'clean'
     end
   end
 
