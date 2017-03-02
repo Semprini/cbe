@@ -105,6 +105,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'cbe.utils.api.BrowsableAPIRendererWithoutForms',
+        'cbe.utils.api.PaginatedCSVRenderer',
     ),
 }
 

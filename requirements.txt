@@ -5,3 +5,4 @@ django-filter>=0.15.3
 django-nose
 coverage
 django-gm2m
+djangorestframework-csv
