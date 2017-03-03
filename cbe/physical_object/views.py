@@ -1,9 +1,15 @@
 from rest_framework import permissions, renderers, viewsets
-from cbe.physical_object.models import Structure, Vehicle, Device
+from cbe.physical_object.models import Structure, Vehicle, Device, Owner
 
-from cbe.physical_object.serializers import StructureSerializer, VehicleSerializer, DeviceSerializer
+from cbe.physical_object.serializers import StructureSerializer, VehicleSerializer, DeviceSerializer,  OwnerSerializer
 
 
+class OwnerViewSet(viewsets.ModelViewSet):
+    queryset = Owner.objects.all()
+    serializer_class = OwnerSerializer
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    
+    
 class StructureViewSet(viewsets.ModelViewSet):
     queryset = Structure.objects.all()
     serializer_class = StructureSerializer

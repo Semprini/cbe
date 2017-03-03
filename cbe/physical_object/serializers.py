@@ -1,10 +1,21 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField
+from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import OrganisationSerializer
-from cbe.physical_object.models import Structure, Vehicle, Device
+from cbe.customer.serializers import PartyRelatedField
 
+from cbe.physical_object.models import Structure, Vehicle, Device, Owner
+
+
+class OwnerSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+    party = PartyRelatedField()
+        
+    class Meta:
+        model = Owner
+        fields = ('type', 'url', 'party')
+    
 
 class VehicleSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()

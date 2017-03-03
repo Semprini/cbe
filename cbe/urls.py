@@ -94,6 +94,7 @@ cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 cberouter.register(r'physical_object/structure', PhysicalObjectViews.StructureViewSet)
 cberouter.register(r'physical_object/vehicle', PhysicalObjectViews.VehicleViewSet)
 cberouter.register(r'physical_object/device', PhysicalObjectViews.DeviceViewSet)
+cberouter.register(r'physical_object/owner', PhysicalObjectViews.OwnerViewSet)
 
 cberouter.register(r'supplier_partner/supplier', SupplierPartnerViews.SupplierViewSet)
 cberouter.register(r'supplier_partner/partner', SupplierPartnerViews.PartnerViewSet)

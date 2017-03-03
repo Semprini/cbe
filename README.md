@@ -53,7 +53,7 @@ Once delegation configured, the build emulation can be executed.
 
 # How is this different to an API from a product?
 
-The API/Persistence/Admin uses generic foreign keys to express relationships that would never be part of a product. The persistence layer has pointers to abstract classes which provides a faithful realization of the data model. This enables the data to be used in all business contexts.
+The API/Persistence/Admin uses techniques like generic foreign keys to express relationships that provide consistent schema for use in multiple contexts. A product will rightly store data for it's own purpose and we then use architectures like SOA to expose and adjust the semantics for different contexts. The CBE persistence layer has pointers to abstract classes which provides a faithful realization of the data model rather than through a transformation layer.
 
 Entity Domains:
 - Party - Entities relating to individuals, organizations, how to contact them and the roles they play

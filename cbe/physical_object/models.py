@@ -1,6 +1,15 @@
 from django.db import models
 
-from cbe.party.models import Organisation
+from cbe.party.models import Organisation, PartyRole
+
+
+class Owner(PartyRole):
+
+    def save(self, *args, **kwargs):
+        if self.name == "":
+            self.name = "Owner"          
+        super(Owner, self).save(*args, **kwargs)
+        
 
 class PhysicalObject(models.Model):
     start_date = models.DateTimeField(null=True,blank=True)
@@ -17,9 +26,10 @@ class ManufacturedObject(PhysicalObject):
     series = models.CharField(max_length=100,blank=True, null=True)
     model = models.CharField(max_length=100,blank=True, null=True)
     serial_number = models.CharField(max_length=100,blank=True, null=True)
+    owner = models.ForeignKey(Owner,blank=True, null=True)
 
     #TODO: Compound objects
-    
+
     class Meta:
         abstract = True
         

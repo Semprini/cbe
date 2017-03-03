@@ -7,14 +7,17 @@ from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer
+from cbe.customer.serializers import PartyRelatedField
 from cbe.party.models import Individual, Organisation, TelephoneNumber
 from cbe.supplier_partner.models import Supplier, Buyer, Partner
 
+
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
-    party = GenericRelatedField( many=False, serializer_dict={
-            Individual: IndividualSerializer(),
-            Organisation: OrganisationSerializer(),
-        })
+    #party = GenericRelatedField( many=False, serializer_dict={
+    #        Individual: IndividualSerializer(),
+    #        Organisation: OrganisationSerializer(),
+    #    })
+    party = PartyRelatedField()
     type = TypeField()
 
     class Meta:
@@ -26,10 +29,7 @@ class SupplierSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PartnerSerializer(serializers.HyperlinkedModelSerializer):
-    party = GenericRelatedField( many=False, serializer_dict={
-            Individual: IndividualSerializer(),
-            Organisation: OrganisationSerializer(),
-        })
+    party = PartyRelatedField()
     type = TypeField()
 
     class Meta:
@@ -41,10 +41,7 @@ class PartnerSerializer(serializers.HyperlinkedModelSerializer):
  
  
 class BuyerSerializer(serializers.HyperlinkedModelSerializer):
-    party = GenericRelatedField( many=False, serializer_dict={
-            Individual: IndividualSerializer(),
-            Organisation: OrganisationSerializer(),
-        })
+    party = PartyRelatedField()
     type = TypeField()
 
     class Meta:
