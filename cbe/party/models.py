@@ -106,7 +106,15 @@ class PartyRole(models.Model):
 class GenericPartyRole(PartyRole):
     pass
 
+    
+class Owner(PartyRole):
 
+    def save(self, *args, **kwargs):
+        if self.name == "":
+            self.name = "Owner"          
+        super(Owner, self).save(*args, **kwargs)
+
+        
 class ContactMedium(models.Model):
     # TODO: Restrict to PartyRole derrived types
     valid_from = models.DateField(null=True, blank=True)

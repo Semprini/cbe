@@ -3,18 +3,9 @@ from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import OrganisationSerializer
-from cbe.customer.serializers import PartyRelatedField
+from cbe.party.serializers import PartyRelatedField
 
-from cbe.physical_object.models import Structure, Vehicle, Device, Owner
-
-
-class OwnerSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeField()
-    party = PartyRelatedField()
-        
-    class Meta:
-        model = Owner
-        fields = ('type', 'url', 'party')
+from cbe.physical_object.models import Structure, Vehicle, Device
     
 
 class VehicleSerializer(serializers.HyperlinkedModelSerializer):

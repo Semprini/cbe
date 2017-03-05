@@ -29,6 +29,7 @@ import cbe.customer.views as CustomerViews
 import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
 import cbe.supplier_partner.views as SupplierPartnerViews
+import cbe.human_resources.views as HumanResourcesViews
 
 
 admin.site.site_title = 'CBE'
@@ -69,6 +70,7 @@ cberouter.register(
     r'party/generic_party_role', PartyViews.GenericPartyRoleViewSet)
 cberouter.register(
     r'party/telephone_number', PartyViews.TelephoneNumberViewSet)
+cberouter.register(r'party/owner', PartyViews.OwnerViewSet)
 
 cberouter.register(r'location/country', LocationViews.CountryViewSet)
 cberouter.register(r'location/city', LocationViews.CityViewSet)
@@ -79,10 +81,10 @@ cberouter.register(
 cberouter.register(
     r'location/absolute_local_location', LocationViews.AbsoluteLocalLocationViewSet)
 
-# cberouter.register(r'business_interaction/business_interaction',
-                   # BusinessInteractionViews.BusinessInteractionViewSet)
-# cberouter.register(r'business_interaction/business_interaction_item',
-                   # BusinessInteractionViews.BusinessInteractionItemViewSet)
+cberouter.register(r'human_resources/staff', HumanResourcesViews.StaffViewSet)
+cberouter.register(r'human_resources/identification', HumanResourcesViews.IdentificationViewSet)
+cberouter.register(r'human_resources/identification_type', HumanResourcesViews.IdentificationTypeViewSet)
+
 
 cberouter.register(r'customer/customer', CustomerViews.CustomerViewSet)
 cberouter.register(r'customer/account', CustomerViews.CustomerAccountViewSet)
@@ -94,7 +96,6 @@ cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 cberouter.register(r'physical_object/structure', PhysicalObjectViews.StructureViewSet)
 cberouter.register(r'physical_object/vehicle', PhysicalObjectViews.VehicleViewSet)
 cberouter.register(r'physical_object/device', PhysicalObjectViews.DeviceViewSet)
-cberouter.register(r'physical_object/owner', PhysicalObjectViews.OwnerViewSet)
 
 cberouter.register(r'supplier_partner/supplier', SupplierPartnerViews.SupplierViewSet)
 cberouter.register(r'supplier_partner/partner', SupplierPartnerViews.PartnerViewSet)

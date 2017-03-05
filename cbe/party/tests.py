@@ -16,10 +16,10 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
 from rest_framework.test import APITestCase
 
-from cbe.party.models import Individual, Organisation, TelephoneNumber, EmailContact, GenericPartyRole
+from cbe.party.models import Individual, Organisation, TelephoneNumber, EmailContact, GenericPartyRole, Owner
 from cbe.party.views import IndividualViewSet
 from cbe.party.admin import GenericPartyRoleAdminForm, GenericPartyRoleAdmin
-
+from cbe.party.views import OwnerViewSet
 
 class MockRequest(object):
     pass
@@ -168,3 +168,50 @@ class PartyAPITests(APITestCase):
         data = {'gender': 'Male'}
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        
+class OwnerAPITests(APITestCase):
+
+    def setUp(self):
+        self.superuser = User.objects.create_superuser(
+            'john', 'john@snow.com', 'johnpassword')
+        self.client.login(username='john', password='johnpassword')
+        self.individual = Individual.objects.create(
+            given_names="John", family_names="Doe")
+        self.organisation = Organisation.objects.create(name='Pen Inc.')
+        self.owner = Owner.objects.create(
+            party=self.individual, )
+        self.factory = APIRequestFactory()
+
+    def test_get_owner(self):
+        """
+        Test that we can GET the sample Owner
+        """
+        view = OwnerViewSet.as_view({'get': 'list', })
+        request = self.factory.get(
+            '/party/owner/{}/'.format(self.owner.pk),)
+        force_authenticate(request, user=self.superuser)
+        response = view(request)
+        self.assertEqual(response.exception, False)
+
+    def test_create_owner(self):
+        """
+        Ensure we can create a new Owner object.
+        """
+        url = '/api/party/owner/'
+        data = {
+            "party": {
+                "type": "Individual",
+                "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk),
+                'given_names': 'Bob'},
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = {
+            "party": {
+                "type": "Organisation",
+                "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)           

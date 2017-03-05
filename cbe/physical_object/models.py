@@ -1,15 +1,7 @@
 from django.db import models
 
-from cbe.party.models import Organisation, PartyRole
+from cbe.party.models import Organisation, PartyRole, Owner
 
-
-class Owner(PartyRole):
-
-    def save(self, *args, **kwargs):
-        if self.name == "":
-            self.name = "Owner"          
-        super(Owner, self).save(*args, **kwargs)
-        
 
 class PhysicalObject(models.Model):
     start_date = models.DateTimeField(null=True,blank=True)
@@ -22,7 +14,7 @@ class PhysicalObject(models.Model):
 
         
 class ManufacturedObject(PhysicalObject):
-    make = models.ForeignKey(Organisation)
+    make = models.ForeignKey(Organisation,blank=True, null=True)
     series = models.CharField(max_length=100,blank=True, null=True)
     model = models.CharField(max_length=100,blank=True, null=True)
     serial_number = models.CharField(max_length=100,blank=True, null=True)

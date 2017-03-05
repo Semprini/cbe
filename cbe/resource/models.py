@@ -5,20 +5,27 @@ from django.contrib.contenttypes.models import ContentType
 from gm2m import GM2MField
 
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem
+from cbe.party.models import Owner
+
 
 POWER_STATES = (('on', 'on'), ('off', 'off'), ('starting', 'starting'), ('stopping', 'stopping'))
 
-class Resource(models.Model):
-    usage_state = models.IntegerField()
-    name = models.CharField(max_length=100,null=True, blank=True )
 
+class Resource(models.Model):
+    usage_state = models.IntegerField(null=True, blank=True)
+    name = models.CharField(max_length=100,null=True, blank=True )
+    
+    owner = models.ForeignKey(Owner,blank=True, null=True)
+
+    serial_number = models.CharField(max_length=100,blank=True, null=True)
+    
     class Meta:
         abstract = True
 
         
 class PhysicalResource(Resource):
     power_state = models.CharField(max_length=100, null=True, blank=True, choices=POWER_STATES)
-    physcial_objects = GM2MField() #TODO: Restrict to physical_object derivatives
+    physcial_objects = GM2MField(related_name="objects") #TODO: Restrict to physical_object derivatives
 
     place_content_type = models.ForeignKey(
         ContentType, null=True, blank=True, related_name="%(app_label)s_%(class)s_ownership")
