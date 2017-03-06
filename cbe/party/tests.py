@@ -152,7 +152,7 @@ class PartyAPITests(APITestCase):
         Ensure we can create a new Individual object.
         """
         url = '/api/party/individual/'
-        data = {'given_names': 'test first', 'family_names': 'test_last'}
+        data = {'given_names': 'test first', 'family_names': 'test_last', 'name':'foo'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -161,7 +161,7 @@ class PartyAPITests(APITestCase):
         Ensure we can update the Individual.
         """
         url = '/api/party/individual/{}/'.format(self.individual.id)
-        data = {'given_names': 'test John', 'family_names': 'Doe'}
+        data = {'given_names': 'test John', 'family_names': 'Doe', 'name':'foo'}
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
