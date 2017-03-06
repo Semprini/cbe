@@ -72,7 +72,7 @@ class IndividualSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Individual
-        fields = ('type', 'url', 'party_user', 'given_names', 'family_names', 'middle_names',
+        fields = ('type', 'url', 'party_user', 'name', 'given_names', 'family_names', 'middle_names',
                   'form_of_address', 'gender', 'legal_name', 'marital_status', 'nationality', 'place_of_birth')
 
 

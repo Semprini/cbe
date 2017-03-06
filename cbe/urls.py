@@ -30,6 +30,7 @@ import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
 import cbe.supplier_partner.views as SupplierPartnerViews
 import cbe.human_resources.views as HumanResourcesViews
+import cbe.resource.views as ResourceViews
 
 
 admin.site.site_title = 'CBE'
@@ -84,6 +85,8 @@ cberouter.register(
 cberouter.register(r'human_resources/staff', HumanResourcesViews.StaffViewSet)
 cberouter.register(r'human_resources/identification', HumanResourcesViews.IdentificationViewSet)
 cberouter.register(r'human_resources/identification_type', HumanResourcesViews.IdentificationTypeViewSet)
+
+cberouter.register(r'resource/physical_resource', ResourceViews.PhysicalResourceViewSet)
 
 
 cberouter.register(r'customer/customer', CustomerViews.CustomerViewSet)

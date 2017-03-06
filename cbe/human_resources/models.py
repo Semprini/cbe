@@ -7,6 +7,7 @@ from cbe.party.models import PartyRole, Individual, Organisation
 
 class IdentificationType( models.Model ):
     name = models.CharField(max_length=200)
+    # Todo add issuer
 
     def __str__(self):
         return "{}".format(self.name,)
