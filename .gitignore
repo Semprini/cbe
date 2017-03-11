@@ -112,3 +112,4 @@ web.config
 /TasksRemote/
 /*.zip
 /manifest.txt
+/projectDirectories.txt
