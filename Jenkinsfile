@@ -15,7 +15,6 @@ node ('w10e2') {
     stage ('Clean Previous Run') {
       bat "IF EXIST .vagrant vagrant destroy -f"
       bat "IF EXIST .vagrant vagrant box list"
-      bat "IF EXIST .vagrant vagrant box update"
       bat "IF EXIST windows-master RMDIR /S /Q windows-master"
     }
     

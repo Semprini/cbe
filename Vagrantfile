@@ -1,6 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+#> vagrant plugin install vagrant-reload
+require 'vagrant-reload'
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -14,14 +17,18 @@ Vagrant.configure(2) do |allhosts|
     host.vm.provision 'shell', path: './automation/remote/capabilities.ps1'
     host.vm.provision 'shell', path: './automation/provisioning/mkdir.ps1', args: 'C:\deploy'
     host.vm.provision 'shell', path: './automation/provisioning/mkdir.ps1', args: 'C:\deploy'
+    host.vm.provision 'shell', path: './automation/provisioning/applyWindowsUpdates.ps1'
+    host.vm.provision :reload
     host.vm.provision 'shell', path: './automation/provisioning/installDocker.ps1'
+    host.vm.provision 'shell', path: './automation/provisioning/applyWindowsUpdates.ps1'
+    host.vm.provision :reload
     
     host.vm.provider 'virtualbox' do |virtualbox, override|
       override.vm.box = 'mwrock/Windows2016'
       override.vm.boot_timeout = 600
       override.vm.communicator = 'winrm'
       virtualbox.gui = false
-      override.vm.network 'private_network', ip: '172.16.17.101'
+      override.vm.network 'private_network', ip: '10.10.8.101'
       override.vm.network 'forwarded_port', guest: 3389, host: 13389 # Remote Desktop
       override.vm.network 'forwarded_port', guest: 5985, host: 15985 # WinRM HTTP
       override.vm.network 'forwarded_port', guest: 5986, host: 15986 # WinRM HTTPS
