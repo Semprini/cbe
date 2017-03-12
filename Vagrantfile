@@ -28,7 +28,7 @@ Vagrant.configure(2) do |allhosts|
       override.vm.boot_timeout = 600
       override.vm.communicator = 'winrm'
       virtualbox.gui = false
-      override.vm.network 'private_network', ip: '172.16.17.101'
+      override.vm.network 'private_network', ip: '10.10.8.101'
       override.vm.network 'forwarded_port', guest: 3389, host: 13389 # Remote Desktop
       override.vm.network 'forwarded_port', guest: 5985, host: 15985 # WinRM HTTP
       override.vm.network 'forwarded_port', guest: 5986, host: 15986 # WinRM HTTPS
