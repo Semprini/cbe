@@ -28,8 +28,19 @@ function executeExpression ($expression) {
 $scriptName = 'applyWindowsUpdates.ps1'
 Write-Host
 Write-Host "[$scriptName] ---------- start ----------"
+$autoRestart = $args[0]
+if ($autoRestart) {
+    Write-Host "[$scriptName] autoRestart   : $autoRestart"
+} else {
+	$autoRestart = 'yes'
+    Write-Host "[$scriptName] autoRestart   : $autoRestart (default)"
+}
 
-executeExpression  "Get-WUInstall –Verbose –AcceptAll –AutoReboot:`$False -Confirm:`$False"
+if ($autoRestart -eq 'yes') {
+	executeExpression  "Get-WUInstall –Verbose –AcceptAll –AutoReboot:`$True -Confirm:`$False"
+} else {
+	executeExpression  "Get-WUInstall –Verbose –AcceptAll –AutoReboot:`$False -Confirm:`$False"
+}
 
 Write-Host
 Write-Host "[$scriptName] ---------- stop ----------"
