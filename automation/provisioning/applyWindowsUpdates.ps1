@@ -25,7 +25,7 @@ function executeExpression ($expression) {
 }
 
 # Only for Windows Server 2016 and above
-$scriptName = 'installDocker.ps1'
+$scriptName = 'applyWindowsUpdates.ps1'
 Write-Host
 Write-Host "[$scriptName] ---------- start ----------"
 
