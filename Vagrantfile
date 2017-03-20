@@ -17,16 +17,20 @@ end
 Vagrant.configure(2) do |config|
   
   config.vm.box = 'WindowsDocker'
-  config.vm.boot_timeout = 1200
-  config.vm.guest = "windows"
+  config.vm.box_check_update = false
+  config.vm.guest = :windows
   config.vm.communicator = 'winrm'
+  config.vm.boot_timeout = 1200
   config.winrm.timeout = 120
   config.winrm.retry_limit = 10
+  config.vm.graceful_halt_timeout = 180
   config.vm.provision 'shell', path: './automation/remote/capabilities.ps1'
     
   config.vm.provider 'virtualbox' do |virtualbox, override|
     virtualbox.gui = false
-    override.vm.synced_folder "#{provision}", "/.provision"
+    virtualbox.memory = 1536
+    virtualbox.cpus = 2
+    override.vm.synced_folder "#{provision}", '/.provision'
     override.vm.network 'private_network', ip: '10.10.8.101'
     override.vm.network 'forwarded_port', guest: 3389, host: 13389 # Remote Desktop
     override.vm.network 'forwarded_port', guest: 5985, host: 15985 # WinRM HTTP
