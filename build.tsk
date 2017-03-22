@@ -8,5 +8,5 @@ assign $terminate=$ACTION
 assign $productVersion+='.'
 assign $productVersion+=$BUILDNUMBER
 
-echo "Ensure Windows Server Core is in the local repo"
-docker pull Microsoft/windowsservercore
+echo "Try the sample image, maybe we can simple overwrite with ours?"
+docker pull Microsoft/sample-django
