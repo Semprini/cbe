@@ -113,3 +113,4 @@ web.config
 /*.zip
 /manifest.txt
 /projectDirectories.txt
+/.vagrant/
