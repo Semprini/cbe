@@ -1,0 +1,12 @@
+echo "If ACTION (emulation only) is clean, do not perform any further action"
+assign $terminate=$ACTION
+
+#echo "Load product (solution) attributes"
+#assign $loadProperties="../$SOLUTIONROOT/CDAF.solution"
+
+# Combine to create symantic (http://semver.org/) version
+assign $productVersion+='.'
+assign $productVersion+=$BUILDNUMBER
+
+echo "Try the sample image, maybe we can simple overwrite with ours?"
+.\automation\local\remoteExec.ps1 localhost NOT_SUPPLIED NOT_SUPPLIED NOT_SUPPLIED 'docker pull microsoft/sample-django'
