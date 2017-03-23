@@ -9,4 +9,4 @@ assign $productVersion+='.'
 assign $productVersion+=$BUILDNUMBER
 
 echo "Try the sample image, maybe we can simple overwrite with ours?"
-.\automation\local\remoteExec.ps1 localhost NOT_SUPPLIED NOT_SUPPLIED NOT_SUPPLIED 'docker pull microsoft/sample-django'
+docker pull microsoft/windowsservercore
