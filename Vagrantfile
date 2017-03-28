@@ -16,7 +16,7 @@ Vagrant.configure(2) do |config|
     provision = '../.provision'
   end
   
-  config.vm.box = 'WindowsDocker'
+  config.vm.box = 'cdaf/WindowsServerStandard'
   config.vm.box_check_update = false
   config.vm.guest = :windows
   config.vm.communicator = 'winrm'
