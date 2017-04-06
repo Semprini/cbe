@@ -1,3 +1,12 @@
+Param (
+  [string]$featureList,
+  [string]$media,
+  [string]$wimIndex,
+  [string]$dismount
+)
+$scriptName = 'addDISM.ps1' # TelnetClient
+                            # 'IIS-WebServerRole IIS-WebServer' install.wim 2
+
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
@@ -49,29 +58,36 @@ function mountWim ($media, $wimIndex, $mountDir) {
 
 # Not using powershell commandlets for provisioning as they do not support /LimitAccess
 # $featureList = @('ActiveDirectory-PowerShell', 'DirectoryServices-DomainController', 'RSAT-ADDS-Tools-Feature', 'DirectoryServices-DomainController-Tools', 'DNS-Server-Full-Role', 'DNS-Server-Tools', 'DirectoryServices-AdministrativeCenter')
-$scriptName = 'newDISM.ps1'
-Write-Host
-Write-Host "[$scriptName] ---------- start ----------"
-Write-Host
-$featureList= $args[0]
+Write-Host "`n[$scriptName] ---------- start ----------`n"
 if ($featureList) {
-    Write-Host "[$scriptName] featureList   : $featureList"
+    Write-Host "[$scriptName] featureList     : $featureList"
 } else {
     Write-Host "[$scriptName] ERROR: List of Features not passed, halting with LASTEXITCODE=1"; exit 1
 }
 
-$media = $args[1]
 if ($media) {
-    Write-Host "[$scriptName] media         : $media"
+    Write-Host "[$scriptName] media           : $media"
+    $mediaRun = "-media $media"
 } else {
-    Write-Host "[$scriptName] media         : (not passed)"
+    Write-Host "[$scriptName] media           : not supplied"
 }
 
-$wimIndex = $args[2]
 if ($wimIndex) {
-    Write-Host "[$scriptName] wimIndex      : $wimIndex"
+    Write-Host "[$scriptName] wimIndex        : $wimIndex"
+    $indexRun = "-wimIndex $wimIndex"
 } else {
-    Write-Host "[$scriptName] wimIndex      : (not passed)"
+    Write-Host "[$scriptName] wimIndex        : (not supplied, use media directly)"
+}
+
+if ($dismount) {
+    Write-Host "[$scriptName] dismount        : $dismount"
+} else {
+	$dismount = 'yes'
+    Write-Host "[$scriptName] dismount        : $dismount (not passed, set to default)"
+}
+# Provisionig Script builder
+if ( $env:PROV_SCRIPT_PATH ) {
+	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $featureList $mediaRun $indexRun -dismount $dismount`""
 }
 
 # Cannot run interactive via remote PowerShell
@@ -127,9 +143,13 @@ foreach ($feature in $featureArray) {
 }
 
 if ( Test-Path "$defaultMount\windows" ) {
-	Write-Host "[$scriptName] Dismount default mount path ($defaultMount)"
-	executeExpression "Dism /Unmount-Image /MountDir:$defaultMount /Discard /Quiet"
+	if ($dismount -eq 'yes') {
+		Write-Host "`n[$scriptName] Dismount default mount path ($defaultMount)"
+		executeExpression "Dism /Unmount-Image /MountDir:$defaultMount /Discard /Quiet"
+	} else {
+	    Write-Host "`n[$scriptName] dismount set to $dismount, leave $defaultMount\windows in place."
+	}
 }
 
-Write-Host
-Write-Host "[$scriptName] ---------- stop ----------"
+Write-Host "`n[$scriptName] ---------- stop ----------"
+exit 0
