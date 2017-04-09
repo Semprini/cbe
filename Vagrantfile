@@ -16,11 +16,11 @@ Vagrant.configure(2) do |config|
     provision = '../.provision'
   end
   
-  config.vm.box = 'WindowsDocker'
+  config.vm.box = 'cdaf/WindowsServerStandard'
   config.vm.box_check_update = false
   config.vm.guest = :windows
   config.vm.communicator = 'winrm'
-  config.vm.boot_timeout = 1200 # 20 minutes
+  config.vm.boot_timeout = 600 # 10 minutes
   config.winrm.timeout =   1800 # 30 minutes
   config.winrm.retry_limit = 10
   config.winrm.username = "vagrant" # Making defaults explicit
@@ -28,6 +28,7 @@ Vagrant.configure(2) do |config|
   config.vm.graceful_halt_timeout = 180 # 3 minutes
   config.vm.provision 'shell', path: './automation/remote/capabilities.ps1'
     
+  # As at 3-Apr-2016 unable to install Windows Containers on VirtualBox VM
   config.vm.provider 'virtualbox' do |virtualbox, override|
     virtualbox.gui = false
     virtualbox.memory = 1024
@@ -40,5 +41,13 @@ Vagrant.configure(2) do |config|
     override.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
     override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1'
     override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1'
+  end
+  
+  # Microsoft Hyper-V does not support NAT or setting hostname: vagrant up target --provider hyperv
+  config.vm.provider 'hyperv' do |hyperv, override|
+    hyperv.memory = 1024
+    hyperv.cpus = 2
+    override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: ".\jules", smb_password: "#{ENV['USER_PASS']}"
+    override.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
   end
 end

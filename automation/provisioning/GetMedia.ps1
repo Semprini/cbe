@@ -1,7 +1,23 @@
+Param (
+  [string]$uri,
+  [string]$mediaDir
+)
 $scriptName = 'GetMedia.ps1'
+
+# Common expression logging and error handling function, copied, not referenced to ensure atomic process
+function executeExpression ($expression) {
+	$error.clear()
+	Write-Host "[$scriptName] $expression"
+	try {
+		$output = Invoke-Expression $expression
+	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
+	} catch { echo $_.Exception|format-list -force; exit 2 }
+    if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    return $output
+}
+
 Write-Host
 Write-Host "[$scriptName] ---------- start ----------"
-$uri = $args[0]
 if ($uri) {
     Write-Host "[$scriptName] uri      : $uri"
 } else {
@@ -9,12 +25,16 @@ if ($uri) {
     exit 101
 }
 
-$mediaDir = $args[1]
 if ($mediaDir) {
     Write-Host "[$scriptName] mediaDir : $mediaDir"
 } else {
 	$mediaDir = '/.provision'
     Write-Host "[$scriptName] mediaDir : $mediaDir (default)"
+}
+
+# Provisionig Script builder
+if ( $env:PROV_SCRIPT_PATH ) {
+	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $uri $mediaDir`""
 }
 
 if (!( Test-Path $mediaDir )) {
@@ -28,9 +48,8 @@ if ( Test-Path $fullpath ) {
 	Write-Host "[scriptName.ps1] $fullpath exists, download not required"
 } else {
 
-	$webclient = new-object system.net.webclient
-	Write-Host "[$scriptName] $webclient.DownloadFile($uri, $fullpath)"
-	$webclient.DownloadFile($uri, $fullpath)
+	$webclient = executeExpression "new-object system.net.webclient"
+	executeExpression "`$webclient.DownloadFile(`"$uri`", `"$fullpath`")"
 }
 
 Write-Host

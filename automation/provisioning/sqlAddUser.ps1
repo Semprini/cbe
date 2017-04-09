@@ -28,7 +28,7 @@ if ($dbhost) {
     Write-Host "[$scriptName] dbhost      : $dbhost (default)"
 }
 
-$loginType = $args[3]
+$loginType = $args[2]
 if ($loginType) {
     Write-Host "[$scriptName] loginType   : $loginType"
 } else {
@@ -36,32 +36,41 @@ if ($loginType) {
     Write-Host "[$scriptName] loginType   : $loginType (not supplied, set to default)"
 }
 
-$sqlPassword = $args[4]
+$sqlPassword = $args[3]
 if ($sqlPassword) {
     Write-Host "[$scriptName] sqlPassword : *********************** (only applicable if loginType is SQLLogin)"
+	# Provisionig Script builder
+	if ( $env:PROV_SCRIPT_PATH ) {
+		Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $dbUser $dbhost $loginType `'***********************`'`""
+	}
 } else {
 	if ( $loginType -eq 'SQLLogin' ) {
     	Write-Host "[$scriptName] sqlPassword : not supplied, required when loginType is SQLLogin, exiting with code 102."; exit 102
 	} else {
 	    Write-Host "[$scriptName] sqlPassword : not supplied (only applicable if loginType is SQLLogin)"
     }
+	# Provisionig Script builder
+	if ( $env:PROV_SCRIPT_PATH ) {
+		Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $dbUser $dbhost $loginType`""
+	}
 }
 
-Write-Host
-# Load the assemblies
+Write-Host "`n[$scriptName] Load the assemblies ...`n"
 executeExpression '[reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo")'
 executeExpression '[reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement")'
 
 Write-Host
 # Rely on caller passing host or host\instance as they desire
+Write-Host "`n[$scriptName] Connect to SQL Server Instance ($dbhost) ...`n"
 $srv = executeExpression "new-Object Microsoft.SqlServer.Management.Smo.Server(`"$dbhost`")"
 if ( $srv ) {
-	executeExpression "`$srv | select Urn"
+	Write-Host "`n[$scriptName] List currentl Logins for SQL Server Instance ($dbhost) ...`n"
+	executeExpression "`$srv.Logins | Format-Table -Property Name"
 } else {
     Write-Host "[$scriptName] Server $dbhost not found!, Exit with code 103"; exit 103
 }
 
-Write-Host; Write-Host "[$scriptName] Instantiate `$SqlUser"
+Write-Host "`n[$scriptName] Create login for ($dbUser) ...`n"
 $SqlUser = executeExpression "New-Object -TypeName Microsoft.SqlServer.Management.Smo.Login -ArgumentList `$srv,`"$dbUser`""
 executeExpression "`$SqlUser | select Urn"
 
@@ -72,11 +81,9 @@ if ( $sqlPassword ) {
 } else {
 	executeExpression "`$SqlUser.Create()"
 }
-Write-Host
-Write-Host; Write-Host "[$scriptName] Login $dbUser added to $dbhost, listing all Logins"
 
-Write-Host
-executeExpression '$srv.Logins | select name'
+Write-Host; Write-Host "`n[$scriptName] Login $dbUser added to $dbhost, listing all Logins after update ...`n"
+executeExpression "`$srv.Logins | Format-Table -Property Name"
 
 Write-Host
 Write-Host "[$scriptName] ---------- stop ----------"

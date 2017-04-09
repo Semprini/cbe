@@ -29,7 +29,27 @@ browse to http://localhost:8000/admin for the admin interface
 browse to http://localhost:8000/api for the api interface
 ```
 
-## Virtual Desktop Environment
+# How is this different to an API from a product?
+
+The API/Persistence/Admin uses techniques like generic foreign keys to express relationships that provide consistent schema for use in multiple contexts. A product will rightly store data for it's own purpose and we then use architectures like SOA to expose and adjust the semantics for different contexts. The CBE persistence layer has pointers to abstract classes which provides a faithful realization of the data model rather than through a transformation layer.
+
+Entity Domains:
+- Party - Entities relating to individuals, organizations, how to contact them and the roles they play
+- Location - Entities for addresses and places
+- Business interaction - Entities for how parties interact in the business
+- Customer - The parties that a business sells products or services to
+- Trouble - Tracking problems and issues
+
+Coming soon to a data model near you:
+- More roles for PartyRole and BusinessInteraction
+- Product
+
+
+The data model is designed to be extended for each industry. In Party, the PartyRole class is the main abstract entity from which concrete classes like Customer or Supplier should be derived.
+
+Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data model is held in the Docs folder as a Sparx EA model
+
+# Virtual Desktop Environment
 
 To use a virtual environment requires VirtualBox and Vagrant, from the workspace run:
 
@@ -50,23 +70,13 @@ Once delegation configured, the build emulation can be executed.
     cd C:\vagrant
 	.\automation\cdEmulate.bat
 
+# Make your own fork
 
-# How is this different to an API from a product?
+    git clone https://github.com/cdaf/cbe.git
+    cd cbe
+    git remote add upstream https://github.com/Semprini/cbe.git
 
-The API/Persistence/Admin uses techniques like generic foreign keys to express relationships that provide consistent schema for use in multiple contexts. A product will rightly store data for it's own purpose and we then use architectures like SOA to expose and adjust the semantics for different contexts. The CBE persistence layer has pointers to abstract classes which provides a faithful realization of the data model rather than through a transformation layer.
+Once established, use the following to synchronise
 
-Entity Domains:
-- Party - Entities relating to individuals, organizations, how to contact them and the roles they play
-- Location - Entities for addresses and places
-- Business interaction - Entities for how parties interact in the business
-- Customer - The parties that a business sells products or services to
-- Trouble - Tracking problems and issues
-
-Coming soon to a data model near you:
-- More roles for PartyRole and BusinessInteraction
-- Product
-
-
-The data model is designed to be extended for each industry. In Party, the PartyRole class is the main abstract entity from which concrete classes like Customer or Supplier should be derived.
-
-Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data model is held in the Docs folder as a Sparx EA model
+    git fetch upstream
+    git pull upstream master

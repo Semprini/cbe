@@ -3,17 +3,20 @@ function executeExpression ($expression) {
 	$error.clear()
 	Write-Host "[$scriptName] $expression"
 	try {
-		Invoke-Expression $expression
+		$output = Invoke-Expression $expression
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    return $output
 }
 
 # This script is designed for media that is on a file share or web server, it will download the media to the
 # local file system tehn mount it.
 $scriptName = 'mountImage.ps1'
-Write-Host
-Write-Host "[$scriptName] ---------- start ----------"
+$lastExitCode = 0
+Write-Host "`n[$scriptName] Usage example"
+Write-Host "[$scriptName]   mountImage.ps1 $env:userprofile\image.iso http:\\the.internet\image.iso"
+Write-Host "`n[$scriptName] ---------- start ----------"
 $imagePath = $args[0]
 if ($imagePath) {
     Write-Host "[$scriptName] imagePath  : $imagePath"
@@ -36,41 +39,49 @@ if ($sourcePath) {
     Write-Host "[$scriptName] sourcePath : not supplied, dismounting $imagePath"
     Write-Host "[$scriptName] fallBack   : (not applicable when sourcePath not passed)"
 }
-Write-Host
+# Provisionig Script builder
+if ( $env:PROV_SCRIPT_PATH ) {
+	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $imagePath $sourcePath $fallBack`""
+}
 
-# Obtain image and mount
 if ($sourcePath) {
-	if ($sourcePath -like 'http*') {	
-	    Write-Host "[$scriptName] Attempt download from web server $sourcePath"
-	    Write-Host
-		$filename = $sourcePath.Substring($sourcePath.LastIndexOf("/") + 1)
-		if ( Test-Path $imagePath ) {
-			Write-Host "[scriptName.ps1] $imagePath exists, download not required"
-		} else {
-		
-			$webclient = new-object system.net.webclient
-			Write-Host "[$scriptName] $webclient.DownloadFile($sourcePath, $imagePath)"
-			try {
-				$webclient.DownloadFile($sourcePath, $imagePath)
-			} catch {
-				Write-Host "[$scriptName] Download from $sourcePath failed, falling back to $fallBack"
-				executeExpression "Copy-Item `"$fallBack`" `"$imagePath`""
-			}
-		}
+	if ($imagePath -eq $sourcePath ) {
+		Write-Host "`n[$scriptName] Source and image are the same, do not attempt copy, just mount $imagePath ...`n"
 	} else {
-	    Write-Host "[$scriptName] Attempt copy from file share $sourcePath"
-	    Write-Host
-		executeExpression "Copy-Item `"$sourcePath`" `"$imagePath`""
+		Write-Host "`n[$scriptName] Obtain image and mount...`n"
+		if ($sourcePath -like 'http*') {	
+		    Write-Host "[$scriptName] Attempt download from web server $sourcePath"
+			$filename = $sourcePath.Substring($sourcePath.LastIndexOf("/") + 1)
+			if ( Test-Path $imagePath ) {
+				Write-Host "[scriptName.ps1] $imagePath exists, download not required"
+			} else {
+			
+				$webclient = new-object system.net.webclient
+				Write-Host "[$scriptName] $webclient.DownloadFile($sourcePath, $imagePath)"
+				try {
+					$webclient.DownloadFile($sourcePath, $imagePath)
+				} catch {
+					Write-Host "[$scriptName] Download from $sourcePath failed, falling back to $fallBack"
+					executeExpression "Copy-Item `"$fallBack`" `"$imagePath`""
+				}
+			}
+		} else {
+		    Write-Host "[$scriptName] Attempt copy from file share $sourcePath"
+			executeExpression "Copy-Item `"$sourcePath`" `"$imagePath`""
+		}
 	}
 
-	executeExpression "Mount-DiskImage -ImagePath `"$imagePath`""
+	$result = executeExpression "Mount-DiskImage -ImagePath `"$imagePath`" -Passthru"
+	$driveLetter = ($result | Get-Volume).DriveLetter
+    Write-Host "`n[$scriptName] Drive Letter : $driveLetter"
+	$result = executeExpression "[Environment]::SetEnvironmentVariable(`'MOUNT_DRIVE_LETTER`', `"$driveLetter`:\`", `'User`')"
 
 # Dismount image
 } else {
 
     Write-Host
 	executeExpression "Dismount-DiskImage -ImagePath `"$imagePath`""
-
 }
 Write-Host
 Write-Host "[$scriptName] ---------- stop ----------"
+exit 0

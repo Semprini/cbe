@@ -283,6 +283,27 @@ Foreach ($line in get-content $TASK_LIST) {
 						$expression = $expBuilder + $expression.Substring($pos+1)
 					}
 	            }
+	            
+				# Push file to remote system
+	            if ( $feature -eq 'EXPUSH ' ) {
+	            	if ($remoteUser ) {
+	            		$remUser = $remoteUser 
+	            	} else {
+		            	$remUser = 'NOT_SUPPLIED'
+	            	}
+	            	if ($remoteCred ) {
+	            		$remCred = $remoteCred 
+	            	} else {
+		            	$remCred = 'NOT_SUPPLIED'
+	            	}
+	            	if ($decryptThb ) {
+	            		$remThumb = $decryptThb 
+	            	} else {
+		            	$remThumb = 'NOT_SUPPLIED'
+	            	}
+		            Write-Host "$expression ==> " -NoNewline
+	            	$expression = '.\remoteExec.ps1 ' + $deployHost + ' ' + $remUser  + ' ' + $remCred + ' ' + $remThumb  + ' ' + $expression.Substring(7)
+	            }
 
 				# Execute Remote Command or Local PowerShell Script remotely (via Invoke-Command)
 	            if ( $feature -eq 'EXCREM ' ) {
@@ -343,6 +364,7 @@ Foreach ($line in get-content $TASK_LIST) {
 	            if ( $feature -eq 'CMPRSS ' ) {
 		            Write-Host "$expression ==> " -NoNewline
 		            $arguments = $expression.Substring(7)
+		            $arguments = Invoke-Expression "Write-Output $arguments"
 					$data = $arguments.split(" ")
 					$filename = $data[0]
 					$source = $data[1]
@@ -350,11 +372,12 @@ Foreach ($line in get-content $TASK_LIST) {
 					$expression = "ZipFiles $filename $source"
 				}		
 
-				# Deompress to file
+				# Decompress from file
 				#  required : file, relative to current workspace
 	            if ( $feature -eq 'DCMPRS ' ) {
 		            Write-Host "$expression ==> " -NoNewline
 		            $arguments = $expression.Substring(7)
+		            $arguments = Invoke-Expression "Write-Output $arguments"
 					$data = $arguments.split(" ")
 					$filename = $data[0]
 					$target = $data[1]
