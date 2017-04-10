@@ -8,5 +8,5 @@ assign $terminate=$ACTION
 assign $productVersion+='.'
 assign $productVersion+=$BUILDNUMBER
 
-echo "Try the sample image, maybe we can simple overwrite with ours?"
+# This will be removed and replaced with Dockerfile, however, here for now to test windows container
 docker pull microsoft/windowsservercore

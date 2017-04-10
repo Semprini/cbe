@@ -1,4 +1,4 @@
-node ('w10e2') {
+node {
 
   properties(
     [
@@ -31,9 +31,9 @@ node ('w10e2') {
 	  '''
 	}
 
-    stage ('Instantiate and Test') {
-      bat 'vagrant up'
-      bat "IF EXIST .vagrant vagrant destroy -f"
+    stage ('Update Image Repository, Build and Test') {
+      bat 'docker pull microsoft/windowsservercore'
+      bat 'automation/cdEmulate.bat'
     }
   
   } catch (e) {

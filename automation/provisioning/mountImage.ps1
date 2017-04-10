@@ -1,3 +1,9 @@
+Param (
+  [string]$imagePath,
+  [string]$sourcePath
+)
+$scriptName = 'mountImage.ps1'
+
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
@@ -12,12 +18,10 @@ function executeExpression ($expression) {
 
 # This script is designed for media that is on a file share or web server, it will download the media to the
 # local file system tehn mount it.
-$scriptName = 'mountImage.ps1'
 $lastExitCode = 0
 Write-Host "`n[$scriptName] Usage example"
 Write-Host "[$scriptName]   mountImage.ps1 $env:userprofile\image.iso http:\\the.internet\image.iso"
 Write-Host "`n[$scriptName] ---------- start ----------"
-$imagePath = $args[0]
 if ($imagePath) {
     Write-Host "[$scriptName] imagePath  : $imagePath"
 } else {
@@ -25,7 +29,6 @@ if ($imagePath) {
     exit 100
 }
 
-$sourcePath = $args[1]
 if ($sourcePath) {
     Write-Host "[$scriptName] sourcePath : $sourcePath"
 	$fallBack = $args[2]
@@ -71,10 +74,15 @@ if ($sourcePath) {
 		}
 	}
 
-	$result = executeExpression "Mount-DiskImage -ImagePath `"$imagePath`" -Passthru"
-	$driveLetter = ($result | Get-Volume).DriveLetter
-    Write-Host "`n[$scriptName] Drive Letter : $driveLetter"
-	$result = executeExpression "[Environment]::SetEnvironmentVariable(`'MOUNT_DRIVE_LETTER`', `"$driveLetter`:\`", `'User`')"
+    Write-Host "[$scriptName] `$result = Mount-DiskImage -ImagePath `"$imagePath`" -Passthru"
+	$result = Mount-DiskImage -ImagePath "$imagePath" -Passthru
+	if ($result) {
+		$driveLetter = ($result | Get-Volume).DriveLetter
+	    Write-Host "`n[$scriptName] Drive Letter : $driveLetter"
+		$result = executeExpression "[Environment]::SetEnvironmentVariable(`'MOUNT_DRIVE_LETTER`', `"$driveLetter`:\`", `'User`')"
+	} else {
+	    Write-Host "`n[$scriptName] Mount failed! Exit with lastexitcode=22`n";exit 22
+	}
 
 # Dismount image
 } else {
@@ -82,6 +90,6 @@ if ($sourcePath) {
     Write-Host
 	executeExpression "Dismount-DiskImage -ImagePath `"$imagePath`""
 }
-Write-Host
-Write-Host "[$scriptName] ---------- stop ----------"
+
+Write-Host "`n[$scriptName] ---------- stop ----------`n"
 exit 0
