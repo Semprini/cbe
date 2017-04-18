@@ -16,7 +16,7 @@ Vagrant.configure(2) do |config|
     provision = '../.provision'
   end
   
-  config.vm.box = 'cdaf/WindowsServerStandard'
+  config.vm.box = 'cdaf/WindowsServerDocker'
   config.vm.box_check_update = false
   config.vm.guest = :windows
   config.vm.communicator = 'winrm'
@@ -34,7 +34,7 @@ Vagrant.configure(2) do |config|
     virtualbox.memory = 1024
     virtualbox.cpus = 2
     override.vm.synced_folder "#{provision}", '/.provision'
-    override.vm.network 'private_network', ip: '10.10.8.101'
+    override.vm.network 'private_network', ip: '10.10.8.101'       # Cannot use 172.16.0.0 range, as that is allocated to container network
     override.vm.network 'forwarded_port', guest: 3389, host: 13389 # Remote Desktop
     override.vm.network 'forwarded_port', guest: 5985, host: 15985 # WinRM HTTP
     override.vm.network 'forwarded_port', guest: 5986, host: 15986 # WinRM HTTPS
@@ -47,7 +47,9 @@ Vagrant.configure(2) do |config|
   config.vm.provider 'hyperv' do |hyperv, override|
     hyperv.memory = 1024
     hyperv.cpus = 2
-    override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: ".\jules", smb_password: "#{ENV['USER_PASS']}"
+    hyperv.ip_address_timeout = 240 # 4 minutes to report IP
+    override.vm.synced_folder ".", "/vagrant", type: "smb", smb_host: "#{ENV['COMPUTERNAME']}", smb_username: ".\jules", smb_password: "#{ENV['USER_PASS']}"
     override.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
+    override.vm.provision 'shell', inline: 'dir c:\vagrant'
   end
 end
