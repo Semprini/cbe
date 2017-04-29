@@ -4,6 +4,7 @@ FROM microsoft/windowsservercore
 MAINTAINER Jules Clements
 
 ENV PYTHONIOINPUT=UTF-8
+WORKDIR solution
 
 # CDAF Required Labels
 LABEL	cdaf.@imageName@.image.branch="@branch@" \
@@ -13,12 +14,12 @@ LABEL	cdaf.@imageName@.image.branch="@branch@" \
 
 #Install Chocolately, Python and Python Package Manager, each PowerShell session will reload the PATH from previous step
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex" 
-RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "choco install -y python3; mkdir /solution"
+RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "choco install -y python3"
 
-COPY requirements.txt /solution
+COPY requirements.txt .
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "dir /solution"
 
-COPY cbe /solution
+COPY cbe .
 
 # Fullfil application dependencies
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution ; pip install -r /tmp/requirements.txt" 
