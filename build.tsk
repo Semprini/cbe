@@ -1,12 +1,15 @@
-echo "If ACTION (emulation only) is clean, do not perform any further action"
+Write-Host "If ACTION (emulation only) is clean, do not perform any further action`n"
 assign $terminate=$ACTION
 
-#echo "Load product (solution) attributes"
-#assign $loadProperties="../$SOLUTIONROOT/CDAF.solution"
+Write-Host "Load product (solution) attributes`n"
+assign $loadProperties=".\$SOLUTIONROOT\CDAF.solution"
 
-# Combine to create symantic (http://semver.org/) version
+Write-Host "Combine to create symantic (http://semver.org/) version`n"
 assign $productVersion+='.'
 assign $productVersion+=$BUILDNUMBER
 
-# This will be removed and replaced with Dockerfile, however, here for now to test windows container
-docker pull microsoft/windowsservercore
+Write-Host "Build the docker image TODO: CDAF script to the Linux ones`n"
+REMOVE $env:TEMP\cbe
+Copy-Item cbe $env:TEMP -Recurse
+cd $env:TEMP
+docker build cbe
