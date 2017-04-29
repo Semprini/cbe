@@ -13,4 +13,5 @@ REMOVE $env:TEMP\cbe
 Copy-Item cbe $env:TEMP -Recurse
 VECOPY requirements.txt $env:TEMP 
 cd $env:TEMP
+dir
 docker build cbe
