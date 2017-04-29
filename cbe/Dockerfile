@@ -14,7 +14,7 @@ LABEL	cdaf.@imageName@.image.branch="@branch@" \
 #Install Chocolately, Python and Python Package Manager, each PowerShell session will reload the PATH from previous step
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex" 
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "choco install -y python3" 
-RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "choco install -y pip" 
+RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "pip --version"
 
 COPY requirements.txt /tmp/
 
