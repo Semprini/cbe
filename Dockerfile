@@ -22,4 +22,4 @@ RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution 
 
 EXPOSE 8000
 
-CMD cd /opt/@imageName@;python manage.py runserver 0.0.0.0:8000
+CMD python manage.py runserver 0.0.0.0:8000
