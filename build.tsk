@@ -10,8 +10,10 @@ assign $productVersion+=$BUILDNUMBER
 
 Write-Host "Build the docker image TODO: CDAF script to the Linux ones`n"
 REMOVE $env:TEMP\cbe
-Copy-Item cbe $env:TEMP -Recurse
-VECOPY requirements.txt $env:TEMP 
-cd $env:TEMP
+MAKDIR $env:TEMP\cbe
+Copy-Item cbe $env:TEMP\cbe -Recurse
+VECOPY requirements.txt $env:TEMP\cbe 
+VECOPY Dockerfile $env:TEMP\cbe 
+cd $env:TEMP\cbe
 dir
-docker build cbe
+docker build -t cbe .

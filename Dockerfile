@@ -16,10 +16,8 @@ LABEL	cdaf.@imageName@.image.branch="@branch@" \
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex" 
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "choco install -y python3"
 
-COPY requirements.txt .
+COPY . .
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "dir /solution"
-
-COPY cbe .
 
 # Fullfil application dependencies
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution ; pip install -r /tmp/requirements.txt" 
