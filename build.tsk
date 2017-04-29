@@ -13,7 +13,12 @@ REMOVE $env:TEMP\cbe
 MAKDIR $env:TEMP\cbe
 Copy-Item cbe $env:TEMP\cbe -Recurse
 VECOPY requirements.txt $env:TEMP\cbe 
-VECOPY Dockerfile $env:TEMP\cbe 
+VECOPY Dockerfile $env:TEMP\cbe
+
+$workingDirectory = $(pwd)
 cd $env:TEMP\cbe
 dir
 docker build -t cbe .
+
+Write-Host "Build complete, return to working directory`n"
+cd $workingDirectory 
