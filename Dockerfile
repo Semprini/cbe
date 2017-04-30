@@ -20,6 +20,9 @@ RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "choco install
 COPY . .
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution ; pip install -r requirements.txt" 
 
+# Initialise the application
+#RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution/cbe ; python deploy.py" 
+
 EXPOSE 8000
 
 CMD python manage.py runserver 0.0.0.0:8000
