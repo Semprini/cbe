@@ -14,6 +14,9 @@ MAKDIR $env:TEMP\cbe
 Copy-Item cbe $env:TEMP\cbe -Recurse
 VECOPY requirements.txt $env:TEMP\cbe 
 VECOPY Dockerfile $env:TEMP\cbe
+VECOPY deploy.py $env:TEMP\cbe
+VECOPY manage.py $env:TEMP\cbe
+VECOPY setup.py $env:TEMP\cbe
 
 $workingDirectory = $(pwd)
 cd $env:TEMP\cbe
