@@ -1,4 +1,4 @@
 # Launch instances, need to set DOCKER_HOST if remote containers
 publishedPort=8000
 environment=prod
-url=cdaf.io
+url=cdaf.info
