@@ -1,0 +1,2 @@
+echo "List host capabilities"
+INVOKE capabilities
