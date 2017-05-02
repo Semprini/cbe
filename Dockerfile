@@ -21,7 +21,7 @@ COPY . .
 RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution ; pip install -r requirements.txt" 
 
 # Initialise the application
-RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution ; python deploy.py" 
+RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution ; python manage.py migrate ; python deploy.py" 
 
 EXPOSE 8000
 
