@@ -114,3 +114,4 @@ web.config
 /manifest.txt
 /projectDirectories.txt
 /.vagrant/
+/.pydevproject
