@@ -41,15 +41,15 @@ INSTALLED_APPS = (
     'django_nose',
     'rest_framework',
     'gm2m',
-    'cbe.business_interaction',
-    'cbe.customer',
     'cbe.location',
     'cbe.party',
-    'cbe.trouble',
+    'cbe.business_interaction',
+    'cbe.customer',
     'cbe.physical_object',
     'cbe.supplier_partner',
     'cbe.human_resources',
     'cbe.resource',
+    'cbe.trouble',
 )
 
 MIDDLEWARE_CLASSES = (
