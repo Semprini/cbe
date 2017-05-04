@@ -45,9 +45,11 @@ if ($tag) {
 	$buildCommand += " --tag ${imageName} "
 }
 
+# Apply required label for CDAF image management
+$buildCommand += " --label=cdaf.${imageName}.image.product=${imageName}"
+
 # Execute the constucted build command using dockerfile from current directory (.)
 executeExpression "$buildCommand ."
-
 
 Write-Host "`n[$scriptName] List Resulting images. Note: label is derived from Dockerfile"
 executeExpression "docker images -f label=cdaf.${imageName}.image.product=${imageName}"

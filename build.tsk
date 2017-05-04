@@ -23,15 +23,16 @@ VECOPY deploy.py $env:TEMP\$imageName
 VECOPY manage.py $env:TEMP\$imageName
 VECOPY setup.py $env:TEMP\$imageName
 VECOPY $AUTOMATIONROOT/remote/dockerBuild.ps1 $env:TEMP\$imageName
+VECOPY $AUTOMATIONROOT/remote/dockerRun.ps1 $env:TEMP\$imageName
 
 $workingDirectory = $(pwd)
 cd $env:TEMP\$imageName
 dir
-# Standard CDAF Labels
+
+Write-Host "Apply CDAF labels for $imageName`n"
 REPLAC Dockerfile @imageName@ $imageName
 REPLAC Dockerfile @version@ $productVersion
 REPLAC Dockerfile @solution@ $SOLUTION
-REPLAC Dockerfile @project@ $PROJECT
 REPLAC Dockerfile @branch@ $REVISION
 REPLAC Dockerfile @buildNumber@ $BUILDNUMBER
 
@@ -39,7 +40,10 @@ Write-Host "List the Dockerfile contents for logging purposes`n"
 cat Dockerfile
 
 Write-Host "Build the container, will create image ${imageName} tagged with $BUILDNUMBER`n"
-.\dockerBuild.ps1 ${imageName} $BUILDNUMBER $env:REGRESSION_HOST
+.\dockerBuild.ps1 ${imageName} $BUILDNUMBER yes #$env:REGRESSION_HOST
+
+#echo "Create an instance for smoke test, this will create \\${imageName}_instance_latest on port \\$publishedPort (${publishedPort})"
+#.\dockerRun.ps1 ${imageName} ${dockerExposedPort} ${publishedPort} $BUILDNUMBER
 
 Write-Host "Build complete, return to working directory`n"
 cd $workingDirectory 
