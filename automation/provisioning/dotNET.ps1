@@ -24,8 +24,9 @@ function executeExpression ($expression) {
 
 function executeRetry ($expression) {
 	$wait = 10
-	$retryMax = 10
+	$retryMax = 3
 	$retryCount = 0
+	$exitCode = 1 # Any value other than 0 to enter the loop
 	while (( $retryCount -le $retryMax ) -and ($exitCode -ne 0)) {
 		$exitCode = 0
 		$error.clear()
@@ -80,9 +81,17 @@ function installFourAndAbove {
 	}
 	
 	try {
-		$argList = @("/q", "/norestart", "/log `"$env:temp\$file.log`"")
+		$argList = @("/q", "/norestart", "/log `"$env:temp\$file`"")
 		Write-Host "[$scriptName] Start-Process -FilePath $fullpath -ArgumentList $argList -PassThru -Wait"
 		$proc = Start-Process -FilePath $fullpath -ArgumentList $argList -PassThru -Wait
+        if ( $proc.ExitCode -ne 0 ) {
+	        if ( $proc.ExitCode -ne 0 ) {
+	    		Write-Host "`n[$scriptName] Exit 3010, The requested operation is successful. Changes will not be effective until the system is rebooted. ERROR_SUCCESS_REBOOT_REQUIRED`n"
+	        } else {
+	    		Write-Host "`n[$scriptName] Install Failed, see log file ($env:temp\${file}.html) for details. Exit with `$LASTEXITCODE $($proc.ExitCode)`n"
+	            exit $proc.ExitCode
+			}
+        }
 	} catch {
 		Write-Host "[$scriptName] .NET Install Exception : $_" -ForegroundColor Red
 		exit 201
@@ -259,14 +268,13 @@ if ($file) {
 	
 	if ($release) {
 	    if (-Not (IsInstalled $release)) {
-	        Write-Host "`n[$scriptName] A restart is required to finalise the Microsoft .NET Framework $version installation"
 	        if ($reboot -eq 'yes') {
-		        Write-Host "`n[$scriptName] Reboot in 2 seconds ..."
-		        executeExpression "shutdown /r /t 2"
+		        Write-Host "`n[$scriptName] Reboot in 1 second ..."
+		        executeExpression "shutdown /r /t 1"
 	        }
 	        if ($reboot -eq 'shutdown') {
-		        Write-Host "`n[$scriptName] Shutdown in 2 seconds ..."
-		        executeExpression "shutdown /s /t 2"
+		        Write-Host "`n[$scriptName] Shutdown in 1 second ..."
+		        executeExpression "shutdown /s /t 1"
 	        }
 	    }
     }

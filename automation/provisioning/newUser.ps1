@@ -12,8 +12,9 @@ function executeExpression ($expression) {
 
 function executeRetry ($expression) {
 	$wait = 10
-	$retryMax = 10
+	$retryMax = 3
 	$retryCount = 0
+	$exitCode = 1 # Any value other than 0 to enter the loop
 	while (( $retryCount -le $retryMax ) -and ($exitCode -ne 0)) {
 		$exitCode = 0
 		$error.clear()
@@ -66,7 +67,7 @@ if ($TrustedForDelegation) {
 
 # Provisionig Script builder
 if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName `"$userName`" `"**********`"`""
+	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $userName `'**********`'`""
 }
 
 if ((gwmi win32_computersystem).partofdomain -eq $true) {
