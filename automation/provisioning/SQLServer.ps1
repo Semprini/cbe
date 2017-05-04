@@ -3,14 +3,14 @@ Param (
   [string]$password,
   [string]$adminAccount,
   [string]$instance,
-  [string]$media
+  [string]$media,
+  [string]$features
 )
 $scriptName = 'SQLServer.ps1'
 
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
-	Write-Host "[$scriptName] $expression"
 	try {
 		$output = Invoke-Expression $expression
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
@@ -19,8 +19,7 @@ function executeExpression ($expression) {
     return $output
 }
 
-Write-Host "`nIf provisioing to server core, the management console is not installed, for GUI server,"
-Write-Host "Management console will be installed."
+Write-Host "`nSQL Server 2012 and above."
 Write-Host "`n[$scriptName] ---------- start ----------"
 if ($serviceAccount) {
     Write-Host "[$scriptName] serviceAccount : $serviceAccount"
@@ -78,16 +77,19 @@ if ($media) {
     Write-Host "[$scriptName] media          : $media (default)"
 }
 
-# Provisionig Script builder
+if ($features) { # https://docs.microsoft.com/en-us/sql/database-engine/install-windows/install-sql-server-on-server-core#a-namebksupportedfeaturesa-supported-features
+    Write-Host "[$scriptName] features       : $features"
+} else {
+	$features = 'SQLEngine,FullText,Conn'
+    Write-Host "[$scriptName] features       : $features (default)"
+}
+# Provisioning Script builder
 if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $serviceAccount `'**********`' $adminAccount $instance $media`""
+	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $serviceAccount `'**********`' $adminAccount $instance $media $features `""
 }
 
 $EditionId = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -Name 'EditionID').EditionId
-if (($EditionId -like "*nano*") -or ($EditionId -like "*core*") ) {
-	$noGUI = '(no GUI)'
-}
-write-host "[$scriptName] EditionId      : $EditionId $noGUI"
+write-host "[$scriptName] EditionId      : $EditionId"
 
 if ($env:interactive) {
 	Write-Host
@@ -99,17 +101,10 @@ if ($env:interactive) {
 	$logToConsole = 'false'
 }
 
-if ($noGUI) {
-    Write-Host "[$scriptName]   O/S GUI not installed, management tools will be excluded"
-	$sqlFeatures = 'SQL'
-} else {	
-    Write-Host "[$scriptName]   O/S GUI installed, management tools will be included"
-	$sqlFeatures = 'SQL,Tools'
-}
-
-$executable = Get-ChildItem d:\ -Filter *.exe
+$executable = Get-ChildItem $media -Filter *.exe
 
 # Reference: https://msdn.microsoft.com/en-us/library/ms144259.aspx
+# Argument list initially loaded for logging purposes only ...
 $argList = @(
 	'/Q',
 	'/ACTION="Install"',
@@ -117,7 +112,29 @@ $argList = @(
 	'/IACCEPTSQLSERVERLICENSETERMS',
 	'/ENU=true',
 	'/UPDATEENABLED=false',
-	"/FEATURES=$sqlFeatures",
+	"/FEATURES=$features",
+	'/INSTALLSHAREDDIR="C:\Program Files\Microsoft SQL Server"',
+	"/INSTANCENAME=`"$instance`"",
+	'/INSTANCEDIR="C:\Program Files\Microsoft SQL Server"',
+	'/SQLSVCSTARTUPTYPE="Automatic"',
+	'/SQLCOLLATION="SQL_Latin1_General_CP1_CI_AS"',
+	"/SQLSVCACCOUNT=`"$serviceAccount`"",
+	"/SQLSVCPASSWORD=`"`$password`"",
+	"/SQLSYSADMINACCOUNTS=`"$adminAccount`"",
+	'/TCPENABLED=1',
+	'/NPENABLED=1'
+)
+Write-Host "[$scriptName] `$proc = Start-Process -FilePath `"$media$executable`" -ArgumentList `"$argList`" $sessionControl"
+
+# ... reload the argument list to use the service account password
+$argList = @(
+	'/Q',
+	'/ACTION="Install"',
+	"/INDICATEPROGRESS=$logToConsole",
+	'/IACCEPTSQLSERVERLICENSETERMS',
+	'/ENU=true',
+	'/UPDATEENABLED=false',
+	"/FEATURES=$features",
 	'/INSTALLSHAREDDIR="C:\Program Files\Microsoft SQL Server"',
 	"/INSTANCENAME=`"$instance`"",
 	'/INSTANCEDIR="C:\Program Files\Microsoft SQL Server"',
@@ -129,22 +146,24 @@ $argList = @(
 	'/TCPENABLED=1',
 	'/NPENABLED=1'
 )
-Write-Host
-executeExpression "`$proc = Start-Process -FilePath `"$media$executable`" -ArgumentList `'$argList`' $sessionControl"
+
+# Note, the actual call passes the argument list as a literal
+$proc = executeExpression "Start-Process -FilePath `"$media$executable`" -ArgumentList `'$argList`' $sessionControl"
 
 foreach ( $sqlVersions in Get-ChildItem "C:\Program Files\Microsoft SQL Server\" ) {
 	$logPath = $sqlVersions.FullName + '\Setup Bootstrap\Log\Summary.txt'
 	if ( Test-Path $logPath ) {
 		$result = cat $logPath | findstr "Failed:"
 		if ($result) {
-			Write-Host
-		    Write-Host "[$scriptName] `'Failed:`' found in $logPath, first 40 lines follow ..."
+		    Write-Host "`n[$scriptName] Process output ..."
+			$proc | format-list 
+		    
+		    Write-Host "`n[$scriptName] `'Failed:`' found in $logPath, first 40 lines follow ..."
 			Get-Content $logPath | select -First 40
-		    Write-Host "[$scriptName] Exit with LASTEXITCODE = 20"; exit 20
+		    Write-Host "`n[$scriptName] Exit with LASTEXITCODE = 20"; exit 20
 		}
 	} 
 }
 
-Write-Host
-Write-Host "[$scriptName] ---------- stop ----------"
+Write-Host "`n[$scriptName] ---------- stop ----------"
 exit 0

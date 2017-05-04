@@ -12,7 +12,7 @@ function executeExpression ($expression) {
 function executeRetry ($expression) {
 	$exitCode = 1
 	$wait = 10
-	$retryMax = 10
+	$retryMax = 3
 	$retryCount = 0
 	while (( $retryCount -le $retryMax ) -and ($exitCode -ne 0)) {
 		$exitCode = 0
@@ -73,6 +73,10 @@ if ($media) {
 } else {
     Write-Host "[$scriptName] media           : (not supplied)"
     Write-Host "[$scriptName] wimIndex        : (not applicable when media not supplied)"
+}
+# Provisioning Script builder
+if ( $env:PROV_SCRIPT_PATH ) {
+	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $configuration $media $wimIndex `""
 }
 
 Write-Host
