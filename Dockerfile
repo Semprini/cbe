@@ -19,10 +19,4 @@ RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution 
 
 EXPOSE 8000
 
-# Informational Labels
-LABEL	cdaf.@imageName@.image.branch="@branch@" \
-		cdaf.@imageName@.image.build="@branch@:@buildNumber@" \
-		cdaf.@imageName@.image.solution="@solution@" \
-		cdaf.@imageName@.image.version="@version@"
-
 CMD python manage.py runserver 0.0.0.0:8000

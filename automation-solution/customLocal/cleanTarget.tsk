@@ -1,1 +1,3 @@
-Write-Host "Here will be image cleanup`n"
+echo "Clean old images, i.e. older than current production"
+ASSIGN $imageName='cbe'
+.\dockerClean.ps1 $imageName $BUILDNUMBER
