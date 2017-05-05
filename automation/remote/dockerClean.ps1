@@ -1,6 +1,6 @@
 Param (
   [string]$imageName,
-  [string]$environment
+  [string]$tag
 )
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
@@ -31,13 +31,13 @@ Write-Host "`n[$scriptName] Clean image from registry based on Product label. If
 Write-Host "[$scriptName] only images with a tag value less that the one supplied and removed."
 Write-Host "`n[$scriptName] --- start ---"
 if ($imageName) {
-    Write-Host "[$scriptName] imageName     : $imageName"
+    Write-Host "[$scriptName] imageName : $imageName"
 } else {
     Write-Host "[$scriptName] imageName not supplied, exit with `$LASTEXITCODE = 1"; exit 1
 }
 
 if ($tag) {
-    Write-Host "[$scriptName] tag : $tag"
+    Write-Host "[$scriptName] tag       : $tag"
 } else {
     Write-Host "[$scriptName] tag not supplied, all will be removed."
 }
@@ -53,19 +53,20 @@ foreach ($imageID in docker images -aq -f dangling=true) {
 Write-Host "`n[$scriptName] Remove unused images (ignore failures). This process relies on the dockerBuild process where docker image label holds the product version."
 Write-Host "[$scriptName]   docker images --filter label=cdaf.${imageName}.image.version -a"
 Write-Host "[$scriptName]   Note: the version value itself is ignored and is for information purposes only."
-if (!( $tag )) {
-	foreach ($imageID in docker images --filter label=cdaf.${imageName}.image.version -aq) {
+foreach ( $imageDetails in docker images --filter label=cdaf.${imageName}.image.version --format "{{.ID}}:{{.Tag}}" ) {
+	$arr = $imageDetails.split(':')
+	$imageID = $arr[0]
+	$imageTag = $arr[1]
+	if ( $tag ) {
+		if ( $imageTag -lt $tag ) {
+			Write-Host "[$scriptName] Remove Image $imageDetails"
+			executeSuppress "docker rmi $imageID"
+		}
+	} else {
+		Write-Host "[$scriptName] Remove All, Image $imageDetails"
 		executeSuppress "docker rmi $imageID"
 	}
- } else {
-	foreach ( $imageTag in docker images --filter label=cdaf.${imageName}.image.version --format "{{.ID}}:{{.Tag}}" ) {
-		$arr = $imageTag.split(':')
-		if ( $arr[1] -lt $tag ) {
-			Write-Host "[$scriptName] Remove Image $imageTag"
-			executeSuppress "docker rmi ${arr[0]}"
-		}
-	}	
-}
+}	
 
 Write-Host "`n[$scriptName] List images (after)"
 executeExpression "docker images"
