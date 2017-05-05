@@ -29,9 +29,12 @@ VECOPY $AUTOMATIONROOT/remote/dockerRemove.ps1 $env:TEMP\$imageName
 $workingDirectory = $(pwd)
 cd $env:TEMP\$imageName
 dir
+REPLAC cbe/settings.py @DEBUG=True@ 'DEBUG=False'
 
-Write-Host "List the Dockerfile contents for logging purposes`n"
+Write-Host "List the Dockerfile and settings for logging purposes`n"
 cat Dockerfile
+
+cat cbe/settings.py
 
 Write-Host "Build the container, will create image ${imageName} tagged with $BUILDNUMBER`n"
 .\dockerBuild.ps1 ${imageName} $BUILDNUMBER $productVersion $env:REGRESSION_HOST

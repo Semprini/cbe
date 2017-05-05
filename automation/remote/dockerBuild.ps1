@@ -37,7 +37,7 @@ if ($version) {
 	} else {
 		$version = '0.0.0'
 	}
-    Write-Host "[$scriptName] version   : $version (not supplied, defaulted to tag)"
+    Write-Host "[$scriptName] version   : $version (not supplied, defaulted to tag if passed, else set to 0.0.0)"
 }
 if ($rebuild) {
     Write-Host "[$scriptName] rebuild   : $rebuild"
