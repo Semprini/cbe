@@ -15,13 +15,13 @@ MARITAL_STATUS_CHOICES = (('Undisclosed', 'Undisclosed'),
 
 class Party(models.Model):
     name = models.CharField(max_length=200)
-    party_user = models.ForeignKey(User, blank=True, null=True)
 
     class Meta:
         abstract = True
 
 
 class Individual(Party):
+    user = models.ForeignKey(User, blank=True, null=True)
     gender = models.CharField(
         max_length=50, blank=True, null=True, choices=GENDER_CHOICES)
     family_names = models.CharField(max_length=200, blank=True)
