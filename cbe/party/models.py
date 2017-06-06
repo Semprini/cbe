@@ -68,7 +68,6 @@ class PartyRole(models.Model):
         ContentType, related_name="%(app_label)s_%(class)s_ownership")
     party_object_id = models.PositiveIntegerField()
     party = GenericForeignKey('party_content_type', 'party_object_id')
-    association_type = models.CharField(max_length=200)
 
     contact_mediums = GM2MField()
 
@@ -105,6 +104,24 @@ class PartyRole(models.Model):
         return "%s as a %s" % (self.party, self.name)
 
 
+class PartyRoleAssociation(models.Model):
+    valid_from = models.DateTimeField(auto_now_add=True)
+    valid_to = models.DateTimeField(null=True, blank=True)
+
+    association_type = models.CharField(max_length=200)
+    
+    association_from_content_type = models.ForeignKey(
+        ContentType, related_name="%(app_label)s_%(class)s_from")
+    association_from_object_id = models.PositiveIntegerField()
+    association_from = GenericForeignKey('association_from_content_type', 'association_from_object_id')
+
+    association_to_content_type = models.ForeignKey(
+        ContentType, related_name="%(app_label)s_%(class)s_to")
+    association_to_object_id = models.PositiveIntegerField()
+    association_to = GenericForeignKey('association_to_content_type', 'association_to_object_id')
+
+    
+    
 class GenericPartyRole(PartyRole):
     pass
 
