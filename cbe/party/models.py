@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+
 
 from gm2m import GM2MField
 
@@ -59,6 +60,23 @@ class Organisation(Party):  # Eg IRD
         return self.name
 
 
+class PartyRoleAssociation(models.Model):
+    valid_from = models.DateTimeField(auto_now_add=True)
+    valid_to = models.DateTimeField(null=True, blank=True)
+
+    association_type = models.CharField(max_length=200)
+    
+    association_from_content_type = models.ForeignKey(
+        ContentType, related_name="%(app_label)s_%(class)s_from")
+    association_from_object_id = models.PositiveIntegerField()
+    association_from = GenericForeignKey('association_from_content_type', 'association_from_object_id')
+
+    association_to_content_type = models.ForeignKey(
+        ContentType, related_name="%(app_label)s_%(class)s_to")
+    association_to_object_id = models.PositiveIntegerField()
+    association_to = GenericForeignKey('association_to_content_type', 'association_to_object_id')
+        
+
 class PartyRole(models.Model):
     valid_from = models.DateTimeField(auto_now_add=True)
     valid_to = models.DateTimeField(null=True, blank=True)
@@ -71,6 +89,11 @@ class PartyRole(models.Model):
 
     contact_mediums = GM2MField()
 
+    associations_from = GenericRelation(PartyRoleAssociation, 
+                                        object_id_field="association_from_object_id", content_type_field='association_from_content_type',)
+    associations_to = GenericRelation(PartyRoleAssociation, 
+                                        object_id_field="association_to_object_id", content_type_field='association_to_content_type')
+    
     class Meta:
         abstract = True
 
@@ -103,24 +126,6 @@ class PartyRole(models.Model):
     def __str__(self):
         return "%s as a %s" % (self.party, self.name)
 
-
-class PartyRoleAssociation(models.Model):
-    valid_from = models.DateTimeField(auto_now_add=True)
-    valid_to = models.DateTimeField(null=True, blank=True)
-
-    association_type = models.CharField(max_length=200)
-    
-    association_from_content_type = models.ForeignKey(
-        ContentType, related_name="%(app_label)s_%(class)s_from")
-    association_from_object_id = models.PositiveIntegerField()
-    association_from = GenericForeignKey('association_from_content_type', 'association_from_object_id')
-
-    association_to_content_type = models.ForeignKey(
-        ContentType, related_name="%(app_label)s_%(class)s_to")
-    association_to_object_id = models.PositiveIntegerField()
-    association_to = GenericForeignKey('association_to_content_type', 'association_to_object_id')
-
-    
     
 class GenericPartyRole(PartyRole):
     pass
