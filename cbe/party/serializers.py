@@ -81,7 +81,7 @@ class OrganisationSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Organisation
-        fields = ('type', 'url', 'name',)
+        fields = ('type', 'url', 'parent', 'name',)
 
         
 class OwnerSerializer(serializers.HyperlinkedModelSerializer):
@@ -90,7 +90,7 @@ class OwnerSerializer(serializers.HyperlinkedModelSerializer):
         
     class Meta:
         model = Owner
-        fields = ('type', 'url', 'party')
+        fields = ('type', 'url', 'party', 'association_type')
         
         
 class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):
@@ -110,4 +110,4 @@ class GenericPartyRoleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenericPartyRole
         fields = (
-            'type', 'url', 'valid_from', 'valid_to', 'name', 'telephonenumbers')
+            'type', 'url', 'valid_from', 'valid_to', 'name', 'association_type', 'telephonenumbers')

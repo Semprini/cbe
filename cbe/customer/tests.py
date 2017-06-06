@@ -50,7 +50,7 @@ class CustomerAccountTestCase(TestCase):
         self.individual = Individual.objects.create(
             given_names="John", family_names="Doe")
         self.customer = Customer.objects.create(
-            party=self.individual, customer_number="1", customer_status="Open")
+            party=self.individual, customer_number="1", customer_status="Open",association_type="customer")
         self.customer_account = CustomerAccount.objects.create(
             account_number="1", account_status="Open", account_type="test", name="Test Account", customer=self.customer)
 
@@ -101,7 +101,7 @@ class CustomerAPITests(APITestCase):
             given_names="John", family_names="Doe")
         self.organisation = Organisation.objects.create(name='Pen Inc.')
         self.customer = Customer.objects.create(
-            party=self.individual, customer_number="1", customer_status="new")
+            party=self.individual, customer_number="1", customer_status="new", association_type="customer")
         self.factory = APIRequestFactory()
 
     def test_get_customer(self):
@@ -137,6 +137,7 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "3",
             "customer_status": "new",
+            "association_type": "customer",
             "party": {
                 "type": "Individual",
                 "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk),
@@ -149,6 +150,7 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "4",
             "customer_status": "new",
+            "association_type": "customer",
             "party": {
                 "type": "Organisation",
                 "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},
@@ -164,6 +166,7 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "3",
             "customer_status": "new",
+            "association_type": "customer",
             "party": {
                 "type": "Foo"},
             "customeraccount_set": []}
@@ -178,6 +181,7 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "3",
             "customer_status": "new",
+            "association_type": "customer",
             "party": {
                 "type": "Individual",
                 'given_names': 'test John', 'family_names': 'Doe'},
@@ -188,6 +192,7 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "4",
             "customer_status": "new",
+            "association_type": "customer",
             "party": {
                 "type": "Organisation",
                 'name': 'Pen Inc. 2'},
@@ -203,6 +208,7 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "3",
             "customer_status": "active",
+            "association_type": "customer",
             "party": {
                 "type": "Individual",
                 'given_names': 'test John', 'family_names': 'Doe'},

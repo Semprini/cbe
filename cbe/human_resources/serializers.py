@@ -35,4 +35,4 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Staff
-        fields = ('type', 'url', 'company', 'party' )
+        fields = ('type', 'url', 'company', 'party', 'association_type' )

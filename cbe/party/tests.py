@@ -200,6 +200,7 @@ class OwnerAPITests(APITestCase):
         """
         url = '/api/party/owner/'
         data = {
+            "association_type": "Ownership",
             "party": {
                 "type": "Individual",
                 "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk),
@@ -209,6 +210,7 @@ class OwnerAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         data = {
+            "association_type": "Ownership",
             "party": {
                 "type": "Organisation",
                 "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},

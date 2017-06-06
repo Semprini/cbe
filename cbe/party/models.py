@@ -52,6 +52,7 @@ class Individual(Party):
 
 
 class Organisation(Party):  # Eg IRD
+    parent = models.ForeignKey('Organisation', blank=True, null=True)
     organisation_type = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
@@ -67,6 +68,7 @@ class PartyRole(models.Model):
         ContentType, related_name="%(app_label)s_%(class)s_ownership")
     party_object_id = models.PositiveIntegerField()
     party = GenericForeignKey('party_content_type', 'party_object_id')
+    association_type = models.CharField(max_length=200)
 
     contact_mediums = GM2MField()
 
