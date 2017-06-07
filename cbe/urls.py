@@ -72,6 +72,7 @@ cberouter.register(
 cberouter.register(
     r'party/telephone_number', PartyViews.TelephoneNumberViewSet)
 cberouter.register(r'party/owner', PartyViews.OwnerViewSet)
+cberouter.register(r'party/party_role_association', PartyViews.PartyRoleAssociationViewSet)
 
 cberouter.register(r'location/country', LocationViews.CountryViewSet)
 cberouter.register(r'location/city', LocationViews.CityViewSet)

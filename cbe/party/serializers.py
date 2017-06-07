@@ -5,8 +5,9 @@ from django.core.urlresolvers import resolve
 
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField
-from cbe.party.models import Individual, Organisation, GENDER_CHOICES, MARITAL_STATUS_CHOICES, TelephoneNumber, GenericPartyRole, Owner
+from cbe.utils.serializer_fields import TypeField, GenericRelatedField
+from cbe.party.models import Individual, Organisation, GENDER_CHOICES, MARITAL_STATUS_CHOICES, TelephoneNumber, GenericPartyRole, Owner, PartyRoleAssociation
+from cbe.customer.models import Customer
 from cbe.location.serializers import CountrySerializer
 
 
@@ -84,6 +85,16 @@ class OrganisationSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'parent', 'name',)
 
         
+class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+    party_role = serializers.HyperlinkedRelatedField(
+        view_name='genericpartyrole-detail', queryset=GenericPartyRole.objects.all())
+
+    class Meta:
+        model = TelephoneNumber
+        fields = ('type', 'url', 'party_role', 'number')
+        
+        
 class OwnerSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
     party = PartyRelatedField()
@@ -93,21 +104,34 @@ class OwnerSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'party',)
         
         
-class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeField()
-    party_role = serializers.HyperlinkedRelatedField(
-        view_name='genericpartyrole-detail', queryset=GenericPartyRole.objects.all())
+class PartyRoleAssociationFromBasicSerializer(serializers.HyperlinkedModelSerializer):
 
+    association_to = serializers.URLField()
+    
     class Meta:
-        model = TelephoneNumber
-        fields = ('type', 'url', 'party_role', 'number')
+        model = PartyRoleAssociation
+        fields = ( 'url', 'association_type', 'association_to' )        
 
+        
+class PartyRoleAssociationToBasicSerializer(serializers.HyperlinkedModelSerializer):
 
+    association_from = serializers.URLField()
+    
+    class Meta:
+        model = PartyRoleAssociation
+        fields = ( 'url', 'association_type', 'association_from' )        
+        
+ 
 class GenericPartyRoleSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
     telephonenumbers = TelephoneNumberSerializer(many=True, read_only=True)
+    
+    associations_from = GenericRelatedField( many=True, serializer_dict={PartyRoleAssociation: PartyRoleAssociationFromBasicSerializer(), } )
+    associations_to = GenericRelatedField( many=True, serializer_dict={ PartyRoleAssociation: PartyRoleAssociationToBasicSerializer(), } )
 
     class Meta:
         model = GenericPartyRole
         fields = (
-            'type', 'url', 'valid_from', 'valid_to', 'name', 'telephonenumbers')
+            'type', 'url', 'valid_from', 'valid_to', 'name', 'telephonenumbers', 'associations_from', 'associations_to',)
+   
+    

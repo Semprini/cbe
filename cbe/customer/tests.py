@@ -137,6 +137,8 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "3",
             "customer_status": "new",
+            "associations_from": [],
+            "associations_to": [],
             "party": {
                 "type": "Individual",
                 "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk),
@@ -149,6 +151,8 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "4",
             "customer_status": "new",
+            "associations_from": [],
+            "associations_to": [],
             "party": {
                 "type": "Organisation",
                 "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},
@@ -164,6 +168,8 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "3",
             "customer_status": "new",
+            "associations_from": [],
+            "associations_to": [],
             "party": {
                 "type": "Foo"},
             "customeraccount_set": []}
@@ -178,6 +184,8 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "3",
             "customer_status": "new",
+            "associations_from": [],
+            "associations_to": [],
             "party": {
                 "type": "Individual",
                 'given_names': 'test John', 'family_names': 'Doe'},
@@ -188,6 +196,8 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "4",
             "customer_status": "new",
+            "associations_from": [],
+            "associations_to": [],
             "party": {
                 "type": "Organisation",
                 'name': 'Pen Inc. 2'},
@@ -203,6 +213,8 @@ class CustomerAPITests(APITestCase):
         data = {
             "customer_number": "3",
             "customer_status": "active",
+            "associations_from": [],
+            "associations_to": [],
             "party": {
                 "type": "Individual",
                 'given_names': 'test John', 'family_names': 'Doe'},

@@ -75,8 +75,11 @@ class PartyRoleAssociation(models.Model):
         ContentType, related_name="%(app_label)s_%(class)s_to")
     association_to_object_id = models.PositiveIntegerField()
     association_to = GenericForeignKey('association_to_content_type', 'association_to_object_id')
-        
 
+    def __str__(self):
+        return "%s %s:%s" % (self.association_type, self.association_to_content_type, self.association_to)    
+
+        
 class PartyRole(models.Model):
     valid_from = models.DateTimeField(auto_now_add=True)
     valid_to = models.DateTimeField(null=True, blank=True)

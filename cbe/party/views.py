@@ -2,8 +2,14 @@ from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from cbe.party.models import Individual, Organisation, TelephoneNumber, GenericPartyRole, Owner
+from cbe.party.models import Individual, Organisation, TelephoneNumber, GenericPartyRole, Owner, PartyRoleAssociation
 from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer, GenericPartyRoleSerializer, OwnerSerializer
+from cbe.party.serializers_partyroleassociation import PartyRoleAssociationSerializer
+
+class PartyRoleAssociationViewSet(viewsets.ModelViewSet):
+    queryset = PartyRoleAssociation.objects.all()
+    serializer_class = PartyRoleAssociationSerializer
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
 
 
 class OwnerViewSet(viewsets.ModelViewSet):

@@ -3,7 +3,7 @@ from django import forms
 from django.db import models
 from django.contrib.contenttypes.admin import GenericTabularInline
 
-from cbe.party.models import Organisation, Individual, PhysicalContact, EmailContact, TelephoneNumber, GenericPartyRole, Owner
+from cbe.party.models import Organisation, Individual, PhysicalContact, EmailContact, TelephoneNumber, GenericPartyRole, Owner, PartyRoleAssociation
 
 
 class GenericPartyRoleAdminForm(forms.ModelForm):
@@ -84,3 +84,5 @@ admin.site.register(EmailContact)
 admin.site.register(TelephoneNumber, TelephoneNumberAdmin)
 admin.site.register(GenericPartyRole, GenericPartyRoleAdmin)
 admin.site.register(Owner, GenericPartyRoleAdmin)
+admin.site.register(PartyRoleAssociation)
+
