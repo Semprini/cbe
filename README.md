@@ -13,6 +13,7 @@ The CBE projects goal is to provide a generic schema/API/persistence layer which
 Industry Specific Extension Projects
  - [Retail](https://github.com/Semprini/cbe-retail)
  - [Utilities (Telco/Energy/Media)](https://github.com/Semprini/cbe-utilities)
+ - [Sport](https://github.com/Semprini/cbe-sport)
 
 Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 
