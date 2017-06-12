@@ -6,7 +6,7 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 
 from cbe.party.models import Organisation, Individual, PhysicalContact, EmailContact, TelephoneNumber, GenericPartyRole
 from cbe.party.admin import GenericPartyRoleAdminForm, GenericPartyRoleAdmin, PhysicalContactInline, EmailContactInline, TelephoneNumberInline
-from cbe.customer.models import Customer, CustomerAccount, CustomerAccountRelationship, CustomerOrder, CustomerAccountContact
+from cbe.customer.models import Customer, CustomerAccount, CustomerAccountRelationship, CustomerOrder, CustomerAccountContact, CustomerCreditProfile
 
 
 class CustomerAdminForm(GenericPartyRoleAdminForm):
@@ -50,6 +50,7 @@ class CustomerOrderAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Customer, CustomerAdmin)
+admin.site.register(CustomerCreditProfile)
 admin.site.register(CustomerOrder, CustomerOrderAdmin)
 admin.site.register(CustomerAccount, CustomerAccountAdmin)
 admin.site.register(CustomerAccountRelationship)

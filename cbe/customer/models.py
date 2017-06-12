@@ -23,7 +23,16 @@ class Customer(PartyRole):
     def __str__(self):
         return "%s:%s" % (self.customer_number, self.party)
 
-
+        
+class CustomerCreditProfile(models.Model):
+    customer = models.ForeignKey(Customer)
+    valid_from = models.DateField(null=True, blank=True)
+    valid_to = models.DateField(null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
+    credit_risk_rating = models.IntegerField(null=True, blank=True)
+    credit_score = models.IntegerField(null=True, blank=True)
+        
+        
 class CustomerAccountContact(PartyRole):
 
     def save(self, *args, **kwargs):

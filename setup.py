@@ -1,62 +1,19 @@
+import os
+
 from distutils.core import setup
+
+def find_packages(srcdir):
+    package_list = []
+    badnames=["__pycache__",]
+    for root, dirs, files in os.walk(srcdir):
+        if not any(bad in root for bad in badnames):
+            if "__init__.py" in files:
+                package_list.append( root.replace("/",".").replace("\\",".").strip('.') )
+    return package_list
+
+cbe_packages = find_packages('cbe/')
+
 setup(name='cbe',
-      version='0.3-alpha',
-      py_modules=[
-          'cbe.business_interaction.__init__',
-          'cbe.business_interaction.admin',
-          'cbe.business_interaction.models',
-          'cbe.business_interaction.serializers',
-          'cbe.business_interaction.tests',
-          'cbe.business_interaction.views',
-          'cbe.customer.__init__',
-          'cbe.customer.admin',
-          'cbe.customer.models',
-          'cbe.customer.serializers',
-          'cbe.customer.tests',
-          'cbe.customer.views',
-          'cbe.location.__init__',
-          'cbe.location.admin',
-          'cbe.location.models',
-          'cbe.location.serializers',
-          'cbe.location.tests',
-          'cbe.location.views',
-          'cbe.party.__init__',
-          'cbe.party.admin',
-          'cbe.party.models',
-          'cbe.party.serializers',
-          'cbe.party.views',
-          'cbe.party.tests',
-          'cbe.physical_object.__init__',
-          'cbe.physical_object.admin',
-          'cbe.physical_object.models',
-          'cbe.physical_object.serializers',
-          'cbe.physical_object.views',
-          'cbe.physical_object.tests',
-          'cbe.trouble.__init__',
-          'cbe.trouble.admin',
-          'cbe.trouble.models',
-          'cbe.trouble.serializers',
-          'cbe.trouble.views',
-          'cbe.trouble.tests',
-          'cbe.supplier_partner.__init__',
-          'cbe.supplier_partner.admin',
-          'cbe.supplier_partner.models',
-          'cbe.supplier_partner.serializers',
-          'cbe.supplier_partner.views',
-          'cbe.supplier_partner.tests',
-          'cbe.human_resources.__init__',
-          'cbe.human_resources.admin',
-          'cbe.human_resources.models',
-          'cbe.human_resources.serializers',
-          'cbe.human_resources.views',
-          'cbe.human_resources.tests',
-          'cbe.resource.__init__',
-          'cbe.resource.admin',
-          'cbe.resource.models',
-          'cbe.resource.serializers',
-          'cbe.resource.views',
-          'cbe.resource.tests',
-          'cbe.utils.serializer_fields', 'cbe.utils.serializers', 'cbe.utils.permissions', 'cbe.utils.api',
-          'cbe.urls', 'cbe.tests', 'cbe.views', 'cbe.settings',
-      ],
-      )
+    version='0.5-alpha',
+    packages=cbe_packages
+)
