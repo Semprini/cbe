@@ -114,3 +114,4 @@ web.config
 /projectDirectories.txt
 /.vagrant/
 /.pydevproject
+/buildnumber.counter
