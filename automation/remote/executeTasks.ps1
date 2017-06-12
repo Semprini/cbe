@@ -1,21 +1,30 @@
-function taskException ($taskName) {
-    write-host "[$scriptName] Caught an exception executing $taskName :" -ForegroundColor Red
-    write-host "     Exception Type: $($_.Exception.GetType().FullName)" -ForegroundColor Red
-    write-host "     Exception Message: $($_.Exception.Message)" -ForegroundColor Red
-	write-host
-    throw "$scriptName HALT"
+# Entry Point for portable package deployment, child scripts inherit the functions of parent scripts, so these definitions are global
+function exitWithCode ($message, $exitCode) {
+    write-host "[$scriptName] $message" -ForegroundColor Red
+    write-host "[$scriptName]   Returning errorlevel $exitCode to DOS" -ForegroundColor Magenta
+    $host.SetShouldExit($exitCode)
+    exit $exitCode
 }
 
-function exitWithCode ($taskName) {
+function passExitCode ($message, $exitCode) {
+    write-host "[$scriptName] $message" -ForegroundColor Red
+    write-host "[$scriptName]   Exiting with `$LASTEXITCODE $exitCode" -ForegroundColor Magenta
+    exit $exitCode
+}
+
+function exceptionExit ($exception) {
+    write-host "[$scriptName]   Exception details follow ..." -ForegroundColor Red
+    echo $exception.Exception|format-list -force
+    write-host "[$scriptName] Returning errorlevel (500) to DOS" -ForegroundColor Magenta
+    $host.SetShouldExit(500); exit
+}
+
+# Not used in this script because called from DOS, but defined here for all child scripts
+function taskFailure ($taskName) {
     write-host
-    write-host "[$scriptName] Caught an exception excuting $taskName :" -ForegroundColor Red
-    write-host "     Exception Type: $($_.Exception.GetType().FullName)" -ForegroundColor Red
-    write-host "     Exception Message: $($_.Exception.Message)" -ForegroundColor Red
-    write-host
-    write-host "     Returning errorlevel (-1) to DOS" -ForegroundColor Magenta
-    write-host
-    $host.SetShouldExit(-1)
-    exit
+    write-host "[$scriptName] Failure occured! Code returned ... $taskName" -ForegroundColor Red
+    write-host "[$scriptName] Returning errorlevel (510) to DOS" -ForegroundColor Magenta
+    $host.SetShouldExit(510); exit
 }
 
 function taskWarning { 
@@ -27,7 +36,7 @@ function getProp ($propName) {
 	try {
 		$propValue=$(& .\getProperty.ps1 .\$TARGET $propName)
 		if(!$?){ taskWarning }
-	} catch { exitWithCode "getProp" }
+	} catch { exceptionExit $_ }
 	
     return $propValue
 }
@@ -48,21 +57,21 @@ if ($WORKSPACE ) {
 write-host "[$scriptName]   hostname             : $(hostname)"
 write-host "[$scriptName]   whoami               : $(whoami)"
 
-write-host
-write-host "[$scriptName] Load SOLUTION and BUILDNUMBER from manifest.txt"
+write-host "`n[$scriptName] Load SOLUTION and BUILDNUMBER from manifest.txt"
 & .\Transform.ps1 ".\manifest.txt" | ForEach-Object { invoke-expression $_ }
 
 $scriptOverride = getProp ("deployScriptOverride")
 if ($scriptOverride ) {
-	write-host "[$scriptName]   deployScriptOverride : $scriptOverride"
-    Write-Host
+	write-host "[$scriptName]   deployScriptOverride : $scriptOverride`n"
     $expression=".\$scriptOverride $SOLUTION $BUILDNUMBER $TARGET"
     write-host $expression
 	try {
 		Invoke-Expression $expression
-	    if(!$?){ taskException "REMOTE_OVERRIDESCRIPT_TRAP" $_ }
-    } catch { taskException "REMOTE_OVERRIDESCRIPT_EXCEPTION" $_ }
-
+		if($LASTEXITCODE -ne 0){
+		    exitWithCode "OVERRIDE_EXECUTE_NON_ZERO_EXIT Invoke-Expression $expression" $LASTEXITCODE 
+		}
+	    if(!$?){ taskFailure "REMOTE_OVERRIDESCRIPT_TRAP" }
+    } catch { exceptionExit $_ }
 
 } else {
 
@@ -75,11 +84,10 @@ if ($scriptOverride ) {
 	    write-host "[$scriptName]   taskList  : $taskList (default, deployTaskOverride not found in properties file)"
     }
 
-    Write-Host
-    write-host "[$scriptName] Execute the Tasks defined in $taskList"
-    Write-Host
-    try {
-	    & .\execute.ps1 $SOLUTION $BUILDNUMBER $TARGET $taskList
-	    if(!$?){ exitWithCode "POWERSHELL_TRAP_$_" }
-    } catch { exitWithCode "POWERSHELL_EXCEPTION_$_" }
+    write-host "`n[$scriptName] Execute the Tasks defined in $taskList`n"
+    & .\execute.ps1 $SOLUTION $BUILDNUMBER $TARGET $taskList
+	if($LASTEXITCODE -ne 0){
+	    exitWithCode "OVERRIDE_EXECUTE_NON_ZERO_EXIT Invoke-Expression $expression" $LASTEXITCODE 
+	}
+    if(!$?){ taskFailure "POWERSHELL_TRAP" }
 }

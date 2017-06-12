@@ -59,7 +59,7 @@ To use a virtual environment requires VirtualBox and Vagrant, from the workspace
 ### Direct PowerShell Access
 
 To access the buildserver using native remote PowerShell.
-Allow credential delegation, on-off step needed on the host when using VirtualBox/Vagrant. 
+Allow credential delegation, one-off step needed on the host when using VirtualBox/Vagrant. 
 
     ./automation/provisioning/runner.bat CredSSP.ps1 client
 

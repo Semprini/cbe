@@ -1,5 +1,5 @@
 # Override function used in entry points
-function exitWithCode ($taskName) {
+function exceptionExit ($taskName) {
     write-host
     write-host "[$scriptName] --- Emulation Error Handling ---" -ForegroundColor Red
     write-host
@@ -7,7 +7,7 @@ function exitWithCode ($taskName) {
     write-host
     write-host "[$scriptName] $taskName failed!" -ForegroundColor Red
     write-host "[$scriptName]   Returning errorlevel (-2) to emulation wrapper" -ForegroundColor Magenta
-    $host.SetShouldExit(-2)
+    $host.SetShouldExit(-2) # Returning exit code to DOS
     exit
 }
 
@@ -24,13 +24,19 @@ if ($AUTOMATIONROOT) {
 	Write-Host "[$scriptName]   AUTOMATIONROOT      : $AUTOMATIONROOT (default)"
 }
 
-# Use timestamp to ensure unique build number
-$buildNumber = $(get-date -f hhmmss)
-$buildNumber = $buildNumber.TrimStart('0')
+# Use a simple text file (buildnumber.counter) for incrimental build number
+if ( Test-Path buildnumber.counter ) {
+	$buildNumber = Get-Content buildnumber.counter
+} else {
+	$buildNumber = 0
+}
+[int]$buildnumber = [convert]::ToInt32($buildNumber)
+$buildNumber += 1
+Out-File buildnumber.counter -InputObject $buildNumber
 Write-Host "[$scriptName]   buildNumber         : $buildNumber"
 $revision = 'master' # Assuming source control is Git
 Write-Host "[$scriptName]   revision            : $revision"
-$release = '666' # Assuming Release is an integer
+$release = $buildNumber += 1 # Assuming Release is an integer, set it to a different value from build number 
 Write-Host "[$scriptName]   release             : $release"
 
 # Check for user defined solution folder, i.e. outside of automation root, if found override solution root
@@ -89,8 +95,10 @@ try {
 if ( $solutionName ) {
 	Write-Host "[$scriptName]   solutionName        : $solutionName (from ${solutionRoot}\CDAF.solution)"
 } else {
-	write-host "[$scriptName] Solution name (solutionName) not defined in ${solutionRoot}\CDAF.solution!"
-	exitWithCode "SOLUTION_NOT_FOUND"
+	write-host "[$scriptName] Solution name (solutionName) not defined in ${solutionRoot}\CDAF.solution!" -ForegroundColor Red
+    write-host "[$scriptName]   Exit with `$LASTEXITCODE 1" -ForegroundColor Magenta
+    $host.SetShouldExit(1) # Returning exit code to DOS
+    exit
 }
 
 $workDirLocal = 'TasksLocal'
@@ -139,7 +147,13 @@ if ( $ACTION -ne "clean" ) { # Case insensitive
 }
 # Process Build and Package
 & $ciProcess $buildNumber $revision $ACTION
-if(!$?){ exitWithCode $ciProcess }
+if($LASTEXITCODE -ne 0){
+    write-host "[$scriptName] CI_NON_ZERO_EXIT $ciProcess $buildNumber $revision $ACTION" -ForegroundColor Magenta
+    write-host "[$scriptName]   `$host.SetShouldExit($LASTEXITCODE)" -ForegroundColor Red
+    $host.SetShouldExit($LASTEXITCODE) # Returning exit code to DOS
+    exit
+}
+if(!$?){ exceptionExit "$ciProcess $buildNumber $revision $ACTION" }
 
 if ( $ACTION -ne "clean" ) {
 	write-host
@@ -214,7 +228,13 @@ if ( $ACTION -eq "clean" ) {
 	write-host "[$scriptName] -------------------------------------------------------"
 
 	& $cdProcess $environmentDelivery $release
-	if(!$?){ exitWithCode $ciProcess }
+	if($LASTEXITCODE -ne 0){
+	    write-host "[$scriptName] CD_NON_ZERO_EXIT $cdProcess $environmentDelivery $release" -ForegroundColor Magenta
+	    write-host "[$scriptName]   `$host.SetShouldExit($LASTEXITCODE)" -ForegroundColor Red
+	    $host.SetShouldExit($LASTEXITCODE) # Returning exit code to DOS
+	    exit
+	}
+	if(!$?){ exceptionExit "$cdProcess $environmentDelivery $release" }
 }
 write-host
 write-host "[$scriptName] ------------------"
