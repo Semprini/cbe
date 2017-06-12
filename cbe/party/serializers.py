@@ -82,7 +82,7 @@ class OrganisationSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Organisation
-        fields = ('type', 'url', 'parent', 'name',)
+        fields = ('type', 'url', 'parent', 'name', 'sub_organisations', )
 
         
 class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):

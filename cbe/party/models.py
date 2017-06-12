@@ -53,7 +53,7 @@ class Individual(Party):
 
 
 class Organisation(Party):  # Eg IRD
-    parent = models.ForeignKey('Organisation', blank=True, null=True)
+    parent = models.ForeignKey('Organisation', blank=True, null=True, related_name='sub_organisations')
     organisation_type = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
