@@ -1,10 +1,23 @@
 # Entry Point for Build Process, child scripts inherit the functions of parent scripts, so these definitions are global for the CI process
+# Primary powershell, returns exitcode to DOS
+function exitWithCode ($message, $exitCode) {
+    write-host "[$scriptName] $message" -ForegroundColor Red
+    write-host "[$scriptName]   Returning errorlevel $exitCode to DOS" -ForegroundColor Magenta
+    $host.SetShouldExit($exitCode)
+    exit $exitCode
+}
 
-function exitWithCode ($exception) {
+function passExitCode ($message, $exitCode) {
+    write-host "[$scriptName] $message" -ForegroundColor Red
+    write-host "[$scriptName]   Exiting with `$LASTEXITCODE $exitCode" -ForegroundColor Magenta
+    exit $exitCode
+}
+
+function exceptionExit ($exception) {
     write-host "[$scriptName]   Exception details follow ..." -ForegroundColor Red
     echo $exception.Exception|format-list -force
-    write-host "[$scriptName] Returning errorlevel (-1) to DOS" -ForegroundColor Magenta
-    $host.SetShouldExit(-1)
+    write-host "[$scriptName] Returning errorlevel (20) to DOS" -ForegroundColor Magenta
+    $host.SetShouldExit(20)
     exit
 }
 
@@ -12,9 +25,9 @@ function exitWithCode ($exception) {
 function taskFailure ($taskName) {
     write-host
     write-host "[$scriptName] Failure occured! Code returned ... $taskName" -ForegroundColor Red
-    throw "$scriptName $taskName"
+    $host.SetShouldExit(30)
+    exit
 }
-
 
 function taskWarning { 
     write-host "[$scriptName] Warning, $taskName encountered an error that was allowed to proceed." -ForegroundColor Yellow
@@ -50,7 +63,7 @@ function getProp ($propName) {
 	try {
 		$propValue=$(& .\$AUTOMATIONROOT\remote\getProperty.ps1 $propertiesFile $propName)
 		if(!$?){ taskWarning }
-	} catch { taskFailure "getProp_$propName" }
+	} catch { exceptionExit $_ }
 	
     return $propValue
 }
@@ -83,8 +96,7 @@ $BUILDNUMBER = $args[0]
 if ( $BUILDNUMBER ) {
 	Write-Host "[$scriptName]   BUILDNUMBER     : $BUILDNUMBER"
 } else { 
-	Write-Host "[$scriptName] Build Number not supplied!"
-	exitWithCode "BUILDNUMBER_NOT_SUPPLIED" 
+	exitWithCode "Build Number not supplied!" 21
 }
 
 $REVISION = $args[1]
@@ -107,8 +119,7 @@ if ($SOLUTION) {
 	if ($SOLUTION) {
 		Write-Host "[$scriptName]   SOLUTION        : $SOLUTION (from `$solutionRoot\CDAF.solution)"
 	} else {
-		Write-Host "[$scriptName] Solution not supplied and unable to derive from $solutionRoot\CDAF.solution"
-		exitWithCode "SOLUTION_NOT_SUPPLIED" 
+		exitWithCode "SOLUTION_NOT_FOUND Solution not supplied and unable to derive from $solutionRoot\CDAF.solution" 22
 	}
 }
 
@@ -140,20 +151,14 @@ $propertiesFile = "$AUTOMATIONROOT\CDAF.windows"
 $cdafVersion = getProp 'productVersion'
 Write-Host "[$scriptName]   CDAF Version    : $cdafVersion"
 
-try {
-	& .\$AUTOMATIONROOT\buildandpackage\buildProjects.ps1 $SOLUTION $BUILDNUMBER $REVISION $AUTOMATIONROOT $solutionRoot $ACTION
-	if(!$?){ taskWarning }
-} catch {
-	Write-Host
-	Write-Host "[$scriptName] Exception thrown from & .\$AUTOMATIONROOT\buildandpackage\buildProjects.ps1 $SOLUTION $BUILDNUMBER $REVISION $AUTOMATIONROOT $solutionRoot $ACTION"
-	exitWithCode $_ 
+& .\$AUTOMATIONROOT\buildandpackage\buildProjects.ps1 $SOLUTION $BUILDNUMBER $REVISION $AUTOMATIONROOT $solutionRoot $ACTION
+if($LASTEXITCODE -ne 0){
+	exitWithCode "BUILD_NON_ZERO_EXIT .\$AUTOMATIONROOT\buildandpackage\buildProjects.ps1 $SOLUTION $BUILDNUMBER $REVISION $AUTOMATIONROOT $solutionRoot $ACTION" $LASTEXITCODE
 }
+if(!$?){ taskWarning "buildProjects.ps1" }
 
-try {
-	& .\$AUTOMATIONROOT\buildandpackage\package.ps1 $SOLUTION $BUILDNUMBER $REVISION $AUTOMATIONROOT $solutionRoot $LOCAL_WORK_DIR $REMOTE_WORK_DIR $ACTION
-	if(!$?){ taskWarning }
-} catch {
-	Write-Host
-	Write-Host "[$scriptName] Exception thrown from & .\$AUTOMATIONROOT\buildandpackage\package.ps1 $SOLUTION $BUILDNUMBER $REVISION $AUTOMATIONROOT $solutionRoot $LOCAL_WORK_DIR $REMOTE_WORK_DIR $ACTION"
-	exitWithCode $_ 
+& .\$AUTOMATIONROOT\buildandpackage\package.ps1 $SOLUTION $BUILDNUMBER $REVISION $AUTOMATIONROOT $solutionRoot $LOCAL_WORK_DIR $REMOTE_WORK_DIR $ACTION
+if($LASTEXITCODE -ne 0){
+	exitWithCode "PACKAGE_NON_ZERO_EXIT .\$AUTOMATIONROOT\buildandpackage\package.ps1 $SOLUTION $BUILDNUMBER $REVISION $AUTOMATIONROOT $solutionRoot $LOCAL_WORK_DIR $REMOTE_WORK_DIR $ACTION" $LASTEXITCODE
 }
+if(!$?){ taskWarning "package.ps1" }

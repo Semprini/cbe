@@ -1,33 +1,11 @@
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+# Convert exceptions and errors into generic exit code.
 function taskException ($taskName, $exception) {
     write-host "[$scriptName (taskException)] Caught an exception excuting $taskName :" -ForegroundColor Red
     write-host "     Exception Type: $($exception.Exception.GetType().FullName)" -ForegroundColor Red
     write-host "     Exception Message: $($exception.Exception.Message)" -ForegroundColor Red
-
-	If ($RELEASE -eq "remote") {
-		write-host
-		write-host "[$scriptName (taskException)] Called from DOS, returning errorlevel -1" -ForegroundColor Blue
-		$host.SetShouldExit(-1)
-	} else {
-		write-host
-		write-host "[$scriptName (taskException)] Called from PowerShell, throwing error" -ForegroundColor Blue
-		throw "$taskName"
-	}
-}
-
-function throwErrorlevel ($taskName, $trappedExit) {
-    write-host "[$scriptName (throwErrorlevel)] Trapped DOS exit code : $trappedExit" -ForegroundColor Red
-
-	If ($RELEASE -eq "remote") {
-		write-host
-		write-host "[$scriptName (throwErrorlevel)] Called from DOS, returning exit code as errorlevel" -ForegroundColor Blue
-		$host.SetShouldExit($trappedExit)
-	} else {
-		write-host
-		write-host "[$scriptName (throwErrorlevel)] Called from PowerShell, throwing error" -ForegroundColor Blue
-		throw "$taskName $trappedExit"
-	}
+	exit -3
 }
 
 function makeContainer ($itemPath) { 
@@ -37,13 +15,13 @@ function makeContainer ($itemPath) {
 			write-host "[$scriptName (makeContainer)] $itemPath exists"
 		} else {
 			Remove-Item $itemPath -Recurse -Force
-			if(!$?) {exitWithCode "[$scriptName (makeContainer)] Remove-Item $itemPath -Recurse -Force" }
+			if(!$?) { taskFailure "[$scriptName (makeContainer)] Remove-Item $itemPath -Recurse -Force" }
 			mkdir $itemPath > $null
-			if(!$?) {exitWithCode "[$scriptName (makeContainer)] (replace) $itemPath Creation failed" }
+			if(!$?) { taskFailure "[$scriptName (makeContainer)] (replace) $itemPath Creation failed" }
 		}	
 	} else {
 		mkdir $itemPath > $null
-		if(!$?) {exitWithCode "[$scriptName (makeContainer)] $itemPath Creation failed" }
+		if(!$?) {taskFailure "[$scriptName (makeContainer)] $itemPath Creation failed" }
 	}
 }
 
@@ -52,7 +30,7 @@ function itemRemove ($itemPath) {
 	if ( Test-Path $itemPath ) {
 		write-host "[itemRemove] Delete $itemPath"
 		Remove-Item $itemPath -Recurse -Force
-		if(!$?) {exitWithCode "[$scriptName (itemRemove)] Remove-Item $itemPath -Recurse -Force" }
+		if(!$?) {taskFailure "[$scriptName (itemRemove)] Remove-Item $itemPath -Recurse -Force" }
 	}
 }
 
@@ -77,10 +55,10 @@ function copyRecurse ($from, $to, $notFirstRun) {
 			
 				# The existing path is a file, not a directory, delete the file and replace with a directory
 				Remove-Item $to -Recurse -Force
-				if(!$?) {exitWithCode "[$scriptName (copyRecurse)] Remove-Item $to -Recurse -Force" }
+				if(!$?) {taskFailure "[$scriptName (copyRecurse)] Remove-Item $to -Recurse -Force" }
 				Write-Host "  $from --> $to (replace file with directory)" 
 				mkdir $to > $null
-				if(!$?) {exitWithCode "[$scriptName (copyRecurse)] (replace) $to Creation failed" }
+				if(!$?) {taskFailure "[$scriptName (copyRecurse)] (replace) $to Creation failed" }
 			}
 		}
 		
@@ -88,7 +66,7 @@ function copyRecurse ($from, $to, $notFirstRun) {
 		if ( ! (Test-Path $to)) {
 			Write-Host "  $from --> $to"
 			mkdir $to > $null
-			if(!$?) {exitWithCode "[$scriptName (copyRecurse)] $to Creation failed" }
+			if(!$?) {taskFailure "[$scriptName (copyRecurse)] $to Creation failed" }
 		}
 
 		foreach ($child in (Get-ChildItem -Path "$from" -Name )) {
@@ -99,7 +77,7 @@ function copyRecurse ($from, $to, $notFirstRun) {
 
 		Write-Host "  $from --> $to" 
 		Copy-Item $from $to -force -recurse
-		if(!$?){ exitWithCode ("[$scriptName (copyRecurse)] Copy remote script $from --> $to") }
+		if(!$?){ taskFailure ("[$scriptName (copyRecurse)] Copy remote script $from --> $to") }
 		
 	}
 }
@@ -123,7 +101,8 @@ function ZipFiles( $zipfilename, $sourcedir )
 			Write-Host "[$scriptName (ZipFiles)]   --> $item"
 		}
 	} else {
-		throwErrorlevel "ZIP_SOURCE_DIR_NOT_FOUND" 700
+        Write-Host "`n[$scriptName] ZIP_SOURCE_DIR_NOT_FOUND, exit with LASTEXITCODE = 700" -ForegroundColor Red
+		exit 700
 	}
 }
 
@@ -137,6 +116,15 @@ function UnZipFiles( $packageFile, $packagePath )
 	foreach ($item in (Get-ChildItem -Path $packagePath/$packageFile)) {
 		Write-Host "[$scriptName (UnZipFiles)]    --> $item"
 	}
+}
+
+# Replace in file, written as a function to allow argument passing with spaces
+function replaceInFile( $fileName, $token, $value )
+{
+	try {
+	(Get-Content $fileName | ForEach-Object { $_ -replace "$token", "$value" } ) | Set-Content $fileName
+	    if(!$?) { taskException "REPLAC_TRAP" }
+	} catch { taskException "REPLAC_TRAP" $_ }
 }
 
 $SOLUTION    = $args[0]
@@ -183,11 +171,15 @@ if ( test-path -path "$TARGET" -pathtype leaf ) {
 	}
 	try {
 		& $transform "$propFile" | ForEach-Object { invoke-expression $_ }
-	    if(!$?) { taskException "PRODLD_TRAP" $_ }
+	    if(!$?) { taskException "PRODLD_TRAP" }
 	} catch { taskException "PRODLD_EXCEPTION" $_ }
 	Write-Host
 }	
 
+if (!( Test-Path $TASK_LIST )) {
+    Write-Host "`n[$scriptName] Task Execution file ($TASK_LIST) not found! `$LASTEXITCODE 9998" -ForegroundColor Red
+    exit 9998
+}
 Foreach ($line in get-content $TASK_LIST) {
 
     # If the task line is empty, simply log an empty line
@@ -238,7 +230,7 @@ Foreach ($line in get-content $TASK_LIST) {
 					Write-Host
 			        try {
 						& $transform "$propFile" | ForEach-Object { invoke-expression $_ }
-				        if(!$?) { taskException "PRODLD_TRAP" $_ }
+				        if(!$?) { taskException "PRODLD_TRAP" }
 			        } catch { taskException "PRODLD_EXCEPTION" $_ }
 	            }
 
@@ -341,7 +333,6 @@ Foreach ($line in get-content $TASK_LIST) {
 					$tokenFile = $data[0]
 					$properties = $data[1]
 	            	$expression = ".\Transform.ps1 "
-
 		            if ($properties) {
 			            $expression += $properties + " " + $tokenFile
 		            } else {
@@ -356,11 +347,7 @@ Foreach ($line in get-content $TASK_LIST) {
 	            if ( $feature -eq 'REPLAC ' ) {
 		            Write-Host "$expression ==> " -NoNewline
 		            $arguments = $expression.Substring(7)
-					$data = $arguments.split(" ")
-					$fileName = $data[0]
-					$name = $data[1]
-					$value = $data[2]
-					$expression = "(Get-Content $fileName | ForEach-Object { `$_ -replace `"$name`", `"$value`" } ) | Set-Content $fileName"
+					$expression = "replaceInFile $arguments"
 				}		
 
 				# Compress to file
@@ -385,11 +372,11 @@ Foreach ($line in get-content $TASK_LIST) {
 		            $arguments = Invoke-Expression "Write-Output $arguments"
 					$data = $arguments.split(" ")
 					$filename = $data[0]
-					$target = $data[1]
-		            if (!( $target )) {
-						$target = $pwd
+					$extractTo = $data[1]
+		            if (!( $extractTo )) {
+						$extractTo = $pwd
 					}
-					$expression = "UnZipFiles $filename $target"
+					$expression = "UnZipFiles $filename $extractTo"
 				}		
 	        }
 
@@ -410,16 +397,14 @@ Foreach ($line in get-content $TASK_LIST) {
 	            # Look for DOS exit codes
 		        $exitcode = $LASTEXITCODE
 		        if ( $exitcode -ne 0 ) { 
-			        Write-Host
-			        Write-Host "[$scriptName] $expression failed with LASTEXITCODE = $exitcode" -ForegroundColor Red
-			        throwErrorlevel "DOS_TERM" $exitcode
+			        Write-Host "`n[$scriptName] $expression failed with `$LASTEXITCODE $exitcode" -ForegroundColor Red
+			        exit $exitcode
 		        }
 	
 	            # Check for non-terminating errors, any error will terminate execution
 		        if ( $error[0] ) { 
-			        Write-Host
-			        Write-Host "[$scriptName] $expression failed with ERROR[0] = $error[0]" -ForegroundColor Red
-			        throwErrorlevel "DOS_NON_TERM" $error[0]
+			        Write-Host "`n[$scriptName] $expression failed with ERROR[0] = $error[0], exit with LASTEXITCODE 9999" -ForegroundColor Red
+			        exit 9999
 		        }
 		    }
         }

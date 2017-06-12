@@ -1,9 +1,3 @@
-function taskException ($trapID, $exception) {
-    write-host "[$scriptName] Caught an exception for Trap ID $trapID :" -ForegroundColor Red
-	echo $_.Exception|format-list -force
-	throw $trapID
-}
-
 $ENVIRONMENT = $args[0]
 $SOLUTION = $args[1]
 $BUILD = $args[2]
@@ -42,9 +36,7 @@ if ($remoteUser) {
 			$password = get-content $remoteCred | convertto-securestring
 		}
 		$cred = New-Object System.Management.Automation.PSCredential ($remoteUser, $password )
-	} catch {
-		taskException "REMOTE_TASK_DECRYPT" $_
-	}
+	} catch { exceptionExit "REMOTE_TASK_DECRYPT" $_ }
 }
 
 # Initialise the session handle
@@ -55,23 +47,19 @@ if ($remoteUser) {
 
 	if ( $deployHost.contains(":") ) {
 
-		write-host 
-		write-host "[$scriptName] Connect using $remoteUser and URI $deployHost"
-		write-host 
+		write-host "`n[$scriptName] Connect using $remoteUser and URI $deployHost`n"
 		try {
 			$session = New-PSSession -credential $cred -connectionUri $deployHost -SessionOption (New-PSSessionOption -SkipRevocationCheck -SkipCACheck -SkipCNCheck)
 			if(!$?){ taskError "REMOTE_URI_SESSION_ERROR" }
-		} catch { taskException "REMOTE_URI_SESSION_EXCEPTION" $_ }
+		} catch { exceptionExit "REMOTE_URI_SESSION_EXCEPTION" $_ }
 
 	} else {
 
-		write-host 
-		write-host "[$scriptName] Connect using $remoteUser"
-		write-host 
+		write-host "`n[$scriptName] Connect using $remoteUser`n"
 		try {
 			$session = New-PSSession -credential $cred -ComputerName $deployHost -SessionOption (New-PSSessionOption -SkipRevocationCheck -SkipCACheck -SkipCNCheck)
 			if(!$?){ taskError "REMOTE_USER_SESSION_ERROR" }
-		} catch { taskException "REMOTE_USER_SESSION_EXCEPTION" $_ }
+		} catch { exceptionExit "REMOTE_USER_SESSION_EXCEPTION" $_ }
 
 	}
 
@@ -79,23 +67,19 @@ if ($remoteUser) {
 
 	if ( $deployHost.contains(":") ) {
 
-		write-host 
-		write-host "[$scriptName] Connect using NTLM ($userName) URI $deployHost"
-		write-host 
+		write-host "`n[$scriptName] Connect using NTLM ($userName) URI $deployHost`n"
 		try {
 			$session = New-PSSession -connectionUri $deployHost -SessionOption (New-PSSessionOption -SkipRevocationCheck -SkipCACheck -SkipCNCheck)
 			if(!$?){ taskError "NTLM_URI_SESSION_ERROR" }
-		} catch { taskException "NTLM_URI_SESSION_EXCEPTION" $_ }
+		} catch { exceptionExit "NTLM_URI_SESSION_EXCEPTION" $_ }
 
 	} else {
 
-		write-host 
-		write-host "[$scriptName] Connect using NTLM ($userName)"
-		write-host 
+		write-host "`n[$scriptName] Connect using NTLM ($userName)`n"
 		try {
 			$session = New-PSSession -ComputerName $deployHost -SessionOption (New-PSSessionOption -SkipRevocationCheck -SkipCACheck -SkipCNCheck)
 			if(!$?){ taskError "NTLM_USER_SESSION_ERROR" }
-		} catch { taskException "NTLM_USER_SESSION_EXCEPTION" $_ }
+		} catch { exceptionExit "NTLM_USER_SESSION_EXCEPTION" $_ }
 	}
 }
 
@@ -103,34 +87,39 @@ if ($remoteUser) {
 try {
 	Invoke-Command -session $session -File $WORK_DIR_DEFAULT\remotePackageManagement.ps1 -Args $deployLand,$SOLUTION-$BUILD
 	if(!$?){ taskError "PACKAGE_TEST_ERROR" }
-} catch { taskException "PACKAGE_TEST_EXCEPTION"  $_ }
+} catch { exceptionExit "PACKAGE_TEST_EXCEPTION"  $_ }
 
 # Copy Package
 try {
 	& $WORK_DIR_DEFAULT\copy.ps1 $SOLUTION-$BUILD.zip $deployLand $WORK_DIR_DEFAULT
 	if(!$?){ taskError "COPY_PACKAGE_ERROR" }
-} catch { taskException "COPY_PACKAGE_EXCEPTION"  $_ }
+} catch { exceptionExit "COPY_PACKAGE_EXCEPTION"  $_ }
 
 # Extract package artefacts and move to runtime location
-write-host 
-write-host "[$scriptName] Extract package artefacts to $deployLand\$SOLUTION-$BUILD"
+write-host "`n[$scriptName] Extract package artefacts to $deployLand\$SOLUTION-$BUILD"
 try {
 	Invoke-Command -session $session -File $WORK_DIR_DEFAULT\extract.ps1 -Args $deployLand,$SOLUTION-$BUILD
 	if(!$?){ taskError "EXTRACT_ERROR" }
-} catch { taskException "EXTRACT_EXCEPTION"  $_ }
+} catch { exceptionExit "EXTRACT_EXCEPTION"  $_ }
 
 # Copy Target Properties file into the extracted directory on the remote host
 try {
 	& $WORK_DIR_DEFAULT\copy.ps1 $propertiesFile $deployLand\$SOLUTION-$BUILD $WORK_DIR_DEFAULT 
 	if(!$?){ taskError "COPY_PROPERTIES_ERROR" }
-} catch { taskException "COPY_PROPERTIES_EXCEPTION"  $_ }
+} catch { exceptionExit "COPY_PROPERTIES_EXCEPTION"  $_ }
 
 # Trigger the Loosely coupled remote execution (principle is that this can be trigger manually for disconnected hosts)
 # Automated trigger passes workspace, this is not required for manual deploy as it is expected that the user has navigated to the workspace
 
-write-host 
-write-host "[$scriptName] Transfer control to the remote host" -ForegroundColor Blue
-write-host 
+write-host "`n[$scriptName] Transfer control to the remote host`n" -ForegroundColor Blue
 try {
 	Invoke-Command -session $session -File $WORK_DIR_DEFAULT\deploy.ps1 -Args $DEPLOY_TARGET,$deployLand\$SOLUTION-$BUILD,$warnondeployerror
-} catch { taskException "REMOTEUSER_POWERSHELL_EXCEPTION" $_ }
+} catch { 
+	$exceptionExit = echo $_.tostring()
+	[int]$exceptionExit = [convert]::ToInt32($exceptionExit)
+	if ( $exceptionExit -ne 0 ){
+	    write-host "[$scriptName] EXCEPTION_PASS_BACK Invoke-Command -session $session -File $WORK_DIR_DEFAULT\deploy.ps1 -Args $DEPLOY_TARGET,$deployLand\$SOLUTION-$BUILD,$warnondeployerror" -ForegroundColor Magenta
+		write-host "[$scriptName]   Exit with `$LASTEXITCODE $exceptionExit" -ForegroundColor Red
+		exit $exceptionExit
+	}
+}
