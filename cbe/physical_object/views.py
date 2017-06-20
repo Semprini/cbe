@@ -7,16 +7,16 @@ from cbe.physical_object.serializers import StructureSerializer, VehicleSerializ
 class StructureViewSet(viewsets.ModelViewSet):
     queryset = Structure.objects.all()
     serializer_class = StructureSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
 
     
 class VehicleViewSet(viewsets.ModelViewSet):
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
 
 
 class DeviceViewSet(viewsets.ModelViewSet):
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )    
+    permission_classes = (permissions.DjangoModelPermissions, )    

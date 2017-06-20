@@ -11,4 +11,4 @@ from cbe.resource.serializers import PhysicalResourceSerializer
 class PhysicalResourceViewSet(viewsets.ModelViewSet):
     queryset = PhysicalResource.objects.all()
     serializer_class = PhysicalResourceSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )

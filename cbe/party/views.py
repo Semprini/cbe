@@ -9,13 +9,13 @@ from cbe.party.serializers_partyroleassociation import PartyRoleAssociationSeria
 class PartyRoleAssociationViewSet(viewsets.ModelViewSet):
     queryset = PartyRoleAssociation.objects.all()
     serializer_class = PartyRoleAssociationSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
 
 
 class OwnerViewSet(viewsets.ModelViewSet):
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
     
     
 class IndividualViewSet(viewsets.ModelViewSet):

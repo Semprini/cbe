@@ -9,19 +9,19 @@ from cbe.location.serializers import UrbanPropertyAddressSerializer, CountrySeri
 class CountryViewSet(viewsets.ModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
 
 
 class CityViewSet(viewsets.ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
 
 
 class UrbanPropertyAddressViewSet(viewsets.ModelViewSet):
     queryset = UrbanPropertyAddress.objects.all()
     serializer_class = UrbanPropertyAddressSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
     #                      IsOwnerOrReadOnly,)
 
 

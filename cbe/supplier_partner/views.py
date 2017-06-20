@@ -10,17 +10,17 @@ from cbe.supplier_partner.serializers import SupplierSerializer, BuyerSerializer
 class SupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
 
 
 class BuyerViewSet(viewsets.ModelViewSet):
     queryset = Buyer.objects.all()
     serializer_class = BuyerSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
 
 
 class PartnerViewSet(viewsets.ModelViewSet):
     queryset = Partner.objects.all()
     serializer_class = PartnerSerializer
-    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly, )
+    permission_classes = (permissions.DjangoModelPermissions, )
     

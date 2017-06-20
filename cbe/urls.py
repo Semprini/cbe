@@ -22,6 +22,8 @@ from rest_framework import serializers, viewsets
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
+from . import views
+
 import cbe.party.views as PartyViews
 import cbe.location.views as LocationViews
 #import cbe.business_interaction.views as BusinessInteractionViews
@@ -113,6 +115,7 @@ for route in cberouter.registry:
     router.register(route[0], route[1])
 
 urlpatterns = [
+    url(r'^$', views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/',
