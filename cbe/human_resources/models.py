@@ -6,15 +6,15 @@ from cbe.party.models import PartyRole, Individual, Organisation
 
 
 class IdentificationType( models.Model ):
-    name = models.CharField(max_length=200)
-    # Todo add issuer
+    name = models.CharField(primary_key=True, max_length=200)
+    issuer = models.ForeignKey(Organisation, null=True, blank=True)
 
     def __str__(self):
         return "{}".format(self.name,)
         
 
 class Identification( models.Model ):
-    number = models.CharField(primary_key=True, max_length=200)
+    number = models.CharField(max_length=200)
     identification_type = models.ForeignKey( IdentificationType )
 
     party_content_type = models.ForeignKey(
