@@ -31,5 +31,5 @@ class DeviceSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
     class Meta:
-        model = Structure
+        model = Device
         fields = ('type', 'url', 'start_date', 'end_date', 'physical_object_type', 'make' )                          

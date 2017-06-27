@@ -22,7 +22,7 @@ class SupplierSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Supplier
-        fields = ('type', 'url', 'party', 'association_type' )
+        fields = ('type', 'url', 'party' )
 
     def create(self, validated_data):
         return Supplier.objects.create(**validated_data)
@@ -34,7 +34,7 @@ class PartnerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Partner
-        fields = ('type', 'url', 'party', 'association_type' )
+        fields = ('type', 'url', 'party' )
 
     def create(self, validated_data):
         return Partner.objects.create(**validated_data)
@@ -46,7 +46,7 @@ class BuyerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Buyer
-        fields = ('type', 'url', 'party', 'association_type' )
+        fields = ('type', 'url', 'party' )
 
     def create(self, validated_data):
         return Buyer.objects.create(**validated_data)        
