@@ -68,12 +68,12 @@ class PartyRoleAssociation(models.Model):
     
     association_from_content_type = models.ForeignKey(
         ContentType, related_name="%(app_label)s_%(class)s_from")
-    association_from_object_id = models.PositiveIntegerField()
+    association_from_object_id = models.CharField(max_length=200)
     association_from = GenericForeignKey('association_from_content_type', 'association_from_object_id')
 
     association_to_content_type = models.ForeignKey(
         ContentType, related_name="%(app_label)s_%(class)s_to")
-    association_to_object_id = models.PositiveIntegerField()
+    association_to_object_id = models.CharField(max_length=200)
     association_to = GenericForeignKey('association_to_content_type', 'association_to_object_id')
 
     def __str__(self):
