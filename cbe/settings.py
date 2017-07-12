@@ -50,6 +50,8 @@ INSTALLED_APPS = (
     'cbe.human_resources',
     'cbe.resource',
     'cbe.trouble',
+    'cbe.information_technology',
+    'cbe.project',
 )
 
 MIDDLEWARE_CLASSES = (
