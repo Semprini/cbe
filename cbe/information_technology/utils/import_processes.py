@@ -63,7 +63,7 @@ def importprocess(framework, appindex, apps, projects, line):
     for index,column in enumerate(line[PROJECTINDEX:appindex]):
         if column.lower()=="y":
             projects[index].processes.add( process )
-            projects[index].components.add(*process.components)
+            projects[index].components.add(*process.components.all())
             print( "    Project: %d - %s"%(index,projects[index] ) )
         else:
             projects[index].processes.remove( process )            
