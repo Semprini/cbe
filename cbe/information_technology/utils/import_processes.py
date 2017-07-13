@@ -35,7 +35,8 @@ def reset(frameworkname):
     Process.objects.filter(framework=framework).delete()
     Component.objects.all().delete()
     Project.objects.all().delete()
-        
+
+    
 processes = {}
 def importprocess(framework, appindex, apps, projects, line):
 

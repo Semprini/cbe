@@ -3,11 +3,13 @@ from django.db import models
 from cbe.resource.models import LogicalResource
 
 class ProcessFramework( models.Model ):
-    name = models.CharField(max_length=200)
+    name = models.CharField(primary_key=True, max_length=200)
 
+    documentation = models.TextField(blank=True)
+    
     
 class ProcessClassification(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(primary_key=True, max_length=200)
 
     documentation = models.TextField(blank=True)
 
@@ -41,7 +43,7 @@ class Process(models.Model):
 
         
 class ComponentClassification(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(primary_key=True, max_length=200)
 
     documentation = models.TextField(blank=True)
 

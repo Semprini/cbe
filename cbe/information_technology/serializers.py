@@ -7,7 +7,7 @@ class ProcessFrameworkSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = ProcessFramework
-        fields = ('url', 'name', 'processes')
+        fields = ('url', 'name', 'documentation', 'processes',)
         
 
 class ComponentClassificationSerializer(serializers.HyperlinkedModelSerializer):
