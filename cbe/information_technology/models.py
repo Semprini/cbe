@@ -15,7 +15,7 @@ class ProcessClassification(models.Model):
 class Process(models.Model):
     id = models.IntegerField(primary_key=True)
     hierarchy_id = models.CharField(max_length=20)
-    level = models.IntegerField(blank=True)
+    level = models.IntegerField(default=1)
     
     framework = models.ForeignKey(ProcessFramework, blank=True, null=True, related_name='processes')
     parent = models.ForeignKey("Process", blank=True, null=True, related_name='child_processes')

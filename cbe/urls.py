@@ -33,6 +33,8 @@ import cbe.physical_object.views as PhysicalObjectViews
 import cbe.supplier_partner.views as SupplierPartnerViews
 import cbe.human_resources.views as HumanResourcesViews
 import cbe.resource.views as ResourceViews
+import cbe.information_technology.views as ITViews
+import cbe.project.views as ProjectViews
 
 
 admin.site.site_title = 'CBE'
@@ -106,6 +108,14 @@ cberouter.register(r'physical_object/device', PhysicalObjectViews.DeviceViewSet)
 cberouter.register(r'supplier_partner/supplier', SupplierPartnerViews.SupplierViewSet)
 cberouter.register(r'supplier_partner/partner', SupplierPartnerViews.PartnerViewSet)
 cberouter.register(r'supplier_partner/buyer', SupplierPartnerViews.BuyerViewSet)
+
+cberouter.register(r'information_technology/component', ITViews.ComponentViewSet)
+cberouter.register(r'information_technology/component_classification', ITViews.ComponentClassificationViewSet)
+cberouter.register(r'information_technology/process', ITViews.ProcessViewSet)
+cberouter.register(r'information_technology/process_classification', ITViews.ProcessClassificationViewSet)
+cberouter.register(r'information_technology/process_framework', ITViews.ProcessFrameworkViewSet)
+
+cberouter.register(r'project/project', ProjectViews.ProjectViewSet)
 
 router = DefaultRouter()
 router.register(r'auth/users', UserViewSet)
