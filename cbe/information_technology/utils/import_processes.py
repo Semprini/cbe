@@ -1,6 +1,6 @@
 from django.db import models
 
-from cbe.information_technology.models import Process, Component
+from cbe.information_technology.models import Process, Component, ProcessFramework
 from cbe.project.models import Project
 
 def importapps(line):    
@@ -23,22 +23,26 @@ def importprojects(appindex,line):
     projects = []
     for column in line[PROJECTINDEX:appindex]:
         project, created = Project.objects.get_or_create(name=column)
+        if not created:
+            project.components.clear()
+            project.processes.clear()
         projects.append(project)
     return projects
     
     
-def reset():
-    Process.objects.all().delete()
+def reset(frameworkname):
+    framework = ProcessFramework.objects.get(name=frameworkname)
+    Process.objects.filter(framework=framework).delete()
     Component.objects.all().delete()
     Project.objects.all().delete()
         
 processes = {}
-def importprocess(appindex, apps, projects, line):
+def importprocess(framework, appindex, apps, projects, line):
 
     l = line[1].count('.')
     if line[1][-1]!="0":
         l+=1
-    process, created = Process.objects.get_or_create(id=int(line[0]), hierarchy_id=line[1], level=l,name=line[4], friendly_name=line[3] )
+    process, created = Process.objects.get_or_create(framework=framework,id=int(line[0]), hierarchy_id=line[1], level=l,name=line[4], friendly_name=line[3] )
             
     processes[line[1]] = process
     if len( line[1] ) > 2:
@@ -55,22 +59,22 @@ def importprocess(appindex, apps, projects, line):
         if column.lower()=="y":
             apps[index-appindex].processes.add( process )
             print( "    App: %d - %s"%(index-appindex,apps[index-appindex] ) )
-        else:
-            apps[index-appindex].processes.remove( process )
 
     for index,column in enumerate(line[PROJECTINDEX:appindex]):
         if column.lower()=="y":
             projects[index].processes.add( process )
+            projects[index].components.add(*process.components)
             print( "    Project: %d - %s"%(index,projects[index] ) )
         else:
             projects[index].processes.remove( process )            
             
                 
-def importtsv(filename):
+def importtsv(frameworkname, filename):
+    framework, created = ProcessFramework.objects.get_or_create(name=frameworkname)
     with open( filename ) as f:
         csv = f.readlines()
         
         appindex, apps=importapps(csv[0].split("\t"))
         projects=importprojects(appindex,csv[0].split("\t"))
         for line in csv[1:]:
-            importprocess(appindex, apps, projects, line.split("\t"))
+            importprocess(framework, appindex, apps, projects, line.split("\t"))
