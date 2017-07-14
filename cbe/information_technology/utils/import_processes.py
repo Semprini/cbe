@@ -75,7 +75,7 @@ def importtsv(frameworkname, filename):
     with open( filename ) as f:
         csv = f.readlines()
         
-        appindex, apps=importapps(csv[0].split("\t"))
-        projects=importprojects(appindex,csv[0].split("\t"))
-        for line in csv[1:]:
+        appindex, apps=importapps(csv[1].split("\t"))
+        projects=importprojects(appindex,csv[1].split("\t"))
+        for line in csv[2:]:
             importprocess(framework, appindex, apps, projects, line.split("\t"))
