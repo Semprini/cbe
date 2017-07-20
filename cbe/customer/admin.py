@@ -6,7 +6,7 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 
 from cbe.party.models import Organisation, Individual, PhysicalContact, EmailContact, TelephoneNumber, GenericPartyRole
 from cbe.party.admin import GenericPartyRoleAdminForm, GenericPartyRoleAdmin, PhysicalContactInline, EmailContactInline, TelephoneNumberInline
-from cbe.customer.models import Customer, CustomerAccount, CustomerAccountRelationship, CustomerOrder, CustomerAccountContact, CustomerCreditProfile
+from cbe.customer.models import Customer, CustomerAccount, CustomerAccountRelationship, CustomerAccountContact
 
 
 class CustomerAdminForm(GenericPartyRoleAdminForm):
@@ -43,15 +43,8 @@ class CustomerAccountAdmin(admin.ModelAdmin):
 
 
 
-class CustomerOrderAdmin(admin.ModelAdmin):
-    list_display = (
-        'interaction_date', 'interaction_status', 'customer_order_type')
-    #inlines = [BusinessInteractionRoleInline, ]
-
 
 admin.site.register(Customer, CustomerAdmin)
-admin.site.register(CustomerCreditProfile)
-admin.site.register(CustomerOrder, CustomerOrderAdmin)
 admin.site.register(CustomerAccount, CustomerAccountAdmin)
 admin.site.register(CustomerAccountRelationship)
 admin.site.register(CustomerAccountContact, CustomerAccountContactAdmin)

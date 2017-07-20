@@ -24,14 +24,6 @@ class Customer(PartyRole):
         return "%s:%s" % (self.customer_number, self.party)
 
         
-class CustomerCreditProfile(models.Model):
-    customer = models.ForeignKey(Customer)
-    valid_from = models.DateField(null=True, blank=True)
-    valid_to = models.DateField(null=True, blank=True)
-    date = models.DateField(null=True, blank=True)
-    credit_risk_rating = models.IntegerField(null=True, blank=True)
-    credit_score = models.IntegerField(null=True, blank=True)
-        
         
 class CustomerAccountContact(PartyRole):
 
@@ -47,7 +39,7 @@ class CustomerAccount(models.Model):
     account_type = models.CharField(max_length=200)
     name = models.CharField(max_length=300)
     pin = models.CharField(max_length=100, null=True, blank=True)
-    credit_limit = models.CharField(max_length=100, null=True, blank=True)
+    credit_limit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     customer_account_contact = models.ManyToManyField(CustomerAccountContact, blank=True)
 
     def __str__(self):
@@ -61,11 +53,4 @@ class CustomerAccountRelationship(models.Model):
     from_account = models.ForeignKey( CustomerAccount, related_name='related_from_account')
     to_account = models.ForeignKey( CustomerAccount, related_name='related_to_account')
 
-
-class CustomerOrder(BusinessInteraction):
-    customer_order_type = models.CharField(max_length=200, null=True, blank=True)
-
-
-class CustomerOrderItem(BusinessInteractionItem):
-	pass
 
