@@ -54,6 +54,8 @@ INSTALLED_APPS = (
     'cbe.project',
 )
 
+#python manage.py makemigrations location party customer physical_object supplier_partner human_resources resource trouble information_technology project
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

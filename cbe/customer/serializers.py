@@ -21,7 +21,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Customer
-        fields = ('type', 'url', 'customer_number',
+        fields = ('type', 'url', 'customer_number', 'managed_by',
                   'customer_status', 'party','customeraccount_set', 'associations_from', 'associations_to',)
 
     def create(self, validated_data):
@@ -49,7 +49,7 @@ class CustomerAccountSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CustomerAccount
-        fields = ('type', 'url', 'customer', 'account_number', 'account_status',
+        fields = ('type', 'url', 'created', 'valid_from', 'valid_to', 'customer', 'account_number', 'account_status', 'managed_by', 'liability_ownership',
                   'account_type', 'name', 'pin', 'credit_limit', 'customer_account_contact',)
 
 
