@@ -111,9 +111,9 @@ cberouter.register(r'supplier_partner/buyer', SupplierPartnerViews.BuyerViewSet)
 
 cberouter.register(r'information_technology/component', ITViews.ComponentViewSet)
 cberouter.register(r'information_technology/component_classification', ITViews.ComponentClassificationViewSet)
+cberouter.register(r'information_technology/process_framework', ITViews.ProcessFrameworkViewSet)
 cberouter.register(r'information_technology/process', ITViews.ProcessViewSet)
 cberouter.register(r'information_technology/process_classification', ITViews.ProcessClassificationViewSet)
-cberouter.register(r'information_technology/process_framework', ITViews.ProcessFrameworkViewSet)
 
 cberouter.register(r'project/project', ProjectViews.ProjectViewSet)
 
