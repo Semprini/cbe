@@ -3,7 +3,7 @@ from django.db import models
 from cbe.resource.models import LogicalResource
 
 class ProcessFramework( models.Model ):
-    name = models.CharField(primary_key=True, max_length=200)
+    name = models.CharField( max_length=200)
 
     documentation = models.TextField(blank=True)
     
