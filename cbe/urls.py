@@ -85,7 +85,7 @@ cberouter.register(
 cberouter.register(
     r'location/po_box_address', LocationViews.PoBoxAddressViewSet)
 cberouter.register(
-    r'location/absolute_local_location', LocationViews.AbsoluteLocalLocationViewSet)
+    r'location/location', LocationViews.LocationViewSet)
 
 cberouter.register(r'human_resources/staff', HumanResourcesViews.StaffViewSet)
 cberouter.register(r'human_resources/identification', HumanResourcesViews.IdentificationViewSet)

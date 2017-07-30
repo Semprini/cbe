@@ -102,7 +102,7 @@ class UrbanPropertyAddress(GeographicAddress):
 
 class UrbanPropertySubAddress(GeographicAddress):
     urban_property_address = models.ForeignKey(UrbanPropertyAddress,)
-    building_name = models.CharField(max_length=200, blank=True, null=True)
+    building = models.ForeignKey('physical_object.Structure', blank=True, null=True)
     level_number = models.CharField(max_length=20, blank=True, null=True)
     level_type = models.CharField(max_length=50, blank=True, null=True)
     private_street_name = models.CharField(
@@ -116,6 +116,17 @@ class RuralPropertyAddress(GeographicAddress):
     postcode = models.CharField(max_length=50, blank=True)
     locality = models.CharField(max_length=200, blank=True)
 
+    
+class RuralPropertySubAddress(GeographicAddress):
+    rural_property_address = models.ForeignKey(RuralPropertyAddress,)
+    building = models.ForeignKey('physical_object.Structure', blank=True, null=True)
+
+    private_street_name = models.CharField(
+        max_length=150, blank=True, null=True)
+
+    sub_unit_number = models.CharField(max_length=20, blank=True, null=True)
+    sub_unit_type = models.CharField(max_length=100, blank=True, null=True)
+    
 
 class PoBoxAddress(GeographicAddress):
     box_number = models.CharField(max_length=200, blank=True)
@@ -125,7 +136,13 @@ class PoBoxAddress(GeographicAddress):
         return "PO Box {}, {}".format(self.box_number, self.locality)
 
 
-class LocalAddress(Place):
+
+class Location(Place):
+    name = models.CharField(max_length=200)
+    x = models.CharField(max_length=30)
+    y = models.CharField(max_length=30)
+    z = models.CharField(max_length=30)
+
     geographic_address_content_type = models.ForeignKey(
         ContentType, related_name="%(app_label)s_%(class)s_ownership", blank=True, null=True)
     geographic_address_object_id = models.PositiveIntegerField(
@@ -135,18 +152,8 @@ class LocalAddress(Place):
 
     full_address = models.CharField(max_length=250, blank=True)
     position_number = models.CharField(max_length=50, blank=True)
-    type = models.CharField(max_length=150, blank=True)
-
-    class Meta:
-        abstract = True
-
-
-class AbsoluteLocalLocation(LocalAddress):
-    name = models.CharField(max_length=200)
-    x = models.CharField(max_length=30)
-    y = models.CharField(max_length=30)
-    z = models.CharField(max_length=30)
-
+    type = models.CharField(max_length=150, blank=True)    
+    
     def __str__(self):
         return self.name
 

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.db import models
 
-from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, PoBoxAddress, RuralPropertyAddress, AbsoluteLocalLocation, Country, City
+from cbe.location.models import UrbanPropertyAddress, UrbanPropertySubAddress, PoBoxAddress, RuralPropertyAddress, Location, Country, City
 
 
 class CountryAdmin(admin.ModelAdmin):
@@ -27,4 +27,4 @@ admin.site.register(UrbanPropertyAddress)
 admin.site.register(UrbanPropertySubAddress)
 admin.site.register(PoBoxAddress)
 admin.site.register(RuralPropertyAddress)
-admin.site.register(AbsoluteLocalLocation)
+admin.site.register(Location)

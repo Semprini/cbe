@@ -35,6 +35,9 @@ class Individual(Party):
     nationality = models.ForeignKey(Country, blank=True, null=True)
     place_of_birth = models.CharField(max_length=200, blank=True)
 
+    class Meta:
+        ordering = ['id']
+    
     def __str__(self):
         return self.name
 
@@ -56,6 +59,9 @@ class Organisation(Party):  # Eg IRD
     parent = models.ForeignKey('Organisation', blank=True, null=True, related_name='sub_organisations')
     organisation_type = models.CharField(max_length=200, blank=True, null=True)
 
+    class Meta:
+        ordering = ['id']
+    
     def __str__(self):
         return self.name
 
@@ -75,6 +81,9 @@ class PartyRoleAssociation(models.Model):
         ContentType, related_name="%(app_label)s_%(class)s_to")
     association_to_object_id = models.CharField(max_length=200)
     association_to = GenericForeignKey('association_to_content_type', 'association_to_object_id')
+
+    class Meta:
+        ordering = ['id']
 
     def __str__(self):
         return "%s %s:%s" % (self.association_type, self.association_to_content_type, self.association_to)    
@@ -135,10 +144,14 @@ class PartyRole(models.Model):
 
     
 class GenericPartyRole(PartyRole):
-    pass
+    class Meta:
+        ordering = ['id']
 
     
 class Owner(PartyRole):
+
+    class Meta:
+        ordering = ['id']
 
     def save(self, *args, **kwargs):
         if self.name == "":
