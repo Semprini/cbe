@@ -94,7 +94,7 @@ cberouter.register(r'human_resources/identification_type', HumanResourcesViews.I
 cberouter.register(r'resource/physical_resource', ResourceViews.PhysicalResourceViewSet)
 
 
-cberouter.register(r'customer/customer', CustomerViews.CustomerViewSet)
+cberouter.register(r'customer/customer', CustomerViews.CustomerViewSet, base_name='customer')
 cberouter.register(r'customer/account', CustomerViews.CustomerAccountViewSet)
 cberouter.register(r'customer/customer_account_contact',
                    CustomerViews.CustomerAccountContactViewSet)
@@ -122,7 +122,10 @@ router.register(r'auth/users', UserViewSet)
 router.register(r'content_types', ContentTypeViewSet)
 
 for route in cberouter.registry:
-    router.register(route[0], route[1])
+    if len(route) == 2:
+        router.register(route[0], route[1])
+    else:
+        router.register(route[0], route[1], base_name=route[2])
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),

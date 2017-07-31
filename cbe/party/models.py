@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
@@ -58,7 +58,7 @@ class Individual(Party):
 class Organisation(Party):  # Eg IRD
     parent = models.ForeignKey('Organisation', blank=True, null=True, related_name='sub_organisations')
     organisation_type = models.CharField(max_length=200, blank=True, null=True)
-
+    
     class Meta:
         ordering = ['id']
     

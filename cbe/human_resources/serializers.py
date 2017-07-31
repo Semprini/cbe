@@ -5,8 +5,10 @@ from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField
+from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import PartyRelatedField
+from cbe.party.serializers import IndividualSerializer, OrganisationSerializer
+from cbe.party.models import Individual, Organisation
 from cbe.human_resources.models import IdentificationType, Identification, Staff
 
                  
@@ -31,8 +33,12 @@ class IdentificationTypeSerializer(serializers.HyperlinkedModelSerializer):
         
 class StaffSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
-    party = PartyRelatedField()
-    
+    party = GenericRelatedField( many=False,
+        serializer_dict={ 
+            Individual: IndividualSerializer(),
+            Organisation: OrganisationSerializer(),
+        })
+        
     class Meta:
         model = Staff
         fields = ('type', 'url', 'company', 'party' )
