@@ -15,7 +15,7 @@ customer_status_choices = (('new', 'new'), ('active', 'active'),
 class Customer(PartyRole):
     customer_number = models.CharField(primary_key=True, max_length=200)
     customer_status = models.CharField(max_length=100, choices=customer_status_choices)
-    managed_by = models.ForeignKey(Organisation, null=True, blank=True)
+    managed_by = models.ForeignKey(Organisation, null=True, blank=True,related_name='manages_customers')
 
     class Meta:
         ordering = ['customer_number']

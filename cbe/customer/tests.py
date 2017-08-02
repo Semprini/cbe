@@ -115,20 +115,6 @@ class CustomerAPITests(APITestCase):
         response = view(request)
         self.assertEqual(response.exception, False)
 
-    def test_invalid_customer_party_type(self):
-        """
-        Test failure if stored party generic relation is not an individual or organisation
-        """
-        self.customer.party_content_type = ContentType.objects.get_for_model(
-            self.customer)
-        self.customer.save()
-        view = CustomerViewSet.as_view({'get': 'list', })
-        request = self.factory.get(
-            '/party/customer/{}/'.format(self.customer.pk),)
-        force_authenticate(request, user=self.superuser)
-        with self.assertRaises(Exception):
-            response = view(request)
-
     def test_create_customer(self):
         """
         Ensure we can create a new Customer object.

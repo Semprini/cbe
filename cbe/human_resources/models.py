@@ -27,7 +27,7 @@ class Identification( models.Model ):
 
 
 class Staff(PartyRole):
-    company = models.ForeignKey(Organisation, null=True, blank=True)
+    company = models.ForeignKey(Organisation, null=True, blank=True, related_name='employer')
 
     def save(self, *args, **kwargs):
         if self.name is None or self.name == "":
