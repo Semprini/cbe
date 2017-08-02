@@ -36,6 +36,7 @@ Vagrant.configure(2) do |config|
   config.winrm.password = "vagrant" # Making defaults explicit
   config.vm.graceful_halt_timeout = 180 # 3 minutes
   config.vm.provision 'shell', path: './automation/remote/capabilities.ps1'
+  config.vm.provision 'shell', inline: 'Start-Service Docker'
     
   # Oracle VirtualBox, cannot use 172.0.0.0/8 range, as that is allocated to Windows Container network
   config.vm.provider 'virtualbox' do |virtualbox, override|
