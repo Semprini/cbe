@@ -15,6 +15,7 @@ class IdentificationType( models.Model ):
 
 class Identification( models.Model ):
     number = models.CharField(max_length=200)
+    pin = models.CharField(max_length=50, null=True, blank=True)
     identification_type = models.ForeignKey( IdentificationType )
 
     party_content_type = models.ForeignKey(

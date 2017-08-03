@@ -11,6 +11,7 @@ from cbe.business_interaction.models import BusinessInteraction, BusinessInterac
 customer_status_choices = (('new', 'new'), ('active', 'active'),
                            ('inactive', 'inactive'), ('prospective', 'prospective'))
 
+credit_status_choices = (('active', 'active'), ('stop', 'stop'),)
 
 class Customer(PartyRole):
     customer_number = models.CharField(primary_key=True, max_length=200)
@@ -47,9 +48,12 @@ class CustomerAccount(models.Model):
     account_type = models.CharField(max_length=200)
     name = models.CharField(max_length=300)
     pin = models.CharField(max_length=100, null=True, blank=True)
-    credit_limit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     customer_account_contact = models.ManyToManyField(CustomerAccountContact, blank=True)
 
+    credit_limit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    credit_status = models.CharField(max_length=100, choices=credit_status_choices)
+    credit_balance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
     managed_by = models.ForeignKey(Organisation, null=True, blank=True, related_name = "accounts_managed")
     liability_ownership = models.ForeignKey(Organisation, null=True, blank=True, related_name = "account_liabilities")
 

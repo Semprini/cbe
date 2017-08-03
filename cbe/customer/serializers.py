@@ -50,7 +50,7 @@ class CustomerAccountSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CustomerAccount
         fields = ('type', 'url', 'created', 'valid_from', 'valid_to', 'customer', 'account_number', 'account_status', 'managed_by', 'liability_ownership',
-                  'account_type', 'name', 'pin', 'credit_limit', 'customer_account_contact',)
+                  'account_type', 'name', 'pin', 'customer_account_contact', 'credit_limit', 'credit_status', 'credit_balance',)
 
 
 sample_json = """
