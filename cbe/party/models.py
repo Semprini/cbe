@@ -17,6 +17,9 @@ MARITAL_STATUS_CHOICES = (('Undisclosed', 'Undisclosed'),
 class Party(models.Model):
     name = models.CharField(max_length=200)
 
+    identifications = GenericRelation('human_resources.Identification', 
+                                        object_id_field="party_object_id", content_type_field='party_content_type',)    
+    
     class Meta:
         abstract = True
 

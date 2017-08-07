@@ -52,7 +52,7 @@ class CustomerAccount(models.Model):
 
     credit_limit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     credit_status = models.CharField(max_length=100, choices=credit_status_choices)
-    credit_balance = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    credit_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
     managed_by = models.ForeignKey(Organisation, null=True, blank=True, related_name = "accounts_managed")
     liability_ownership = models.ForeignKey(Organisation, null=True, blank=True, related_name = "account_liabilities")
