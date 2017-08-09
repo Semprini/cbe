@@ -5,7 +5,7 @@ from rest_framework import serializers
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.party.models import Individual, Organisation, TelephoneNumber, GenericPartyRole, PartyRoleAssociation
-from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer, PartyRelatedField, PartyRoleAssociationFromBasicSerializer, PartyRoleAssociationToBasicSerializer
+from cbe.party.serializers import PartyRelatedField, IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer, PartyRoleAssociationFromBasicSerializer, PartyRoleAssociationToBasicSerializer
 
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
