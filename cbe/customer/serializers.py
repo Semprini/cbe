@@ -5,8 +5,8 @@ from rest_framework import serializers
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.party.models import Individual, Organisation, TelephoneNumber, GenericPartyRole, PartyRoleAssociation
-from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer, PartyRelatedField, PartyRoleAssociationFromBasicSerializer, PartyRoleAssociationToBasicSerializer
-
+from cbe.party.serializers import PartyRelatedField, IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer, PartyRoleAssociationFromBasicSerializer, PartyRoleAssociationToBasicSerializer
+from cbe.credit.serializers import CreditSerializer
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     #party = GenericRelatedField( many=False, serializer_dict={
@@ -22,11 +22,10 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Customer
         fields = ('type', 'url', 'customer_number', 'managed_by',
-                  'customer_status', 'party','customeraccount_set', 'associations_from', 'associations_to',)
+                  'customer_status', 'party', 'customer_accounts', 'associations_from', 'associations_to',)
 
     def create(self, validated_data):
-        validated_data.pop('customeraccount_set')
-        print( validated_data )
+        validated_data.pop('customer_accounts')
         return Customer.objects.create(**validated_data)
 
 
@@ -41,16 +40,17 @@ class CustomerAccountContactSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CustomerAccountContact
-        fields = ('type', 'url', 'party', 'customeraccount_set')
+        fields = ('type', 'url', 'party', 'customer_accounts')
 
 
 class CustomerAccountSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    credit_liabilities = CreditSerializer(many=True,)
 
     class Meta:
         model = CustomerAccount
-        fields = ('type', 'url', 'created', 'valid_from', 'valid_to', 'customer', 'account_number', 'account_status', 'managed_by', 'liability_ownership',
-                  'account_type', 'name', 'pin', 'credit_limit', 'customer_account_contact',)
+        fields = ('type', 'url', 'created', 'valid_from', 'valid_to', 'customer', 'account_number', 'account_status', 'managed_by', 'credit_liabilities',
+                  'account_type', 'name', 'pin', 'customer_account_contact', )
 
 
 sample_json = """

@@ -17,6 +17,9 @@ MARITAL_STATUS_CHOICES = (('Undisclosed', 'Undisclosed'),
 class Party(models.Model):
     name = models.CharField(max_length=200)
 
+    identifications = GenericRelation('human_resources.Identification', 
+                                        object_id_field="party_object_id", content_type_field='party_content_type',)    
+    
     class Meta:
         abstract = True
 
@@ -94,12 +97,15 @@ class PartyRole(models.Model):
     valid_to = models.DateTimeField(null=True, blank=True)
 
     name = models.CharField(max_length=200)
-    party_content_type = models.ForeignKey(
-        ContentType, related_name="%(app_label)s_%(class)s_ownership")
-    party_object_id = models.PositiveIntegerField()
-    party = GenericForeignKey('party_content_type', 'party_object_id')
+    
+    individual = models.ForeignKey(Individual, blank=True, null=True)
+    organisation = models.ForeignKey(Organisation, blank=True, null=True)
+    
+    #party_content_type = models.ForeignKey(
+    #    ContentType, related_name="%(app_label)s_%(class)s_ownership")
+    #party_object_id = models.PositiveIntegerField()
+    #party = GenericForeignKey('party_content_type', 'party_object_id')
 
-    #contact_mediums = GM2MField()
 
     associations_from = GenericRelation(PartyRoleAssociation, 
                                         object_id_field="association_from_object_id", content_type_field='association_from_content_type',)
@@ -109,35 +115,57 @@ class PartyRole(models.Model):
     telephone_numbers = GenericRelation(TelephoneNumber,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
     email_contacts = GenericRelation(EmailContact,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
     physical_contacts = GenericRelation(PhysicalContact,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
-    
+
     class Meta:
         abstract = True
 
+    def __setattr__(self, attrname, val):
+        super(PartyRole, self).__setattr__(attrname, val)
+        if attrname == "organisation" and val != None:
+            self.individual = None
+        elif attrname == "individual" and val != None:
+            self.organisation = None
+            
     @property
-    def individual(self):
-        if type(self.party) is Individual:
-            return self.party
+    def party(self):
+        if self.individual is None:
+            return self.organisation
+        return self.individual
 
-    @individual.setter
-    def individual(self, value):
+    @party.setter
+    def party(self, value):
         if type(value) is Individual or value == None:
-            self.party = value
+            self.individual = value
+            self.organisation = None
         else:
-            raise Exception(
-                "Invalid type of party provided as individual to PartyRole: %s" % type(value))
+            self.organisation = value
+            self.individual = None
+    
+    #@property
+    #def individual(self):
+    #    if type(self.party) is Individual:
+    #        return self.party
 
-    @property
-    def organisation(self):
-        if type(self.party) is Organisation:
-            return self.party
+    #@individual.setter
+    #def individual(self, value):
+    #    if type(value) is Individual or value == None:
+            # self.party = value
+        # else:
+            # raise Exception(
+                # "Invalid type of party provided as individual to PartyRole: %s" % type(value))
 
-    @organisation.setter
-    def organisation(self, value):
-        if type(value) is Organisation or value == None:
-            self.party = value
-        else:
-            raise Exception(
-                "Invalid type of party provided as organisation to PartyRole: %s" % type(value))
+    # @property
+    # def organisation(self):
+        # if type(self.party) is Organisation:
+            # return self.party
+
+    # @organisation.setter
+    # def organisation(self, value):
+        # if type(value) is Organisation or value == None:
+            # self.party = value
+        # else:
+            # raise Exception(
+                # "Invalid type of party provided as organisation to PartyRole: %s" % type(value))
 
     def __str__(self):
         return "%s as a %s" % (self.party, self.name)

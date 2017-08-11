@@ -35,6 +35,7 @@ import cbe.human_resources.views as HumanResourcesViews
 import cbe.resource.views as ResourceViews
 import cbe.information_technology.views as ITViews
 import cbe.project.views as ProjectViews
+import cbe.credit.views as CreditViews
 
 
 admin.site.site_title = 'CBE'
@@ -99,6 +100,11 @@ cberouter.register(r'customer/account', CustomerViews.CustomerAccountViewSet)
 cberouter.register(r'customer/customer_account_contact',
                    CustomerViews.CustomerAccountContactViewSet)
 
+cberouter.register(r'credit/credit', CreditViews.CreditViewSet)
+cberouter.register(r'credit/credit_balance_event', CreditViews.CreditBalanceEventViewSet)
+cberouter.register(r'credit/credit_profile', CreditViews.CreditProfileViewSet)
+
+                   
 cberouter.register(r'trouble/problem', TroubleViews.ProblemViewSet)
 
 cberouter.register(r'physical_object/structure', PhysicalObjectViews.StructureViewSet)

@@ -26,7 +26,7 @@ class CustomerAdmin(GenericPartyRoleAdmin):
     form = CustomerAdminForm
     fields = (
         'valid_to', 'name', 'party', 'customer_number', 'customer_status')
-    readonly_fields = ('name', 'party_content_type', 'party_object_id')
+    readonly_fields = ('name',)
     inlines = [AccountInline, ]
 
 class CustomerAccountContactAdmin(GenericPartyRoleAdmin):
@@ -39,7 +39,7 @@ class CustomerAccountContactAdmin(GenericPartyRoleAdmin):
 
 class CustomerAccountAdmin(admin.ModelAdmin):
     list_display = (
-        'customer', 'account_number', 'name', 'account_status', 'credit_limit')
+        'customer', 'account_number', 'name', 'account_status', )
 
 
 

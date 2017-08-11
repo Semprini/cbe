@@ -66,6 +66,12 @@ class PartyRelatedField(serializers.Field):
 class IndividualSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
+    identifications = serializers.HyperlinkedRelatedField(
+        view_name='identification-detail',
+        many=True,
+        read_only=True
+    )
+    
     gender = serializers.ChoiceField(
         choices=GENDER_CHOICES, required=False, allow_blank=True)
     marital_status = serializers.ChoiceField(
@@ -74,15 +80,21 @@ class IndividualSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Individual
         fields = ('type', 'url', 'user', 'name', 'given_names', 'family_names', 'middle_names',
-                  'form_of_address', 'gender', 'legal_name', 'marital_status', 'nationality', 'place_of_birth')
+                  'form_of_address', 'gender', 'legal_name', 'marital_status', 'nationality', 'place_of_birth', 'identifications', )
 
 
 class OrganisationSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
+    identifications = serializers.HyperlinkedRelatedField(
+        view_name='identification-detail',
+        many=True,
+        read_only=True
+    )
+    
     class Meta:
         model = Organisation
-        fields = ('type', 'url', 'parent', 'name', 'sub_organisations', )
+        fields = ('type', 'url', 'parent', 'name', 'sub_organisations', 'identifications', )
 
         
 class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):

@@ -36,19 +36,12 @@ class GenericRelatedField(serializers.StringRelatedField):
         if type(data) == str:
             data = {'url': data}
 
-        print(data)
-        print(data)
-        print(data)
-
         # Existing resource can be specified as url
         if 'url' in data:
             # Extract details from the url and grab real object
             resolved_func, unused_args, resolved_kwargs = resolve(
                 urlparse(data['url']).path)
             object = resolved_func.cls.queryset.get(pk=resolved_kwargs['pk'])
-            print(object)
-            print(object)
-            print(object)
         else:
             # If url is not specified then object is new and must have a 'type'
             # field to allow us to create correct object from list of
@@ -60,9 +53,6 @@ class GenericRelatedField(serializers.StringRelatedField):
         # Deserialize data into attributes of object and apply
         if object.__class__ in self.serializer_dict.keys():
             serializer = self.serializer_dict[object.__class__]
-            print(serializer.__dict__)
-            print(serializer.__dict__)
-            print(serializer.__dict__)
             serializer.partial = True
             obj_internal_value = serializer.to_internal_value(data)
             for k, v in obj_internal_value.items():

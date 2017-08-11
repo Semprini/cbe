@@ -19,7 +19,7 @@ class IdentificationSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Identification
-        fields = ('type', 'url', 'identification_type', 'number', 'party')                  
+        fields = ('type', 'url', 'identification_type', 'number', 'pin', 'party')                  
         
 
        

@@ -115,20 +115,6 @@ class CustomerAPITests(APITestCase):
         response = view(request)
         self.assertEqual(response.exception, False)
 
-    def test_invalid_customer_party_type(self):
-        """
-        Test failure if stored party generic relation is not an individual or organisation
-        """
-        self.customer.party_content_type = ContentType.objects.get_for_model(
-            self.customer)
-        self.customer.save()
-        view = CustomerViewSet.as_view({'get': 'list', })
-        request = self.factory.get(
-            '/party/customer/{}/'.format(self.customer.pk),)
-        force_authenticate(request, user=self.superuser)
-        with self.assertRaises(Exception):
-            response = view(request)
-
     def test_create_customer(self):
         """
         Ensure we can create a new Customer object.
@@ -143,7 +129,7 @@ class CustomerAPITests(APITestCase):
                 "type": "Individual",
                 "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk),
                 'given_names': 'Bob'},
-            "customeraccount_set": []}
+            "customer_accounts": []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Customer.objects.get(pk='3').party.given_names, 'Bob')
@@ -156,7 +142,7 @@ class CustomerAPITests(APITestCase):
             "party": {
                 "type": "Organisation",
                 "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},
-            "customeraccount_set": []}
+            "customer_accounts": []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -172,7 +158,7 @@ class CustomerAPITests(APITestCase):
             "associations_to": [],
             "party": {
                 "type": "Foo"},
-            "customeraccount_set": []}
+            "customer_accounts": []}
         with self.assertRaises(Exception):
             response = self.client.post(url, data, format='json')
 
@@ -189,7 +175,7 @@ class CustomerAPITests(APITestCase):
             "party": {
                 "type": "Individual",
                 'given_names': 'test John', 'family_names': 'Doe'},
-            "customeraccount_set": []}
+            "customer_accounts": []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -201,7 +187,7 @@ class CustomerAPITests(APITestCase):
             "party": {
                 "type": "Organisation",
                 'name': 'Pen Inc. 2'},
-            "customeraccount_set": []}
+            "customer_accounts": []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -218,7 +204,7 @@ class CustomerAPITests(APITestCase):
             "party": {
                 "type": "Individual",
                 'given_names': 'test John', 'family_names': 'Doe'},
-            "customeraccount_set": []}
+            "customer_accounts": []}
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
