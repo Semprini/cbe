@@ -39,7 +39,7 @@ class CustomerAccountContactAdmin(GenericPartyRoleAdmin):
 
 class CustomerAccountAdmin(admin.ModelAdmin):
     list_display = (
-        'customer', 'account_number', 'name', 'account_status', 'credit_limit')
+        'customer', 'account_number', 'name', 'account_status', )
 
 
 

@@ -43,19 +43,14 @@ class CustomerAccount(models.Model):
     valid_to = models.DateField(null=True, blank=True)
     
     account_number = models.CharField(primary_key=True, max_length=200)
-    customer = models.ForeignKey(Customer)
+    customer = models.ForeignKey(Customer, related_name="customer_accounts")
     account_status = models.CharField(max_length=100)
     account_type = models.CharField(max_length=200)
     name = models.CharField(max_length=300)
     pin = models.CharField(max_length=100, null=True, blank=True)
     customer_account_contact = models.ManyToManyField(CustomerAccountContact, blank=True)
 
-    credit_limit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    credit_status = models.CharField(max_length=100, choices=credit_status_choices)
-    credit_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    
     managed_by = models.ForeignKey(Organisation, null=True, blank=True, related_name = "accounts_managed")
-    liability_ownership = models.ForeignKey(Organisation, null=True, blank=True, related_name = "account_liabilities")
 
     class Meta:
         ordering = ['created']
