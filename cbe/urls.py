@@ -1,33 +1,17 @@
 """cbe URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.8/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Add an import:  from blog import urls as blog_urls
-    2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
 from django.contrib import admin
 
 from rest_framework.routers import DefaultRouter
-from rest_framework import serializers, viewsets
-
-from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 
 from cbe.routers import AppRouter
 from . import views
 
+import cbe.views as CBEViews
 import cbe.party.views as PartyViews
 import cbe.location.views as LocationViews
-#import cbe.business_interaction.views as BusinessInteractionViews
 import cbe.customer.views as CustomerViews
 import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
@@ -38,59 +22,23 @@ import cbe.information_technology.views as ITViews
 import cbe.project.views as ProjectViews
 import cbe.credit.views as CreditViews
 
-
 admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
-
-# Serializers define the API representation.
-
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('url', 'username', 'email', 'is_staff')
-
-
-class ContentTypeSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = ContentType
-        fields = ('url', 'app_label', 'model', 'name', )
-
-# ViewSets define the view behavior.
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class ContentTypeViewSet(viewsets.ModelViewSet):
-    queryset = ContentType.objects.all()
-    serializer_class = ContentTypeSerializer
-
-cberouter = AppRouter()
 
 partyrouter = AppRouter(root_view_name='app-party')
 partyrouter.register(r'individual', PartyViews.IndividualViewSet)
 partyrouter.register(r'organisation', PartyViews.OrganisationViewSet)
-partyrouter.register(
-    r'generic_party_role', PartyViews.GenericPartyRoleViewSet)
-partyrouter.register(
-    r'telephone_number', PartyViews.TelephoneNumberViewSet)
+partyrouter.register(r'generic_party_role', PartyViews.GenericPartyRoleViewSet)
+partyrouter.register(r'telephone_number', PartyViews.TelephoneNumberViewSet)
 partyrouter.register(r'owner', PartyViews.OwnerViewSet)
 partyrouter.register(r'party_role_association', PartyViews.PartyRoleAssociationViewSet)
 
 locationrouter = AppRouter(root_view_name='app-location')
 locationrouter.register(r'country', LocationViews.CountryViewSet)
 locationrouter.register(r'city', LocationViews.CityViewSet)
-locationrouter.register(
-    r'urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
-locationrouter.register(
-    r'po_box_address', LocationViews.PoBoxAddressViewSet)
-locationrouter.register(
-    r'location', LocationViews.LocationViewSet)
+locationrouter.register(r'urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
+locationrouter.register(r'po_box_address', LocationViews.PoBoxAddressViewSet)
+locationrouter.register(r'location', LocationViews.LocationViewSet)
 
 humanresourcesrouter = AppRouter(root_view_name='app-human_resources')
 humanresourcesrouter.register(r'staff', HumanResourcesViews.StaffViewSet)
@@ -100,12 +48,10 @@ humanresourcesrouter.register(r'identification_type', HumanResourcesViews.Identi
 resourcerouter = AppRouter(root_view_name='app-resource')
 resourcerouter.register(r'physical_resource', ResourceViews.PhysicalResourceViewSet)
 
-
 customerrouter = AppRouter(root_view_name='app-customer')
 customerrouter.register(r'customer', CustomerViews.CustomerViewSet, base_name='customer')
 customerrouter.register(r'account', CustomerViews.CustomerAccountViewSet)
-customerrouter.register(r'customer_account_contact',
-                   CustomerViews.CustomerAccountContactViewSet)
+customerrouter.register(r'customer_account_contact', CustomerViews.CustomerAccountContactViewSet)
 
 creditrouter = AppRouter(root_view_name='app-credit')
 creditrouter.register(r'credit', CreditViews.CreditViewSet)
@@ -148,8 +94,8 @@ apps={  'party':'app-party',
         'project':'app-project',
         'information_technology':'app-information_technology', }
 router = AppRouter( apps=apps )
-router.register(r'auth/users', UserViewSet)
-router.register(r'content_types', ContentTypeViewSet)
+router.register(r'auth/users', CBEViews.UserViewSet)
+router.register(r'content_types', CBEViews.ContentTypeViewSet)
 
 appurlpatterns = [
     url(r'^api/party/', include(partyrouter.urls)),
