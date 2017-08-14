@@ -137,16 +137,16 @@ projectrouter = AppRouter(root_view_name='app-project')
 projectrouter.register(r'project', ProjectViews.ProjectViewSet)
 
 apps={  'party':'app-party',
-                            'location':'app-location',
-                            'human_resources':'app-human_resources',
-                            'customer':'app-customer',
-                            'credit':'app-credit',
-                            'project':'app-project',
-                            'resource':'app-resource',
-                            'trouble':'app-trouble',
-                            'physical_object':'app-physical_object',
-                            'supplier_partner':'app-supplier_partner',
-                            'information_technology':'app-information_technology', }
+        'location':'app-location',
+        'human_resources':'app-human_resources',
+        'customer':'app-customer',
+        'credit':'app-credit',
+        'resource':'app-resource',
+        'trouble':'app-trouble',
+        'physical_object':'app-physical_object',
+        'supplier_partner':'app-supplier_partner',
+        'project':'app-project',
+        'information_technology':'app-information_technology', }
 router = AppRouter( apps=apps )
 router.register(r'auth/users', UserViewSet)
 router.register(r'content_types', ContentTypeViewSet)
@@ -161,6 +161,7 @@ appurlpatterns = [
     url(r'^api/trouble/', include(troublerouter.urls)),
     url(r'^api/physical_object/', include(physicalobjectrouter.urls)),
     url(r'^api/supplier_partner/', include(supplierpartnerrouter.urls)),
+    url(r'^api/project/', include(projectrouter.urls)),
     url(r'^api/information_technology/', include(informationtechnologyrouter.urls)),
 ]
 
