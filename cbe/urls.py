@@ -97,8 +97,8 @@ humanresourcesrouter.register(r'staff', HumanResourcesViews.StaffViewSet)
 humanresourcesrouter.register(r'identification', HumanResourcesViews.IdentificationViewSet)
 humanresourcesrouter.register(r'identification_type', HumanResourcesViews.IdentificationTypeViewSet)
 
-physicalresourcerouter = AppRouter(root_view_name='app-physical_resource')
-physicalresourcerouter.register(r'physical_resource', ResourceViews.PhysicalResourceViewSet)
+resourcerouter = AppRouter(root_view_name='app-resource')
+resourcerouter.register(r'physical_resource', ResourceViews.PhysicalResourceViewSet)
 
 
 customerrouter = AppRouter(root_view_name='app-customer')
@@ -136,16 +136,18 @@ informationtechnologyrouter.register(r'process_classification', ITViews.ProcessC
 projectrouter = AppRouter(root_view_name='app-project')
 projectrouter.register(r'project', ProjectViews.ProjectViewSet)
 
-router = AppRouter( apps={  'party':'app-party',
+apps={  'party':'app-party',
                             'location':'app-location',
                             'human_resources':'app-human_resources',
-                            'physical_resource':'app-physical_resource',
                             'customer':'app-customer',
                             'credit':'app-credit',
+                            'project':'app-project',
+                            'resource':'app-resource',
                             'trouble':'app-trouble',
                             'physical_object':'app-physical_object',
                             'supplier_partner':'app-supplier_partner',
-                            'information_technology':'app-information_technology', } )
+                            'information_technology':'app-information_technology', }
+router = AppRouter( apps=apps )
 router.register(r'auth/users', UserViewSet)
 router.register(r'content_types', ContentTypeViewSet)
 
@@ -153,7 +155,7 @@ appurlpatterns = [
     url(r'^api/party/', include(partyrouter.urls)),
     url(r'^api/location/', include(locationrouter.urls)),
     url(r'^api/human_resources/', include(humanresourcesrouter.urls)),
-    url(r'^api/physical_resource/', include(physicalresourcerouter.urls)),
+    url(r'^api/resource/', include(resourcerouter.urls)),
     url(r'^api/customer/', include(customerrouter.urls)),
     url(r'^api/credit/', include(creditrouter.urls)),
     url(r'^api/trouble/', include(troublerouter.urls)),
