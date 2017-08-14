@@ -25,7 +25,7 @@ class Resource(models.Model):
         
 class PhysicalResource(Resource):
     power_state = models.CharField(max_length=100, null=True, blank=True, choices=POWER_STATES)
-    physcial_objects = GM2MField(related_name="objects") #TODO: Restrict to physical_object derivatives
+    physical_objects = GM2MField(related_name="objects") #TODO: Restrict to physical_object derivatives
 
     place_content_type = models.ForeignKey(
         ContentType, null=True, blank=True, related_name="%(app_label)s_%(class)s_ownership")

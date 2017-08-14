@@ -24,7 +24,7 @@ class StructureSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Structure
-        fields = ('type', 'url', 'start_date', 'end_date', 'physical_object_type', 'make' )                  
+        fields = ('type', 'url', 'start_date', 'end_date', 'physical_object_type', 'make', 'location' )                  
         
         
 class DeviceSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,4 +32,4 @@ class DeviceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Device
-        fields = ('type', 'url', 'start_date', 'end_date', 'physical_object_type', 'make' )                          
+        fields = ('type', 'url', 'start_date', 'end_date', 'physical_object_type', 'make', 'location' )                          
