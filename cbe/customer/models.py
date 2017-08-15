@@ -48,7 +48,7 @@ class CustomerAccount(models.Model):
     account_type = models.CharField(max_length=200)
     name = models.CharField(max_length=300)
     pin = models.CharField(max_length=100, null=True, blank=True)
-    customer_account_contact = models.ManyToManyField(CustomerAccountContact, blank=True)
+    customer_account_contact = models.ManyToManyField(CustomerAccountContact, blank=True, related_name="customer_accounts")
 
     managed_by = models.ForeignKey(Organisation, null=True, blank=True, related_name = "accounts_managed")
 
