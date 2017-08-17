@@ -6,7 +6,7 @@ node {
         $class: 'BuildDiscarderProperty',
         strategy: [$class: 'LogRotator', numToKeepStr: '10']
       ],
-        pipelineTriggers([cron('20 06 * * *')]),
+        pipelineTriggers([cron('30 00 * * *')]),
     ]
   )
 
