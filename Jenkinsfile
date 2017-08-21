@@ -31,7 +31,8 @@ node {
       bat "cat automation/CDAF.windows | grep productVersion"
     }
 
-    stage ('Clean, Instantiate and Test') {
+    stage ('Get latest image and Test') {
+      bat "docker pull microsoft/windowsservercore"
       bat "automation\\cdEmulate.bat"
     }
 
