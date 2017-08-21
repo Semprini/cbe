@@ -32,7 +32,7 @@ node {
     }
 
     stage ('Clean, Instantiate and Test') {
-      bat "automation\\provisioning\\runner.bat automation\\cdEmulate.ps1"
+      bat "automation\\cdEmulate.bat"
     }
 
   } catch (e) {
