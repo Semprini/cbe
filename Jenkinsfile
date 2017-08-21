@@ -6,7 +6,7 @@ node {
         $class: 'BuildDiscarderProperty',
         strategy: [$class: 'LogRotator', numToKeepStr: '10']
       ],
-        pipelineTriggers([cron('30 00 * * *')]),
+        pipelineTriggers([cron('15 07 * * *')]),
     ]
   )
 
@@ -32,11 +32,7 @@ node {
     }
 
     stage ('Clean, Instantiate and Test') {
-      bat "cat Vagrantfile"
-      bat "IF EXIST .vagrant vagrant destroy -f"
-      bat "IF EXIST .vagrant vagrant box list"
-      bat "vagrant up"
-      bat "IF EXIST .vagrant vagrant destroy -f"
+      bat "\\automation\\provisioning\\runner.bat \\automation\cdEmulate.ps1"
     }
 
   } catch (e) {
