@@ -32,12 +32,11 @@ node {
     }
 
     stage ('Clean, Instantiate and Test') {
-      bat "\\automation\\provisioning\\runner.bat automation\\cdEmulate.ps1"
+      bat "automation\\provisioning\\runner.bat automation\\cdEmulate.ps1"
     }
 
   } catch (e) {
     
-    bat "IF EXIST .vagrant vagrant halt"
     currentBuild.result = "FAILED"
     notifyFailed()
     throw e
@@ -45,7 +44,6 @@ node {
   } finally {
 
     stage ('Discard GitHub branch') {
-      bat "RM Vagrantfile"
       bat "git checkout -- ."
       bat "git checkout master"
       bat "git branch -D local_branch"
