@@ -6,7 +6,7 @@ node {
         $class: 'BuildDiscarderProperty',
         strategy: [$class: 'LogRotator', numToKeepStr: '10']
       ],
-        pipelineTriggers([cron('30 00 * * *')]),
+        pipelineTriggers([cron('15 07 * * *')]),
     ]
   )
 
@@ -31,17 +31,13 @@ node {
       bat "cat automation/CDAF.windows | grep productVersion"
     }
 
-    stage ('Clean, Instantiate and Test') {
-      bat "cat Vagrantfile"
-      bat "IF EXIST .vagrant vagrant destroy -f"
-      bat "IF EXIST .vagrant vagrant box list"
-      bat "vagrant up"
-      bat "IF EXIST .vagrant vagrant destroy -f"
+    stage ('Get latest image and Test') {
+      bat "docker pull microsoft/windowsservercore"
+      bat "automation\\cdEmulate.bat"
     }
 
   } catch (e) {
     
-    bat "IF EXIST .vagrant vagrant halt"
     currentBuild.result = "FAILED"
     notifyFailed()
     throw e
@@ -49,7 +45,6 @@ node {
   } finally {
 
     stage ('Discard GitHub branch') {
-      bat "RM Vagrantfile"
       bat "git checkout -- ."
       bat "git checkout master"
       bat "git branch -D local_branch"
