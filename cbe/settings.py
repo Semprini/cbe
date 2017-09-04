@@ -114,6 +114,18 @@ REST_FRAMEWORK = {
     ),
 }
 
+MQ_FRAMEWORK = {
+    'HOST': 'None',
+    'USER': 'None',
+    'PASSWORD': 'None',
+    'EXCHANGE_PREFIX': 'notify.',
+    'HTTP_REST_CONTEXT': {
+        'SERVER_NAME': '127.0.0.1',
+        'SERVER_PORT': 8000,
+    }
+}
+
+
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
     # '--with-coverage',
