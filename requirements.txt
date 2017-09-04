@@ -6,3 +6,4 @@ django-nose
 coverage
 django-gm2m
 djangorestframework-csv
+pika
