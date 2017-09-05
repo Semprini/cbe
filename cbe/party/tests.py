@@ -204,7 +204,7 @@ class OwnerAPITests(APITestCase):
             "party": {
                 "type": "Individual",
                 "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk),
-                'given_names': 'Bob'},
+                'given_names': 'Bob', 'name':'Bob'},
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

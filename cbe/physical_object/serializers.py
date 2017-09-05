@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import OrganisationSerializer
-from cbe.party.serializers import PartyRelatedField
 
 from cbe.physical_object.models import Structure, Vehicle, Device
     
