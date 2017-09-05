@@ -9,12 +9,13 @@ from cbe.party.serializers import PartyRelatedField, IndividualSerializer, Organ
 from cbe.credit.serializers import CreditSerializer
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
-    #party = GenericRelatedField( many=False, serializer_dict={
-    #        Individual: IndividualSerializer(),
-    #        Organisation: OrganisationSerializer(),
-    #    })
-    party = PartyRelatedField()
     type = TypeField()
+    party = GenericRelatedField( many=False, 
+        serializer_dict={ 
+            Individual: IndividualSerializer(),
+            Organisation: OrganisationSerializer(),
+        })
+    #party = PartyRelatedField()
 
     associations_from = GenericRelatedField( many=True, serializer_dict={PartyRoleAssociation: PartyRoleAssociationFromBasicSerializer(), } )
     associations_to = GenericRelatedField( many=True, serializer_dict={ PartyRoleAssociation: PartyRoleAssociationToBasicSerializer(), } )
@@ -52,6 +53,21 @@ class CustomerAccountSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'created', 'valid_from', 'valid_to', 'customer', 'account_number', 'account_status', 'managed_by', 'credit_liabilities',
                   'account_type', 'name', 'pin', 'customer_account_contact', )
 
+    def create(self, validated_data):
+        credit_liabilities_data = validated_data.pop('credit_liabilities')
+        account = CustomerAccount.objects.create(**validated_data)    
+        return account  
+
+
+    def update(self, instance, validated_data):
+        credit_liabilities_data = validated_data.pop('credit_liabilities')
+        
+        for key, value in validated_data.items():
+            setattr( instance, key, value )
+
+        instance.save()
+        return instance             
+            
 
 sample_json = """
 {

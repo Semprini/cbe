@@ -85,6 +85,12 @@ class IndividualSerializer(serializers.HyperlinkedModelSerializer):
 
 class OrganisationSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    name = serializers.CharField( required=False )
+    sub_organisations = serializers.HyperlinkedRelatedField(
+        view_name='organisation-detail',
+        many=True,
+        read_only=True
+    )
 
     identifications = serializers.HyperlinkedRelatedField(
         view_name='identification-detail',

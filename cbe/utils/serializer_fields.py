@@ -3,17 +3,15 @@ from django.core.urlresolvers import resolve
 from django.utils import six
 from rest_framework import serializers
 
-from cbe.party.models import Individual, Organisation, TelephoneNumber
-#from cbe.party.serializers import IndividualSerializer, OrganisationSerializer
 
-
-class GenericRelatedField(serializers.StringRelatedField):
+class GenericRelatedField(serializers.Field):
 
     """
     A custom field to use for serializing generic relationships.
     """
 
     def __init__(self, serializer_dict, *args, **kwargs):
+        self.many = kwargs.pop('many')
         super(GenericRelatedField, self).__init__(*args, **kwargs)
 
         self.serializer_dict = serializer_dict
@@ -22,19 +20,37 @@ class GenericRelatedField(serializers.StringRelatedField):
 
 
     def to_representation(self, instance):
+        if self.many:
+            objects = []
+            for object in instance.all():
+                self.to_representation(object)
+            return objects
+
         # find a serializer correspoding to the instance class
         for key in self.serializer_dict.keys():
             if isinstance(instance, key):
                 # Return the result of the classes serializer
                 return self.serializer_dict[key].to_representation(instance=instance)
+
         return '{}'.format(instance)
 
 
     def to_internal_value(self, data):
-        # If provided as string, must be url to resource. Create dict
-        # containing just url
+        # If provided as string, must be url to resource. Create dict containing just url
         if type(data) == str:
             data = {'url': data}
+
+        # If provided as list then loop through all objects
+        elif type(data) == list:
+            if self.parent.instance == None:
+                return []
+            else:
+                attr = getattr( self.parent.instance, self.source )
+                setattr( self.parent.instance, self.source, [] )
+                for object in data:
+                    attr.add( self.to_internal_value( object ) )
+                self.parent.instance.save()
+                return attr.all()
 
         # Existing resource can be specified as url
         if 'url' in data:
@@ -67,7 +83,6 @@ class GenericRelatedField(serializers.StringRelatedField):
 
 
 class TypeField(serializers.Field):
-
     """
         Read only Field which displays the object type from the class name
     """

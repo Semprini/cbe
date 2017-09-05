@@ -128,7 +128,7 @@ class CustomerAPITests(APITestCase):
             "party": {
                 "type": "Individual",
                 "url": "http://127.0.0.1:8000/api/party/individual/{}/".format(self.individual.pk),
-                'given_names': 'Bob'},
+                'name': 'Bob', 'given_names': 'Bob'},
             "customer_accounts": []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -144,6 +144,7 @@ class CustomerAPITests(APITestCase):
                 "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},
             "customer_accounts": []}
         response = self.client.post(url, data, format='json')
+        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_fail_create_customer_party_type(self):
@@ -174,7 +175,7 @@ class CustomerAPITests(APITestCase):
             "associations_to": [],
             "party": {
                 "type": "Individual",
-                'given_names': 'test John', 'family_names': 'Doe'},
+                'given_names': 'test John', 'family_names': 'Doe', 'name': 'test John Doe'},
             "customer_accounts": []}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -203,7 +204,7 @@ class CustomerAPITests(APITestCase):
             "associations_to": [],
             "party": {
                 "type": "Individual",
-                'given_names': 'test John', 'family_names': 'Doe'},
+                'given_names': 'test John', 'family_names': 'Doe', 'name': 'test John Doe'},
             "customer_accounts": []}
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
