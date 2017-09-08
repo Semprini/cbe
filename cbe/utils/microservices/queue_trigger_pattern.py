@@ -39,7 +39,7 @@ class QueueTriggerPattern():
         print( "Should override worker and do something here" )
     
     
-    def queue_callback(channel, method, properties, body):
+    def queue_callback(self, channel, method, properties, body):
 
         try:
             # Create a disctionary from message body
@@ -80,8 +80,8 @@ class QueueTriggerPattern():
         
         # Create a retry exchange and queue where messages are held for TTL.
         channel.exchange_declare(exchange=self.retry_exchange, exchange_type='direct')
-        channel.queue_declare(exclusive=False, queue=self.retry_queue, durable=True, arguments={'x-dead-letter-exchange':self.retry_ready_exchnage,'x-message-ttl':RETRY_DELAY} )
-        channel.queue_bind(exchange=self.retry_exchange, queue=self.retry_queue, routing_key = '',)
+        channel.queue_declare(exclusive=False, queue=self.retry_queue_name, durable=True, arguments={'x-dead-letter-exchange':self.retry_ready_exchnage,'x-message-ttl':RETRY_DELAY} )
+        channel.queue_bind(exchange=self.retry_exchange, queue=self.retry_queue_name, routing_key = '',)
                            
         channel.basic_consume(callback, queue=self.queue_name, no_ack=False)
         return channel
@@ -111,13 +111,13 @@ class QueueTriggerPattern():
         
             while not done:
                 try:
-                   channel = queue_setup(connection, self.queue_callback)
+                   channel = self.queue_setup(connection, self.queue_callback)
                    channel.start_consuming()
                 except pika.exceptions.ConnectionClosed:
                     logging.warning( "Connection to MQ closed. retry..." )
                     connection = None
                     time.sleep(5)
-                    connection = self.connect()
+                    connection = self.connect(credentials)
                     
         except KeyboardInterrupt:
             print( 'Bye' )
