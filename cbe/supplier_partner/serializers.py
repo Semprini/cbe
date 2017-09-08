@@ -8,7 +8,7 @@ from rest_framework import serializers
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer
 from cbe.party.models import Individual, Organisation, TelephoneNumber
-from cbe.supplier_partner.models import Supplier, Buyer, Partner
+from cbe.supplier_partner.models import Supplier, SupplierAccount, Buyer, Partner
 
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
@@ -26,6 +26,14 @@ class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         return Supplier.objects.create(**validated_data)
 
+        
+class SupplierAccountSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+
+    class Meta:
+        model = SupplierAccount
+        fields = ('type', 'url', 'valid_from','valid_to','supplier','account_number','account_status','account_type','name' )
+        
 
 class PartnerSerializer(serializers.HyperlinkedModelSerializer):
     party = GenericRelatedField( many=False, 

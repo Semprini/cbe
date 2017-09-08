@@ -2,8 +2,8 @@ from rest_framework import permissions, renderers, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from cbe.supplier_partner.models import Supplier, Buyer, Partner
-from cbe.supplier_partner.serializers import SupplierSerializer, BuyerSerializer, PartnerSerializer
+from cbe.supplier_partner.models import Supplier, Buyer, Partner, SupplierAccount
+from cbe.supplier_partner.serializers import SupplierSerializer, SupplierAccountSerializer, BuyerSerializer, PartnerSerializer
 
 
 
@@ -12,6 +12,12 @@ class SupplierViewSet(viewsets.ModelViewSet):
     serializer_class = SupplierSerializer
     permission_classes = (permissions.DjangoModelPermissions, )
 
+    
+class SupplierAccountViewSet(viewsets.ModelViewSet):
+    queryset = SupplierAccount.objects.all()
+    serializer_class = SupplierAccountSerializer
+    permission_classes = (permissions.DjangoModelPermissions, )
+    
 
 class BuyerViewSet(viewsets.ModelViewSet):
     queryset = Buyer.objects.all()

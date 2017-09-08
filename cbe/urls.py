@@ -68,6 +68,7 @@ physicalobjectrouter.register(r'device', PhysicalObjectViews.DeviceViewSet)
 
 supplierpartnerrouter = AppRouter(root_view_name='app-supplier_partner')
 supplierpartnerrouter.register(r'supplier', SupplierPartnerViews.SupplierViewSet)
+supplierpartnerrouter.register(r'supplier_account', SupplierPartnerViews.SupplierAccountViewSet)
 supplierpartnerrouter.register(r'partner', SupplierPartnerViews.PartnerViewSet)
 supplierpartnerrouter.register(r'buyer', SupplierPartnerViews.BuyerViewSet)
 
