@@ -41,6 +41,13 @@ class QueueTriggerPattern():
     
     
     def queue_callback(self, channel, method, properties, body):
+        # Always ack before work has completed as we have assumed responsibility for message. Retry handled via new message passed to retry exchange
+        try:
+            channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False)
+            logging.info( "ackd" )
+        except:
+            logging.error( "Message unable to be ackd. Do not process now: %s"%body )
+            raise
 
         try:
             # Create a disctionary from message body
@@ -51,11 +58,9 @@ class QueueTriggerPattern():
         except RequeableError:
             logging.info( "requeued: %s"%channel.basic_publish( self.retry_exchange, '', body ) )
         except FatalError:
-            logging.error( "Fatal error: "%body )
-        
-        # Always ack (after work has completed) as retry handled via new message passed to retry exchange
-        channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False)
-        logging.info( "ackd" )
+            logging.error( "Fatal error: %s"%body )
+        except:
+            logging.critical( "Unhandled message: %s"%body )
         
 
     def queue_setup(self, connection, callback):
