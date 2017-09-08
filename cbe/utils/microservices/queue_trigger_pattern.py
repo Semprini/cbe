@@ -8,7 +8,8 @@ import pika
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
 
 RETRY_DELAY = 30000
-    
+
+TEST_NAME = 'test_queue_trigger_pattern'    
 TEST_EXCHANGES = (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.Sale.created',{'store':'Test Store 1'}))
 TEST_QUEUE_NAME = 'microservice.queue_trigger_test'
 
@@ -22,13 +23,13 @@ def FatalError( Exception ):
 
 class QueueTriggerPattern():
    
-    def __init__(self, microservice_name, exchanges, queue_name, queue_host, queue_user, queue_pass):
+    def __init__(self, microservice_name, exchanges, queue_host, queue_user, queue_pass):
         self.microservice_name = microservice_name
         self.exchanges = exchanges
         self.retry_ready_exchnage = 'microservice.' + microservice_name + '.retry_ready'
         self.retry_exchange = 'microservice.' + microservice_name + '.retry'
-        self.queue_name = queue_name
-        self.retry_queue_name = queue_name + ".retry"
+        self.queue_name = 'microservice.' + microservice_name
+        self.retry_queue_name = 'microservice.' + microservice_name + ".retry"
     
         self.queue_host = queue_host
         self.queue_user = queue_user
@@ -131,6 +132,6 @@ class QueueTriggerPattern():
             
 if __name__ == "__main__":
     
-    qtp = QueueTriggerPattern('queue_trigger_pattern_test', TEST_EXCHANGES, TEST_QUEUE_NAME, sys.argv[1], sys.argv[2], sys.argv[3])
+    qtp = QueueTriggerPattern(TEST_NAME, TEST_EXCHANGES, sys.argv[1], sys.argv[2], sys.argv[3])
     qtp.main_loop()
     
