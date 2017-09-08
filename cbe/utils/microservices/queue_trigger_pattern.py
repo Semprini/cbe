@@ -9,14 +9,14 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(
 
 RETRY_DELAY = 30000
 
-TEST_NAME = 'test_queue_trigger_pattern'    
+TEST_NAME = 'test.queue_trigger_pattern'    
 TEST_EXCHANGES = (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.Sale.created',{'store':'Test Store 1'}))
-TEST_QUEUE_NAME = 'microservice.queue_trigger_test'
 
 
 def RequeableError( Exception ):
     pass
 
+    
 def FatalError( Exception ):
     pass
 
