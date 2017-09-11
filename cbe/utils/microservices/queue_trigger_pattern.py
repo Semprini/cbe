@@ -14,18 +14,10 @@ TEST_EXCHANGES = (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.
 
 
 def RequeableError( Exception ):
-    def __init__(self, m):
-        self.message = m
-    
-    def __str__(self):
-        return self.message
+    pass
     
 def FatalError( Exception ):
-    def __init__(self, m):
-        self.message = m
-    
-    def __str__(self):
-        return self.message
+    pass
 
 class QueueTriggerPattern():
    
@@ -61,9 +53,9 @@ class QueueTriggerPattern():
             
             self.worker(message_json)
             
-        except RequeableError:
+        except RequeableError as err:
             logging.info( "requeued: %s"%channel.basic_publish( self.retry_exchange, '', body ) )
-        except FatalError:
+        except FatalError as err:
             logging.error( "Fatal error: %s"%body )
         except:
             logging.critical( "Unhandled message: %s"%body )
