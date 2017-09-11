@@ -3,9 +3,49 @@ from django.core.urlresolvers import resolve
 from django.utils import six
 from rest_framework import serializers
 
+class ExtendedSerializerField(serializers.Field):
+    """
+    A custom field which allows urls to be provided when deserializing hyperlinked fields.
+    """
 
+    def __init__(self, serializer, many=False, *args, **kwargs):
+        self.many = many
+        super(ExtendedSerializerField, self).__init__(*args, **kwargs)
+
+        self.serializer = serializer
+        self.serializer.bind('', self)
+
+    def to_representation(self, instance):
+        # Serialize using supplied serializer
+        return self.serializer.to_representation(instance)
+
+    def to_internal_value(self, data):
+        # Allow string, list or full object to be provided
+        
+        # If string then it must contain the URL, reverse and get referenced object
+        if type(data) == str:
+            resolved_func, unused_args, resolved_kwargs = resolve(
+                urlparse(data).path)
+            return resolved_func.cls.queryset.get(pk=resolved_kwargs['pk'])
+
+        # If list then loop through results and call to_internal_value on each
+        elif type(data) == list:
+            if self.parent.instance == None:
+                return []
+            else:
+                attr = getattr( self.parent.instance, self.source )
+                setattr( self.parent.instance, self.source, [] )
+                for object in data:
+                    attr.add( self.to_internal_value( object ) )
+                self.parent.instance.save()
+                return attr.all()
+        
+        # Otherwise use default serializer function
+        else:
+            return self.serializer.to_internal_value(data)
+        
+    
 class GenericRelatedField(serializers.Field):
-
     """
     A custom field to use for serializing generic relationships.
     """
