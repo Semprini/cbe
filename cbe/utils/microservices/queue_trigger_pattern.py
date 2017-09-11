@@ -13,11 +13,11 @@ TEST_NAME = 'test.queue_trigger_pattern'
 TEST_EXCHANGES = (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.Sale.created',{'store':'Test Store 1'}))
 
 
-def RequeableError( Exception ):
+def RequeableError( BaseException ):
     pass
 
     
-def FatalError( Exception ):
+def FatalError( BaseException ):
     pass
 
 
