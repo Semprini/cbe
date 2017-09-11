@@ -13,13 +13,19 @@ TEST_NAME = 'test.queue_trigger_pattern'
 TEST_EXCHANGES = (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.Sale.created',{'store':'Test Store 1'}))
 
 
-def RequeableError( BaseException ):
-    pass
-
+def RequeableError( Exception ):
+    def __init__(self, m):
+        self.message = m
     
-def FatalError( BaseException ):
-    pass
-
+    def __str__(self):
+        return self.message
+    
+def FatalError( Exception ):
+    def __init__(self, m):
+        self.message = m
+    
+    def __str__(self):
+        return self.message
 
 class QueueTriggerPattern():
    
