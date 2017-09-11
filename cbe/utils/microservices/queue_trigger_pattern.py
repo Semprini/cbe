@@ -2,6 +2,7 @@
 import os, sys, time, json
 import requests
 import logging
+import traceback
 
 import pika
 
@@ -57,8 +58,9 @@ class QueueTriggerPattern():
             logging.info( "requeued: %s"%channel.basic_publish( self.retry_exchange, '', body ) )
         except FatalError as err:
             logging.error( "Fatal error: %s"%body )
-        except:
-            logging.critical( "Unhandled message: %s"%body )
+        except Exception as err:
+            logging.critical( "Unhandled message: %s | %s"%(err,body) )
+            traceback.print_exc()
         
 
     def queue_setup(self, connection, callback):
