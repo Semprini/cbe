@@ -1,15 +1,16 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField, GenericRelatedField
+from cbe.utils.serializers import LimitDepthMixin
+from cbe.utils.serializer_fields import TypeField, ExtendedSerializerField
 from cbe.party.serializers import OrganisationSerializer
 
 from cbe.physical_object.models import Structure, Vehicle, Device
     
 
-class VehicleSerializer(serializers.HyperlinkedModelSerializer):
+class VehicleSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
-    make = OrganisationSerializer()
+    make = ExtendedSerializerField(OrganisationSerializer())
     
     class Meta:
         model = Vehicle
@@ -18,7 +19,7 @@ class VehicleSerializer(serializers.HyperlinkedModelSerializer):
                   'doors','weight','axles')
 
                   
-class StructureSerializer(serializers.HyperlinkedModelSerializer):
+class StructureSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
     class Meta:
@@ -26,8 +27,9 @@ class StructureSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'start_date', 'end_date', 'physical_object_type', 'make', 'location' )                  
         
         
-class DeviceSerializer(serializers.HyperlinkedModelSerializer):
+class DeviceSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    make = ExtendedSerializerField(OrganisationSerializer())
 
     class Meta:
         model = Device

@@ -37,6 +37,9 @@ class Structure(ManufacturedObject):
         if self.physical_object_type is None or self.physical_object_type == "":
             self.physical_object_type = "Structure"          
         super(Structure, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['id']    
         
         
 class Vehicle(ManufacturedObject):
@@ -50,6 +53,8 @@ class Vehicle(ManufacturedObject):
     weight = models.IntegerField(blank=True, null=True)
     axles = models.IntegerField(blank=True, null=True)
     
+    class Meta:
+        ordering = ['id']    
     
     def __str__(self):
         if self.model is not None:
@@ -64,6 +69,7 @@ class Vehicle(ManufacturedObject):
 
 
 class Device(ManufacturedObject):
-    pass
+    class Meta:
+        ordering = ['id']    
     
         

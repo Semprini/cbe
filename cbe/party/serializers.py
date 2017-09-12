@@ -5,13 +5,14 @@ from django.core.urlresolvers import resolve
 
 from rest_framework import serializers
 
+from cbe.utils.serializers import LimitDepthMixin
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.models import Individual, Organisation, GENDER_CHOICES, MARITAL_STATUS_CHOICES, TelephoneNumber, GenericPartyRole, Owner, PartyRoleAssociation
 from cbe.customer.models import Customer
 from cbe.location.serializers import CountrySerializer
 
 
-class IndividualSerializer(serializers.HyperlinkedModelSerializer):
+class IndividualSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
     identifications = serializers.HyperlinkedRelatedField(
@@ -31,7 +32,7 @@ class IndividualSerializer(serializers.HyperlinkedModelSerializer):
                   'form_of_address', 'gender', 'legal_name', 'marital_status', 'nationality', 'place_of_birth', 'identifications', )
 
 
-class OrganisationSerializer(serializers.HyperlinkedModelSerializer):
+class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
     name = serializers.CharField( required=False )
     sub_organisations = serializers.HyperlinkedRelatedField(
@@ -61,7 +62,7 @@ class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('type', 'url', 'party_role', 'number')
         
         
-class OwnerSerializer(serializers.HyperlinkedModelSerializer):
+class OwnerSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
     party = GenericRelatedField( many=False, 
         serializer_dict={ 

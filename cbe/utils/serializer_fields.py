@@ -42,7 +42,12 @@ class ExtendedSerializerField(serializers.Field):
         
         # Otherwise use default serializer function
         else:
-            return self.serializer.to_internal_value(data)
+            object = getattr( self.parent.instance, self.source )
+            obj_internal_value = self.serializer.to_internal_value(data)
+            for k, v in obj_internal_value.items():
+                setattr(object, k, v)
+            object.save()
+            return object
         
     
 class GenericRelatedField(serializers.Field):

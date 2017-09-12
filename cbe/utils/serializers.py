@@ -1,7 +1,53 @@
 from urllib.parse import urlparse
+from collections import OrderedDict
+import inspect
+
 from django.core.urlresolvers import resolve
+from django.conf import settings
+
 from rest_framework import serializers
+from rest_framework.fields import SkipField
+from rest_framework.relations import PKOnlyObject
+
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
+
+
+class LimitDepthMixin(serializers.HyperlinkedModelSerializer):
+    """
+    Mixin which overloads to_representation of serializer to enforce a max depth when serializing nested relations.
+    When max depth is reached the response will be the url value
+    """
+    def to_representation(self, instance):
+        ret = OrderedDict()
+        fields = self._readable_fields
+
+        if not hasattr(self, 'expansion_depth'):
+            self.expansion_depth = 0
+
+        if self.expansion_depth >= settings.DEPTH_MAX:
+            for field in fields:
+                if field.field_name == self.url_field_name:
+                    attribute = field.get_attribute(instance)
+                    return field.to_representation(attribute)
+        for field in fields:
+            field.expansion_depth = self.expansion_depth + 1
+            try:
+                attribute = field.get_attribute(instance)
+            except SkipField:
+                continue
+                
+            # We skip `to_representation` for `None` values so that fields do
+            # not have to explicitly deal with that case.
+            #
+            # For related fields with `use_pk_only_optimization` we need to
+            # resolve the pk value.
+            check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
+            if check_for_none is None:
+                ret[field.field_name] = None
+            else:
+                ret[field.field_name] = field.to_representation(attribute)
+
+        return ret
 
 
 class GenericHyperlinkedSerializer(serializers.HyperlinkedModelSerializer):

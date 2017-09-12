@@ -150,6 +150,9 @@ TIME_ZONE = 'UTC'
 
 STATIC_URL = '/static/'
 
+# LimitDepthMixin serializer setting
+DEPTH_MAX = 2
+
 # Try to use a local settings file if available
 try:
     from cbe.local_settings import *
