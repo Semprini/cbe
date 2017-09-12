@@ -8,7 +8,7 @@ from cbe.party.serializers import OrganisationSerializer
 from cbe.physical_object.models import Structure, Vehicle, Device
     
 
-class VehicleSerializer(LimitDepthMixin):
+class VehicleSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
     make = ExtendedModelSerializerField(OrganisationSerializer())
     

@@ -10,6 +10,7 @@ class ExtendedModelSerializerField(serializers.Field):
 
     def __init__(self, serializer, many=False, *args, **kwargs):
         self.many = many
+        self.partial = kwargs.pop('partial', False)
         super(ExtendedModelSerializerField, self).__init__(*args, **kwargs)
 
         self.serializer = serializer
@@ -45,7 +46,6 @@ class ExtendedModelSerializerField(serializers.Field):
         else:
             obj_internal_value = self.serializer.to_internal_value(data)
             if self.parent.instance == None:
-                print( obj_internal_value )
                 return obj_internal_value
             object = getattr( self.parent.instance, self.source )
             for k, v in obj_internal_value.items():

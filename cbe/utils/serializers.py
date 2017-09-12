@@ -1,8 +1,5 @@
-from urllib.parse import urlparse
 from collections import OrderedDict
-import inspect
 
-from django.core.urlresolvers import resolve
 from django.conf import settings
 
 from rest_framework import serializers
@@ -12,7 +9,7 @@ from rest_framework.relations import PKOnlyObject
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 
 
-class LimitDepthMixin(serializers.HyperlinkedModelSerializer):
+class LimitDepthMixin():
     """
     Mixin which overloads to_representation of serializer to enforce a max depth when serializing nested relations.
     When max depth is reached the response will be the url value
@@ -26,19 +23,17 @@ class LimitDepthMixin(serializers.HyperlinkedModelSerializer):
         
         if self.expansion_depth >= settings.DEPTH_MAX:
             for field in fields:
-                print( field.field_name, type(field) )
                 if field.field_name == self.url_field_name:
                     attribute = field.get_attribute(instance)
                     return field.to_representation(attribute)
                     
         for field in fields:
+            field.expansion_depth = self.expansion_depth + 1
             try:
                 attribute = field.get_attribute(instance)
             except SkipField:
                 continue
 
-            field.expansion_depth = self.expansion_depth + 1
-                
             # For related fields with `use_pk_only_optimization` we need to
             # resolve the pk value.
             check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
