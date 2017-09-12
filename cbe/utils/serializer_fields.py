@@ -3,20 +3,21 @@ from django.core.urlresolvers import resolve
 from django.utils import six
 from rest_framework import serializers
 
-class ExtendedSerializerField(serializers.Field):
+class ExtendedModelSerializerField(serializers.Field):
     """
     A custom field which allows urls to be provided when deserializing hyperlinked fields.
     """
 
     def __init__(self, serializer, many=False, *args, **kwargs):
         self.many = many
-        super(ExtendedSerializerField, self).__init__(*args, **kwargs)
+        super(ExtendedModelSerializerField, self).__init__(*args, **kwargs)
 
         self.serializer = serializer
         self.serializer.bind('', self)
 
     def to_representation(self, instance):
         # Serialize using supplied serializer
+        self.serializer.expansion_depth = getattr(self, "expansion_depth", 0)
         return self.serializer.to_representation(instance)
 
     def to_internal_value(self, data):
@@ -42,8 +43,11 @@ class ExtendedSerializerField(serializers.Field):
         
         # Otherwise use default serializer function
         else:
-            object = getattr( self.parent.instance, self.source )
             obj_internal_value = self.serializer.to_internal_value(data)
+            if self.parent.instance == None:
+                print( obj_internal_value )
+                return obj_internal_value
+            object = getattr( self.parent.instance, self.source )
             for k, v in obj_internal_value.items():
                 setattr(object, k, v)
             object.save()

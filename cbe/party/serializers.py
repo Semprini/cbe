@@ -32,7 +32,7 @@ class IndividualSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializ
                   'form_of_address', 'gender', 'legal_name', 'marital_status', 'nationality', 'place_of_birth', 'identifications', )
 
 
-class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
+class OrganisationSerializer(LimitDepthMixin):
     type = TypeField()
     name = serializers.CharField( required=False )
     sub_organisations = serializers.HyperlinkedRelatedField(

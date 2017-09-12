@@ -30,6 +30,18 @@ def notify_save_instance(sender, instance, created, serializer, exchange_prefix,
     """
     Generic notification of object change
     """
+    
+    # To allow related objects to be sent in signal we can set a dictionary of things to save before the serializtion occurs
+    if hasattr(instance,"pre_signal_xtra_related"):
+        for key, value in instance.pre_signal_xtra_related.items():
+            if type(value[0]) == list:
+                for item in value[0]:
+                    setattr( item, value[1], instance )
+                    item.save()
+            else:
+                setattr( value[0], value[1], instance )
+                value[0].save()
+                
     if created:
         exchange_name = exchange_prefix + ".created"
     else:
