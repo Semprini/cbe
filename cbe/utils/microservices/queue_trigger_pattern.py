@@ -101,8 +101,11 @@ class QueueTriggerPattern():
                 logging.info( "Completed connection to MQ..." )
                 ready = True
             except pika.exceptions.ConnectionClosed as ex:
-                logging.warning( "Connection to MQ not ready, retry..." )
+                logging.warning( "Connection to MQ not ready, retry... ({})".format(ex) )
                 time.sleep(5)
+            except pika.exceptions.IncompatibleProtocolError as ex:
+                logging.error( "Connection to MQ threw protocol error - possible server restarting, retry... ({})".format(ex) )
+                time.sleep(60)
         return connection
 
         
