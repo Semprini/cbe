@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from cbe.credit.models import Credit, CreditProfile, CreditAlert, CreditBalanceEvent
+
+admin.site.register(Credit)
+admin.site.register(CreditProfile)
+admin.site.register(CreditAlert)
+admin.site.register(CreditBalanceEvent)
+

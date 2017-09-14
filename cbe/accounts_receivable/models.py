@@ -16,7 +16,7 @@ class PaymentChannel(models.Model):
         return "%s"%(self.name)
 
         
-class Payment(models.Model):
+class CustomerPayment(models.Model):
     channel = models.ForeignKey(PaymentChannel)
     vendor = models.ForeignKey(Organisation, null=True,blank=True)
 
@@ -25,4 +25,7 @@ class Payment(models.Model):
 
     customer = models.ForeignKey(Customer, db_index=True, null=True,blank=True)
     account = models.ForeignKey(CustomerAccount, db_index=True, null=True,blank=True)
+
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    tax = models.DecimalField(max_digits=10, decimal_places=2)
     

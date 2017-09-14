@@ -53,9 +53,10 @@ INSTALLED_APPS = (
     'cbe.trouble',
     'cbe.information_technology',
     'cbe.project',
+    'cbe.accounts_receivable',
 )
 
-#python manage.py makemigrations location party customer credit physical_object supplier_partner human_resources resource trouble information_technology project
+#python manage.py makemigrations location party customer credit physical_object supplier_partner human_resources resource trouble information_technology project accounts_receivable
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

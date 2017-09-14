@@ -1,0 +1,1 @@
+default_app_config = 'cbe.accounts_receivable.apps.AccountsReceivableConfig'

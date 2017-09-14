@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from cbe.accounts_receivable.models import CustomerPayment, PaymentChannel
+
+admin.site.register(CustomerPayment)
+admin.site.register(PaymentChannel)
+
