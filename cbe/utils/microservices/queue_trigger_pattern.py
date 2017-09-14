@@ -34,6 +34,10 @@ class QueueTriggerPattern():
         self.queue_user = queue_user
         self.queue_pass = queue_pass
     
+        self.setup()
+
+    def setup(self):
+        pass
     
     def worker(self, message_json):
         print( "Should override worker and do something here" )
