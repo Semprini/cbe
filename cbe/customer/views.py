@@ -14,10 +14,7 @@ from cbe.customer.serializers import CustomerAccountContactSerializer, CustomerS
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
-    #queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
-    #                      IsOwnerOrReadOnly,)
 
     def get_queryset(self):
         if not self.request.user.is_anonymous:# == AnonymousUser:
@@ -37,7 +34,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
                 
                 return Customer.objects.filter( Q(managed_by__in=organisations) | Q(managed_by=None) )
         else:
-            return []   #TODO: Auth Exception
+            return Customer.objects.none()
 
 
 class CustomerAccountViewSet(viewsets.ModelViewSet):

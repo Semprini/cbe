@@ -9,38 +9,28 @@ from cbe.party.serializers_partyroleassociation import PartyRoleAssociationSeria
 class PartyRoleAssociationViewSet(viewsets.ModelViewSet):
     queryset = PartyRoleAssociation.objects.all()
     serializer_class = PartyRoleAssociationSerializer
-    permission_classes = (permissions.DjangoModelPermissions, )
 
 
 class OwnerViewSet(viewsets.ModelViewSet):
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
-    permission_classes = (permissions.DjangoModelPermissions, )
     
     
 class IndividualViewSet(viewsets.ModelViewSet):
     queryset = Individual.objects.all()
     serializer_class = IndividualSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
-    #                      IsOwnerOrReadOnly,)
-
-    # def perform_create(self, serializer):
-    #    serializer.save(owner=self.request.user)
 
 
 class OrganisationViewSet(viewsets.ModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
 
 
 class TelephoneNumberViewSet(viewsets.ModelViewSet):
     queryset = TelephoneNumber.objects.all()
     serializer_class = TelephoneNumberSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
 
 
 class GenericPartyRoleViewSet(viewsets.ModelViewSet):
     queryset = GenericPartyRole.objects.all()
     serializer_class = GenericPartyRoleSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
