@@ -25,6 +25,9 @@ class FatalError( Exception ):
 class QueueTriggerPattern():
     """
     Boiler plate of queue triggered microservices. Should be inherited and 'worker' function overriden.
+    
+    Provided exchanges is a list of tuples. Each tuple contains an exchange name and exchange args dictionary (or None)
+    Args example: {'ham': 'good', 'x-match':'any'}
     """
    
     def __init__(self, microservice_name, exchanges, queue_host, queue_user, queue_pass):
@@ -108,7 +111,6 @@ class QueueTriggerPattern():
         for exchange, arguments in self.exchanges:
             channel.exchange_declare(exchange=exchange, exchange_type='headers')
             channel.queue_bind(exchange=exchange, queue=self.queue_name, routing_key = '', arguments=arguments)
-                           #arguments = {'ham': 'good', 'x-match':'any'})
 
         # Create a dead letter exhange where messages from retry queue will be put after TTL
         # Subscribe (bind) our main queue to it for redelivery
