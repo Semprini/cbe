@@ -10,10 +10,18 @@ from cbe.party.serializers import IndividualSerializer, OrganisationSerializer
 from cbe.party.models import Individual, Organisation
 from cbe.human_resources.models import IdentificationType, Identification, Staff
 
+
+class IdentificationTypeSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+    
+    class Meta:
+        model = IdentificationType
+        fields = ('type', 'url', 'name' )  
                  
                   
 class IdentificationSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    
     party = GenericRelatedField( many=False, 
         serializer_dict={ 
             Individual: IndividualSerializer(),
@@ -26,14 +34,6 @@ class IdentificationSerializer(serializers.HyperlinkedModelSerializer):
         
 
        
-class IdentificationTypeSerializer(serializers.HyperlinkedModelSerializer):
-    type = TypeField()
-    
-    class Meta:
-        model = IdentificationType
-        fields = ('type', 'url', 'name' )  
-        
-        
 class StaffSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
     party = GenericRelatedField( many=False,
