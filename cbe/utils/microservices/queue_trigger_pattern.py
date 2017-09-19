@@ -54,12 +54,15 @@ class QueueTriggerPattern():
         """
         A wrapper around the requests get function which will call CBE and load the json response.
         """
+        if type(url) is dict:
+            logging.info( "QueueTriggerPattern request called to get url but url is already dict. Assuming loaded json so returning input." )
+            return url
         response = requests.get(url, auth=(user, password))
         if response.status_code >= 500 or response.status_code in (401,403):
             # Retryable errors which can be requeued
             logging.warning( "Retryable " + error_message + "{}".format(response.content) )
             raise RequeableError("Get {} returned: {}".format(url, response.status_code))
-        elif response.status_code != 200:   
+        elif response.status_code != 200:
             # Fatal errors which can't be retried
             logging.error( "Fatal " + error_message + "{}".format(response.content) )
             raise FatalError("Get {} returned: {}".format(url, response.status_code))
