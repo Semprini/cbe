@@ -7,6 +7,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
 function executeRetry ($expression) {
@@ -23,7 +24,7 @@ function executeRetry ($expression) {
 		    if(!$?) { Write-Host "[$scriptName] `$? = $?"; $exitCode = 1 }
 		} catch { echo $_.Exception|format-list -force; $exitCode = 2 }
 	    if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; $exitCode = 3 }
-		if ( $LASTEXITCODE -eq 3010 ) { $LASTEXITCODE = 0 } # 3010 is a normal exit
+		if ( $LASTEXITCODE -eq 3010 ) { cmd /c "exit 0" } # 3010 is a normal exit
 	    if ( $lastExitCode -ne 0 ) { Write-Host "[$scriptName] `$lastExitCode = $lastExitCode "; $exitCode = $lastExitCode }
 	    if ($exitCode -ne 0) {
 			if ($retryCount -ge $retryMax ) {
@@ -75,10 +76,6 @@ if ($media) {
 } else {
     Write-Host "[$scriptName] media           : (not supplied)"
     Write-Host "[$scriptName] wimIndex        : (not applicable when media not supplied)"
-}
-# Provisioning Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $configuration $media $wimIndex `""
 }
 
 $defaultMount = 'C:\mountdir'

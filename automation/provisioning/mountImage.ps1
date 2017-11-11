@@ -13,12 +13,12 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     return $output
 }
 
 # This script is designed for media that is on a file share or web server, it will download the media to the
 # local file system tehn mount it.
-$lastExitCode = 0
 Write-Host "`n[$scriptName] Usage example"
 Write-Host "[$scriptName]   mountImage.ps1 $env:userprofile\image.iso http:\\the.internet\image.iso"
 Write-Host "`n[$scriptName] ---------- start ----------"
@@ -41,10 +41,6 @@ if ($sourcePath) {
 } else {
     Write-Host "[$scriptName] sourcePath : not supplied, dismounting $imagePath"
     Write-Host "[$scriptName] fallBack   : (not applicable when sourcePath not passed)"
-}
-# Provisionig Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $imagePath $sourcePath $fallBack`""
 }
 
 if ($sourcePath) {

@@ -15,6 +15,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     return $output
 }
 
@@ -42,20 +43,12 @@ if ($loginType) {
 
 if ($sqlPassword) {
     Write-Host "[$scriptName] sqlPassword : *********************** (only applicable if loginType is SQLLogin)"
-	# Provisionig Script builder
-	if ( $env:PROV_SCRIPT_PATH ) {
-		Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $dbUser $dbhost $loginType `'***********************`'`""
-	}
 } else {
 	if ( $loginType -eq 'SQLLogin' ) {
     	Write-Host "[$scriptName] sqlPassword : not supplied, required when loginType is SQLLogin, exiting with code 102."; exit 102
 	} else {
 	    Write-Host "[$scriptName] sqlPassword : not supplied (only applicable if loginType is SQLLogin)"
     }
-	# Provisionig Script builder
-	if ( $env:PROV_SCRIPT_PATH ) {
-		Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $dbUser $dbhost $loginType`""
-	}
 }
 
 Write-Host "`n[$scriptName] Load the assemblies ...`n"

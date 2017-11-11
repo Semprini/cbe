@@ -1,14 +1,13 @@
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
-	$LASTEXITCODE = 0
 	Write-Host "[$scriptName] $expression"
 	try {
 		$output = Invoke-Expression $expression
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
-    if ( $LASTEXITCODE -ne 0 ) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     return $output
 }
 
@@ -35,10 +34,6 @@ if ($opt_arg) {
     Write-Host "[$scriptName] opt_arg          : (not supplied)"
 }
 
-# Provisionig Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $msiFile $opt_arg`""
-}
 if ($env:interactive) {
     Write-Host "[$scriptName] `$env:interactive : $env:interactive, run in current window"
     $sessionControl = '-PassThru -Wait -NoNewWindow'

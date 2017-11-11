@@ -4,6 +4,7 @@
 [![GitHub version](https://badge.fury.io/gh/semprini%2Fcbe.svg)](https://badge.fury.io/gh/semprini%2Fcbe)
 [![Build Status](https://img.shields.io/circleci/project/github/Semprini/cbe.svg)](https://circleci.com/gh/Semprini/cbe)
 [![Coverage Status](https://coveralls.io/repos/github/Semprini/cbe/badge.svg?branch=master)](https://coveralls.io/github/Semprini/cbe?branch=master)
+[![cdaf version](automation/badge.png)](http://cdaf.io)
 
 The CBE projects goal is to provide practical data governance via a generic schema/API/persistence layer which can be used for all the common functions in an enterprise and extended for each industry/business. CBE can be used to underpin micro-service, SOA, EDA or MDM architecture. In the same area as SAP MDG, CBE provides domain-specific master data governance to centrally create, change and distribute or to consolidate master data across your complete enterprise system landscape.
 

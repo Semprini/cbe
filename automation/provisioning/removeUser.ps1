@@ -7,6 +7,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; emailAndExit 1 }
 	} catch { echo $_.Exception|format-list -force; emailAndExit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; emailAndExit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     return $output
 }
 
@@ -19,10 +20,6 @@ if ($userName) {
 } else {
 	$userName = 'vagrant'
     Write-Host "[$scriptName] userName             : $userName (default)"
-}
-# Provisionig Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $userName`""
 }
 
 if ((gwmi win32_computersystem).partofdomain -eq $true) {

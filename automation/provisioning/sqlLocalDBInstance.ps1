@@ -7,6 +7,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
 $scriptName = 'sqlLocalDBInstance.ps1'
@@ -19,11 +20,6 @@ if ($instanceName) {
 } else {
 	$instanceName = 'MSSQLLocalDB'
     Write-Host "[$scriptName] instanceName          : $instanceName (not supplied, so default used)"
-}
-
-# Provisionig Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $instanceName`""
 }
 
 $exists = SqlLocalDB.exe info | findstr.exe $instanceName

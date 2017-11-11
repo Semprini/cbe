@@ -7,6 +7,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
 $scriptName = 'IISPoolAccount.ps1'
@@ -33,10 +34,6 @@ if ($poolName) {
 } else {
 	$poolName = 'DefaultAppPool'
     Write-Host "[$scriptName] poolName     : $poolName (default)"
-}
-# Provisioning Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $poolid `'**********`' $poolName `""
 }
 
 executeExpression 'Import-Module ServerManager'
