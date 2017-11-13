@@ -7,25 +7,3 @@ automation/remote/dockerBuild.ps1 $imageName $buildNumber
 
 # Remove any older images	
 automation/remote/dockerClean.ps1 $imageName $buildNumber
-
-Write-Host "`nCleanup from previously failed builds`n"
-$env:CORE_IMAGE = "${imageName}"
-docker-compose down
-docker-compose rm
-
-Write-Host "Create Test Containers`n"
-$env:CORE_IMAGE = "${imageName}:$buildNumber"
-docker-compose up -d
-
-Write-Host "Wait for migrations to start"
-sleep 10
-
-Write-Host "Disable outbound proxy and test container"
-$url = "http://${env:COMPUTERNAME}:8001/admin"
-$webClient = New-Object System.Net.WebClient
-$webClient.Proxy = [System.Net.GlobalProxySelection]::GetEmptyWebProxy()
-$webClient.DownloadString($url) | findstr /C:"Common Business Entities"
-
-Write-Host "`nTear down`n"
-docker-compose down
-docker-compose rm
