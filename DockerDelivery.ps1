@@ -36,14 +36,16 @@ function executeRetry ($expression) {
 				Write-Host "[$scriptName] Retry maximum ($retryCount) reached, listing docker images and processes for diagnostics and exiting with `$LASTEXITCODE = $exitCode.`n"
 				Write-Host "[$scriptName] docker images`n"
 				docker images
-				Write-Host "[$scriptName] `ndocker ps`n"
+				Write-Host "`n[$scriptName] docker ps`n"
 				docker ps
-				Write-Host "[$scriptName] `ndocker-compose logs`n"
+				Write-Host "`n[$scriptName] docker-compose logs`n"
 				docker-compose logs
 				exit $exitCode
 			} else {
 				$retryCount += 1
 				Write-Host "[$scriptName] Wait $wait seconds, then retry $retryCount of $retryMax"
+				Write-Host "[$scriptName] docker-compose logs`n"
+				docker-compose logs
 				sleep $wait
 			}
 		}
@@ -94,11 +96,11 @@ Write-Host "Wait for migrations to start"
 executeExpression "sleep 10"
 
 Write-Host "Disable outbound proxy and test container"
-$url = "http://${env:COMPUTERNAME}/admin:8000"
+$url = "http://${env:COMPUTERNAME}:8001/admin"
 Write-Host "`$webClient = New-Object System.Net.WebClient"
 $webClient = New-Object System.Net.WebClient
 executeExpression "`$webClient.Proxy = [System.Net.GlobalProxySelection]::GetEmptyWebProxy()"
-executeRetry "`$webClient.DownloadString('$url')"
+executeRetry "`$webClient.DownloadString('$url') | findstr /C:`"Common Business Entities`""
 
 Write-Host "`nTear down`n"
 executeExpression "docker-compose down"
