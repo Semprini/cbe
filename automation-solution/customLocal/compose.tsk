@@ -19,7 +19,8 @@ docker-compose up -d
 
 Write-Host "Wait for container to start"
 
-sleep 60
+if ( -not ($secondsToMigrate)) { $secondsToMigrate = 30 }
+sleep $secondsToMigrate
 docker-compose logs
 
 Write-Host "Disable outbound proxy and test container (http://${env:COMPUTERNAME}:${publishedPort}/admin)"

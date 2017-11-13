@@ -2,3 +2,4 @@
 deployTaskOverride=compose.tsk
 publishedPort=8000
 environment=prod
+secondsToMigrate=120
