@@ -1,6 +1,5 @@
 Param (
-	[string]$buildNumber,
-	[string]$rebuildImage
+	[string]$buildNumber
 )
 
 $scriptName = 'DockerDelivery.ps1'
@@ -16,42 +15,6 @@ function executeExpression ($expression) {
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
     if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
-}
-
-function executeRetry ($expression) {
-	$exitCode = 1
-	$wait = 10
-	$retryMax = 5
-	$retryCount = 0
-	while (( $retryCount -le $retryMax ) -and ($exitCode -ne 0)) {
-		$exitCode = 0
-		$error.clear()
-		Write-Host "[$scriptName][$retryCount] $expression"
-		try {
-			Invoke-Expression $expression
-		    if(!$?) { Write-Host "[$scriptName] `$? = $?"; $exitCode = 1 }
-		} catch { Write-Host "[$scriptName] $_"; $exitCode = 2 }
-	    if ( $error[0] ) { Write-Host "[$scriptName] Warning, message in `$error[0] = $error"; $error.clear() } # do not treat messages in error array as failure
-	    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$lastExitCode = $lastExitCode "; $exitCode = $LASTEXITCODE }
-	    if ($exitCode -ne 0) {
-			if ($retryCount -ge $retryMax ) {
-				Write-Host "[$scriptName] Retry maximum ($retryCount) reached, listing docker images and processes for diagnostics and exiting with `$LASTEXITCODE = $exitCode.`n"
-				Write-Host "[$scriptName] docker images`n"
-				docker images
-				Write-Host "`n[$scriptName] docker ps`n"
-				docker ps
-				Write-Host "`n[$scriptName] docker-compose logs`n"
-				docker-compose logs
-				exit $exitCode
-			} else {
-				$retryCount += 1
-				Write-Host "[$scriptName] Wait $wait seconds, then retry $retryCount of $retryMax"
-				Write-Host "[$scriptName] docker-compose logs`n"
-				docker-compose logs
-				sleep $wait
-			}
-		}
-    }
 }
 
 # Use the CDAF provisioning helpers
@@ -73,51 +36,8 @@ if ( $buildNumber ) {
 	Write-Host "[$scriptName]   buildNumber  : $buildNumber (using locally generated counter)"
 }
 
-if ( $rebuildImage ) {
-	Write-Host "[$scriptName]   rebuildImage : $rebuildImage (choices are yes or no)"
-} else {
-	$rebuildImage = 'no'
-	Write-Host "[$scriptName]   rebuildImage : $rebuildImage (not supplied, so set to default)"
-}
-
-$imageName = "cbe"
-Write-Host "[$scriptName]   imageName    : $imageName"
-
-Write-Host "`nCreate the base image, relying on docker cache to avoid unnecessary reprovisioning"
-executeExpression "cat Dockerfile"
-	
-if ( $rebuildImage -eq 'yes') {
-	# Force rebuild, i.e. no-cache
-	executeExpression "automation/remote/dockerBuild.ps1 $imageName $buildNumber -rebuild yes"
-} else {
-	executeExpression "automation/remote/dockerBuild.ps1 $imageName $buildNumber"
-}
-
-# Remove any older images	
-executeExpression "automation/remote/dockerClean.ps1 $imageName $buildNumber"
-
-Write-Host "`nCleanup from previously failed builds`n"
-executeExpression "`$env:CORE_IMAGE = '${imageName}'"
-executeExpression "docker-compose down"
-executeExpression "docker-compose rm"
-
-Write-Host "Create Test Containers`n"
-executeExpression "`$env:CORE_IMAGE = '${imageName}:$buildNumber'"
-executeExpression "docker-compose up -d"
-
-Write-Host "Wait for migrations to start"
-executeExpression "sleep 10"
-
-Write-Host "Disable outbound proxy and test container"
-$url = "http://${env:COMPUTERNAME}:8001/admin"
-Write-Host "`$webClient = New-Object System.Net.WebClient"
-$webClient = New-Object System.Net.WebClient
-executeExpression "`$webClient.Proxy = [System.Net.GlobalProxySelection]::GetEmptyWebProxy()"
-executeRetry "`$webClient.DownloadString('$url') | findstr /C:`"Common Business Entities`""
-
-Write-Host "`nTear down`n"
-executeExpression "docker-compose down"
-executeExpression "docker-compose rm"
+executeExpression "Copy-Item -Force dockerBuild.tsk build.tsk"
+executeExpression ".\automation\processor\buildPackage.ps1 $buildNumber"
 
 Write-Host "`n[$scriptName] ---------- stop ----------"
 $error.clear()

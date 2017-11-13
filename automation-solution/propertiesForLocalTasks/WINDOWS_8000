@@ -1,5 +1,0 @@
-# Run as child process
-deployTaskOverride=startAsChild.tsk
-publishedPort=8000
-environment=prod
-url=localhost:8000
