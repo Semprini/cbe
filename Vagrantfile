@@ -1,4 +1,4 @@
-# -*- mode: ruby -*-
+r# -*- mode: ruby -*-
 # vi: set ft=ruby :
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -31,9 +31,9 @@ vCPU = scale
 # If this environment variable is set, then the location defined will be used for media
 # [Environment]::SetEnvironmentVariable('SYNCED_FOLDER', 'E:\.provision', 'Machine')
 if ENV['SYNCED_FOLDER']
-  provision = ENV['SYNCED_FOLDER']
+  synchedFolder = ENV['SYNCED_FOLDER']
 else
-  provision = '../.provision'
+  synchedFolder = '../.provision'
 end
 
 Vagrant.configure(2) do |config|
@@ -55,7 +55,7 @@ Vagrant.configure(2) do |config|
     virtualbox.gui = false
     virtualbox.memory = "#{vRAM}"
     virtualbox.cpus = "#{vCPU}"
-    override.vm.synced_folder "#{provision}", '/.provision'
+    override.vm.synced_folder "#{synchedFolder}", '/.provision'
     override.vm.network 'private_network', ip: '10.10.8.101'
     override.vm.network 'forwarded_port', guest: 3389, host: 13389 # Remote Desktop
     override.vm.network 'forwarded_port', guest: 5985, host: 15985 # WinRM HTTP
