@@ -1,9 +1,0 @@
-$imageName = "cbe"
-
-Write-Host "`nCreate the base image, relying on docker cache to avoid unnecessary reprovisioning"
-cat Dockerfile
-
-automation/remote/dockerBuild.ps1 $imageName $buildNumber
-
-# Remove any older images	
-automation/remote/dockerClean.ps1 $imageName $buildNumber

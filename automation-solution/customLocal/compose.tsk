@@ -1,0 +1,31 @@
+$workspace = $(pwd)
+Write-Host "`$workspace = $workspace`n"
+
+Write-Host "Transform developer settings`n"
+REPLAC docker-compose.yml '${CORE_IMAGE}' "${SOLUTION}:$BUILDNUMBER"
+REPLAC docker-compose.yml '8001:8000' "${publishedPort}:8000"
+
+Write-Host "Each environment has it's own persistent store (/$SOLUTION/$environment) to ensure teardown based on the compose file they were created with`n"
+MAKDIR "/$SOLUTION/$environment"
+
+Write-Host "Test for existing instance`n"
+cd "/$SOLUTION/$environment"
+if ( Test-Path "./docker-compose.yml" ) { docker-compose down; docker-compose rm; rm "./docker-compose.yml" }
+
+Write-Host "Place the current version of compose file to persistent store (/$SOLUTION/$environment)`n"
+mv $workspace/docker-compose.yml "/$SOLUTION/$environment/docker-compose.yml"
+cat "/$SOLUTION/$environment/docker-compose.yml"
+docker-compose up -d
+
+Write-Host "Wait for container to start"
+
+sleep 30
+docker-compose logs
+
+Write-Host "Disable outbound proxy and test container (http://${env:COMPUTERNAME}:${publishedPort}/admin)"
+$url = "http://${env:COMPUTERNAME}:${publishedPort}/admin"
+$webClient = New-Object System.Net.WebClient
+$webClient.Proxy = [System.Net.GlobalProxySelection]::GetEmptyWebProxy()
+$webClient.DownloadString($url) | findstr /C:"Common Business Entities"
+
+cd $workspace

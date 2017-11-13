@@ -4,3 +4,4 @@ deploy.py
 manage.py
 setup.py
 start.ps1
+docker-compose.yml

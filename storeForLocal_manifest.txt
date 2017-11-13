@@ -11,3 +11,4 @@ TasksLocal\deploy.py
 TasksLocal\manage.py
 TasksLocal\setup.py
 TasksLocal\start.ps1
+TasksLocal\docker-compose.yml
