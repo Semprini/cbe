@@ -4,19 +4,22 @@ FROM microsoft/windowsservercore
 MAINTAINER Jules Clements
 
 ENV PYTHONIOINPUT=UTF-8
-WORKDIR solution
-
-#Install Chocolately, Python and Python Package Manager, each PowerShell session will reload the PATH from previous step
-RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex" 
-RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "choco install -y python3"
-
-# Copy solution and build using PIP
-COPY . .
-RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution ; pip install -r requirements.txt" 
-
-# Initialise the application
-RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "cd /solution ; python manage.py migrate ; python deploy.py" 
 
 EXPOSE 8000
 
-CMD python manage.py runserver 0.0.0.0:8000
+# Copy solution, provision and then build
+WORKDIR solution
+
+COPY automation automation
+COPY requirements.txt requirements.txt
+COPY automation-solution/bootstrapAgent.ps1 automation-solution/bootstrapAgent.ps1
+
+# Provision Build Dependancies
+RUN automation\provisioning\runner.bat automation-solution\bootstrapAgent.ps1
+
+# Copy the solution (do this last to utilise cache of provisioning steps)
+COPY cbe cbe
+COPY start.ps1 start.ps1
+COPY *.py ./
+
+CMD automation\provisioning\runner.bat start.ps1
