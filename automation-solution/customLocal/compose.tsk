@@ -20,6 +20,7 @@ docker-compose up -d
 Write-Host "Wait for container to start"
 
 if ( -not ($secondsToMigrate)) { $secondsToMigrate = 30 }
+Write-Host "`$secondsToMigrate = $secondsToMigrate`n"
 sleep $secondsToMigrate
 docker-compose logs
 
