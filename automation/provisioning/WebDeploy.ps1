@@ -17,6 +17,7 @@ function executeExpression ($expression) {
 	} catch { echo $_.Exception|format-list -force; exit 2 }
 	if ( $LASTEXITCODE -ne 0 ) { exit $LASTEXITCODE }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     return $output
 }
 
@@ -50,10 +51,7 @@ if ($mediaDir) {
 	$mediaDir = 'C:\.provision'
     Write-Host "[$scriptName] mediaDir        : $mediaDir (default)"
 }
-# Provisioning Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $Installtype $MsDepSvcPort $version $mediaDir `""
-}
+
 if (!( Test-Path $mediaDir )) {
 	Write-Host "[$scriptName] mkdir $mediaDir"
 	mkdir $mediaDir
@@ -144,7 +142,11 @@ if ( $InstallPath ) {
 	# Perform Install
 	$proc = executeExpression "Start-Process -FilePath `'msiexec`' -ArgumentList `'$argList`' $sessionControl"
 	if ( $proc.ExitCode -ne 0 ) {
-		Write-Host "`n[$scriptName] Install Failed, see log file (c:\windows\logs\CBS\CBS.log) for details. Exit with `$LASTEXITCODE $($proc.ExitCode)`n"
+		Write-Host "`n[$scriptName] Install Failed, see log file (c:\windows\logs\CBS\CBS.log) for details, listing last 40 lines`n"
+		executeExpression "Get-Content 'c:\windows\logs\CBS\CBS.log' | select -Last 40"
+		Write-Host "`n[$scriptName] Listing MSI log file`n"
+		executeExpression "Get-Content $logFile"
+		Write-Host "`n[$scriptName] Exit with `$LASTEXITCODE $($proc.ExitCode)`n"
 	    exit $proc.ExitCode
 	}
 	

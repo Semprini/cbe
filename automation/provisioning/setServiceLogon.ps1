@@ -13,6 +13,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
 Write-Host "`n[$scriptName] ---------- start ----------"
@@ -26,11 +27,6 @@ if ($userAlias) {
     Write-Host "[$scriptName] userAlias   : $userAlias"
 } else {
     Write-Host "[$scriptName] userAlias not passed, exit with LASTEXITCODE 101"; exit 101
-}
-
-# Provisioning Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $userDomain $userAlias `""
 }
 
 #Desc: Grants log on as service rights on the computer. This script needs to run in elevated mode (admin)

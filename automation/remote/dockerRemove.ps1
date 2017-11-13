@@ -11,7 +11,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
-    if ( $lastExitCode -ne 0 ) { Write-Host "[$scriptName] `$lastExitCode = $lastExitCode "; exit $lastExitCode }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
 $scriptName = 'dockerRemove.ps1'
@@ -19,7 +19,7 @@ Write-Host "`n[$scriptName] This script stops and removes all instances for the 
 Write-Host "[$scriptName] on environment tag. Use this to purge all targets for the environment."
 Write-Host "`n[$scriptName] --- start ---"
 if ($imageName) {
-    Write-Host "[$scriptName] imageName     : $imageName"
+    Write-Host "[$scriptName] imageName   : $imageName"
 } else {
     Write-Host "[$scriptName] imageName not supplied, exit with `$LASTEXITCODE = 1"; exit 1
 }
@@ -44,3 +44,5 @@ Write-Host "`n[$scriptName] List running containers (after)"
 executeExpression "docker ps"
 
 Write-Host "`n[$scriptName] --- end ---"
+$error.clear()
+exit 0

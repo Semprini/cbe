@@ -10,20 +10,10 @@ function executeExpression ($expression) {
     if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
-$scriptName = 'base.ps1'
-Write-Host "[$scriptName] ---------- start ----------"
-Write-Host
-Write-Host "[$scriptName] Install components using Chocolatey."
-Write-Host
-$install = $args[0]
-if ($install) {
-    Write-Host "[$scriptName] install   : $install"
-} else {
-    Write-Host "[$scriptName] Package to install not supplied, exiting"
-}
+$scriptName = 'EnableFileAndPrintSharing.ps1'
+Write-Host "`n[$scriptName] ---------- start ----------"
 
-Write-Host
-executeExpression "choco install -y $install --fail-on-standard-error"
+executeExpression "netsh advfirewall firewall set rule group='File and Printer Sharing' new enable=Yes"
 
-Write-Host
-Write-Host "[$scriptName] ---------- stop ----------"
+Write-Host "`n[$scriptName] ---------- stop ----------"
+exit 0

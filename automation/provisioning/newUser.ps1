@@ -14,6 +14,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     return $output
 }
 
@@ -87,11 +88,6 @@ if ($passwordExpires) {
 } else {
 	$passwordExpires = 'yes'
     Write-Host "[$scriptName] passwordExpires      : $passwordExpires (default, choices yes or no)"
-}
-
-# Provisionig Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $userName `$password `""
 }
 
 if ( $userName.StartsWith('.\')) { 

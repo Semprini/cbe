@@ -14,8 +14,8 @@ function executeExpression ($expression) {
 		Invoke-Expression $expression
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { Write-Host $_.Exception|format-list -force; exit 2 }
-	if ( $LASTEXITCODE -ne 0 ) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE"; exit $LASTEXITCODE }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
 Write-Host "`n[$scriptName] ---------- start ----------"
@@ -67,3 +67,5 @@ Write-Host "`n[$scriptName] List Resulting images...`n"
 executeExpression "docker images -f label=cdaf.${imageName}.image.version"
 
 Write-Host "`n[$scriptName] --- end ---"
+$error.clear()
+exit 0

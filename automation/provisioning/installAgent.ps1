@@ -14,13 +14,12 @@ $scriptName = 'installAgent.ps1'
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
-	$LASTEXITCODE = 0
 	Write-Host "[$scriptName] $expression"
 	try {
 		$output = Invoke-Expression $expression
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
-    if ( $LASTEXITCODE -ne 0 ) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
     return $output
 }
@@ -28,13 +27,11 @@ function executeExpression ($expression) {
 Write-Host "[$scriptName] ---------- start ----------"
 if ( $url ) {
 	Write-Host "[$scriptName] url             : $url"
-	$optParms += " -url $url"
 } else {
 	Write-Host "[$scriptName] url             : (not supplied, will just extract the agent software)"
 }
 if ( $pat ) {
 	Write-Host "[$scriptName] pat             : `$pat"
-	$optParms += " -pat `$pat"
 } else {
 	Write-Host "[$scriptName] pat             : (not supplied)"
 }
@@ -44,35 +41,30 @@ if ( $pool ) {
 	$pool = 'default'
 	Write-Host "[$scriptName] pool            : $pool (not supplied, set to default, if Deployment Group is used, this will be ignored)"
 }
-$optParms += " -pool $pool"
 if ( $agentName ) {
 	Write-Host "[$scriptName] agentName       : $agentName"
 } else {
 	$agentName = "$env:COMPUTERNAME" 
 	Write-Host "[$scriptName] agentName       : $agentName (not supplied, set to default)"
 }
-$optParms += " -agentName `$agentName"
+
 if ( $serviceAccount ) {
 	Write-Host "[$scriptName] serviceAccount  : $serviceAccount"
-	$optParms += " -serviceAccount $serviceAccount"
 } else {
 	Write-Host "[$scriptName] serviceAccount  : (not supplied)"
 }
 if ( $servicePassword ) {
 	Write-Host "[$scriptName] servicePassword : `$servicePassword"
-	$optParms += " -servicePassword `$password"
 } else {
 	Write-Host "[$scriptName] servicePassword : (not supplied)"
 }
 if ( $deploymentgroup ) {
 	Write-Host "[$scriptName] deploymentgroup : $deploymentgroup"
-	$optParms += " -deploymentgroup `$deploymentgroup"
 } else {
 	Write-Host "[$scriptName] deploymentgroup : (not supplied)"
 }
 if ( $projectname ) {
 	Write-Host "[$scriptName] projectname     : $projectname"
-	$optParms += " -projectname `$projectname"
 } else {
 	if ( $deploymentgroup ) {
 		Write-Host "[$scriptName] deploymentgroup ($deploymentgroup) supplied, therefore projectname required but not supplied, exit with `$LASTEXITCODE = 3"; exit 3
@@ -86,11 +78,7 @@ if ( $mediaDirectory ) {
 	$mediaDirectory = 'C:\.provision'
 	Write-Host "[$scriptName] mediaDirectory  : $mediaDirectory (not supplied, set to default)"
 }
-$optParms += " -mediaDirectory $mediaDirectory"
-# Provisioning Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $url $optParms `""
-}
+
 $fullpath = 'C:\agent\config.cmd'
 $workspace = $(pwd)
 
@@ -124,6 +112,10 @@ if ( $url ) {
 	}
 	
 	Write-Host "`nUnattend configuration for VSTS with PAT authentication"
+	if ( $serviceAccount.StartsWith('.\')) { 
+		$serviceAccount = $serviceAccount.Substring(2) # Remove the .\ prefix
+	}
+	
 	if ( $serviceAccount ) {
 		$printList = "$argList --token `$pat --pool $pool --agent $agentName --replace --runasservice --windowslogonaccount $serviceAccount --windowslogonpassword `$servicePassword"
 		$argList += " --token $pat --pool $pool --agent $agentName --replace --runasservice --windowslogonaccount $serviceAccount --windowslogonpassword $servicePassword"

@@ -1,8 +1,8 @@
 Param (
-  [string]$feature,
-  [string]$options,
-  [string]$media,
-  [string]$wimIndex
+	[string]$feature,
+	[string]$options,
+	[string]$media,
+	[string]$wimIndex
 )
 $scriptName = 'addFeature.ps1'
 
@@ -15,6 +15,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
 Write-Host "`n[$scriptName] Add Windows Feature using DIM source if provided."
@@ -44,10 +45,6 @@ if ($wimIndex) {
 } else {
 	$wimIndex = '2'
     Write-Host "[$scriptName] wimIndex  : $wimIndex (default, Standard Edition)"
-}
-# Provisioning Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $feature $options $media $wimIndex `""
 }
 
 # If media is not found, install will attempt to download from windows update

@@ -15,6 +15,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     return $output
 }
 
@@ -46,10 +47,6 @@ if ($subDirectory) {
     Write-Host "[$scriptName] subDirectory    : ( not supplied )"
 }
 
-# Provisioning Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `'./automation/provisioning/$scriptName $packageName `"$targetDirectory`"$optArg`'"
-}
 $nugetOutDir = "$env:temp\packages"
 if ( Test-Path $nugetOutDir ) {
 	Write-Host "[$scriptName] $nugetOutDir exists, this is the cache NuGet will use"

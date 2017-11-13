@@ -8,6 +8,18 @@ function taskException ($taskName, $exception) {
 	exit -3
 }
 
+function executeExpression ($expression) {
+	$error.clear()
+	Write-Host "[$scriptName] $expression"
+	try {
+		$output = Invoke-Expression $expression
+	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
+	} catch { echo $_.Exception|format-list -force; exit 2 }
+    if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
+    return $output
+}
+
 function MAKDIR ($itemPath) { 
 # If directory already exists, just report, otherwise create the directory and report
 	if ( Test-Path $itemPath ) {
@@ -134,7 +146,7 @@ function DCMPRS( $packageFile, $packagePath )
 function REPLAC( $fileName, $token, $value )
 {
 	try {
-	(Get-Content $fileName | ForEach-Object { $_ -replace "$token", "$value" } ) | Set-Content $fileName
+	(Get-Content $fileName | ForEach-Object { $_ -replace [regex]::Escape($token), "$value" } ) | Set-Content $fileName
 	    if(!$?) { taskException "REPLAC_TRAP" }
 	} catch { taskException "REPLAC_TRAP" $_ }
 }
@@ -143,6 +155,28 @@ function REPLAC( $fileName, $token, $value )
 function DECRYP( $encryptedFile, $thumbprint, $location )
 {
 	./decryptKey.ps1 $encryptedFile $thumbprint $location
+}
+
+# Use the the transofrm helper script to perform detokenisation
+#  required : tokenised file, relative to current workspace
+#  option : properties file, if not passed, target will be used
+function DETOKN( $tokenFile, $properties )
+{
+    if ($properties) {
+        $expression = ".\Transform.ps1 `"$properties`" `"$tokenFile`""
+    } else {
+        $expression = ".\Transform.ps1 `"$TARGET`" `"$tokenFile`""
+	}
+	executeExpression $expression
+}
+
+# Log error array, if elements exist, then exit normally
+function IGNORE()
+{
+    if ( $error[0] ) {
+		Write-Host "[$scriptName (IGNORE)] `$error[0] = $error[0]"
+		$error.clear()
+	}
 }
 
 $SOLUTION    = $args[0]
@@ -258,15 +292,6 @@ Foreach ($line in get-content $TASK_LIST) {
 		            $expression = $expression.Substring(7)
 	            }
 
-				# Decrypt a file
-				#  required : file location
-				#  optional : thumbprint, if decrypting using certificate
-	            if ( $feature -eq 'DECRYP ' ) {
-		            Write-Host "$expression ==> " -NoNewline
-		            $arguments = $expression.Substring(7)
-					$expression = "`$RESULT = DECRYP $arguments"
-				}
-
 				# Invoke a custom script
 	            if ( $feature -eq 'INVOKE ' ) {
 		            Write-Host "$expression ==> " -NoNewline
@@ -321,23 +346,6 @@ Foreach ($line in get-content $TASK_LIST) {
 	            	}
 		            Write-Host "$expression ==> " -NoNewline
 	            	$expression = '.\remoteExec.ps1 ' + $deployHost + ' ' + $remUser  + ' ' + $remCred + ' ' + $remThumb  + ' ' + $expression.Substring(7)
-	            }
-
-				# Detokenise a file
-				#  required : tokenised file, relative to current workspace
-				#  option : properties file, if not passed, target will be used
-	            if ( $feature -eq 'DETOKN ' ) {
-		            Write-Host "$expression ==> " -NoNewline
-	            	$arguments = $expression.Substring(7)
-					$data = $arguments.split(" ")
-					$tokenFile = $data[0]
-					$properties = $data[1]
-	            	$expression = ".\Transform.ps1 "
-		            if ($properties) {
-			            $expression += $properties + " " + $tokenFile
-		            } else {
-		            	$expression += $TARGET + " " + $tokenFile
-					}
 	            }
 	        }
 

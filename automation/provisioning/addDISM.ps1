@@ -1,15 +1,15 @@
 Param (
-  [string]$featureList,
-  [string]$media,
-  [string]$wimIndex,
-  [string]$dismount,
-  [string]$halt
+	[string]$featureList,
+	[string]$media,
+	[string]$wimIndex,
+	[string]$dismount,
+	[string]$halt # halt on reboot
 )
 $scriptName = 'addDISM.ps1' # TelnetClient
                             # 'IIS-WebServerRole IIS-WebServer' install.wim 2
 
-# Common expression logging and error handling function, copied, not referenced to ensure atomic process
-function executeExpression ($expression) {
+# Custom expression execution for DISM exit codes and not failing on LASTEXITCODE (to allow subsequent fall-back/retry processing
+function executeSuppress ($expression) {
 	$error.clear()
 	Write-Host "[$scriptName] $expression"
 	try {
@@ -17,7 +17,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
-	if ( $LASTEXITCODE -eq 3010 ) { if ( ! $halt ) { $LASTEXITCODE = 0 } } # 3010 is a normal exit, but force exit if halt is set
+	if ( $LASTEXITCODE -eq 3010 ) { if ( ! $halt ) { cmd /c "exit 0" } } # 3010 is a normal exit, use date function to clear LASTEXITCODE, halt on reboot required as been pass
 }
 
 function executeRetry ($expression) {
@@ -34,7 +34,7 @@ function executeRetry ($expression) {
 		    if(!$?) { Write-Host "[$scriptName] `$? = $?"; $exitCode = 1 }
 		} catch { echo $_.Exception|format-list -force; $exitCode = 2 }
 	    if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; $exitCode = 3 }
-		if ( $LASTEXITCODE -eq 3010 ) { $LASTEXITCODE = 0 } # 3010 is a normal exit
+		if ( $LASTEXITCODE -eq 3010 ) { cmd /c "exit 0" } # 3010 is a normal exit
 	    if ( $lastExitCode -ne 0 ) { Write-Host "[$scriptName] `$lastExitCode = $lastExitCode "; $exitCode = $lastExitCode }
 	    if ($exitCode -ne 0) {
 			if ($retryCount -ge $retryMax ) {
@@ -53,10 +53,10 @@ function executeRetry ($expression) {
 # Create or reuse mount directory
 function mountWim ($media, $wimIndex, $mountDir) {
 	Write-Host "[$scriptName] Validate WIM source ${media}:${wimIndex} using Deployment Image Servicing and Management (DISM)"
-	executeExpression "dism /get-wiminfo /wimfile:$media"
+	executeSuppress "dism /get-wiminfo /wimfile:$media"
 	Write-Host
 	Write-Host "[$scriptName] Mount to $mountDir using Deployment Image Servicing and Management (DISM)"
-	executeExpression "Dism /Mount-Image /ImageFile:$media /index:$wimIndex /MountDir:$mountDir /ReadOnly /Optimize /Quiet"
+	executeSuppress "Dism /Mount-Image /ImageFile:$media /index:$wimIndex /MountDir:$mountDir /ReadOnly /Optimize /Quiet"
 }
 
 # Not using powershell commandlets for provisioning as they do not support /LimitAccess
@@ -70,35 +70,26 @@ if ($featureList) {
 
 if ($media) {
     Write-Host "[$scriptName] media       : $media"
-    $optParam += "-media $media "
 } else {
     Write-Host "[$scriptName] media       : not supplied"
 }
 
 if ($wimIndex) {
     Write-Host "[$scriptName] wimIndex    : $wimIndex"
-    $optParam += "-wimIndex $wimIndex "
 } else {
     Write-Host "[$scriptName] wimIndex    : (not supplied, use media directly)"
 }
 
 if ($dismount) {
     Write-Host "[$scriptName] dismount    : $dismount"
-    $optParam += "-dismount $dismount "
 } else {
     Write-Host "[$scriptName] dismount    : (not passed, will dismount if mount successful)"
 }
 
 if ($halt) {
     Write-Host "[$scriptName] halt        : $halt (will halt on all exceptions or non-zero exitcode)"
-    $optParam += "-halt $halt "
 } else {
     Write-Host "[$scriptName] halt        : not passed, will continue if 3010 (restart required) is encountered."
-}
-# Provisionig Script builder
-$scriptPath = [Environment]::GetEnvironmentVariable('PROV_SCRIPT_PATH', 'Machine')
-if ( $scriptPath ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $featureList $optParam`""
 }
 
 # Cannot run interactive via remote PowerShell
@@ -114,9 +105,9 @@ $sourceOption = '/Quiet'
 
 # Create a baseline copy of the DISM log file, to use for logging informatio if there is an exception, note: this log is normally locked, so can't simply delete it
 if ( Test-Path c:\windows\logs\dism\dism.log ) {
-	executeExpression "copy 'c:\windows\logs\dism\dism.log' $env:temp"
+	executeSuppress "copy 'c:\windows\logs\dism\dism.log' $env:temp"
 } else {
-	executeExpression 'Add-Content $env:temp\dism.log "Starting DISM from $scriptName"'
+	executeSuppress 'Add-Content $env:temp\dism.log "Starting DISM from $scriptName"'
 }
 
 Write-Host
@@ -151,8 +142,12 @@ $featureArray = $featureList.split(" ")
 foreach ($feature in $featureArray) {
 	if ( $sourceOption -eq '/Quiet' ) {
 		executeRetry "dism /online /NoRestart /enable-feature /featurename:$feature $sourceOption"
+		if ( $lastExitCode -ne 0 ) {
+			Write-Host "[$scriptName] DISM failed with `$lastExitCode = $lastExitCode, retry from WSUS/Internet"
+			executeRetry "dism /online /NoRestart /enable-feature /All /featurename:$feature /Quiet"
+		}
 	} else {
-		executeExpression "dism /online /NoRestart /enable-feature /featurename:$feature $sourceOption"
+		executeSuppress "dism /online /NoRestart /enable-feature /featurename:$feature $sourceOption"
 		if ( $lastExitCode -ne 0 ) {
 			Write-Host "[$scriptName] DISM failed with `$lastExitCode = $lastExitCode, retry from WSUS/Internet"
 			executeRetry "dism /online /NoRestart /enable-feature /All /featurename:$feature /Quiet"
@@ -165,7 +160,7 @@ if ( Test-Path "$defaultMount\windows" ) {
 	    Write-Host "`n[$scriptName] dismount set to `'$dismount`', leave $defaultMount\windows in place."
 	} else {
 		Write-Host "`n[$scriptName] Dismount default mount path ($defaultMount)"
-		executeExpression "Dism /Unmount-Image /MountDir:$defaultMount /Discard /Quiet"
+		executeSuppress "Dism /Unmount-Image /MountDir:$defaultMount /Discard /Quiet"
 	}
 }
 

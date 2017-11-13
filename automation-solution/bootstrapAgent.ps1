@@ -1,3 +1,5 @@
+$scriptName = 'buildAgent.ps1'
+
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
@@ -10,24 +12,20 @@ function executeExpression ($expression) {
     if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
-$scriptName = 'addPath.ps1'
-Write-Host
-Write-Host "[$scriptName] ---------- start ----------"
-Write-Host
-$directoryName = $args[0]
-if ($directoryName) {
-    Write-Host "[$scriptName] directoryName : $directoryName"
-} else {
-    Write-Host "[$scriptName] directoryName not supplied, exiting!"
-    exit 100
+# Use the CDAF provisioning helpers
+Write-Host "`n[$scriptName] ---------- start ----------`n"
+
+if ( Test-Path "c:\vagrant" ) {
+	executeExpression 'cd c:\vagrant'
 }
 
-# Append Directory to PATH
-executeExpression "[Environment]::SetEnvironmentVariable(`'Path`', `$env:Path + `";$directoryName`", [EnvironmentVariableTarget]::Machine)"
-
-# Reload the path (without logging off and back on)
+Write-Host "[$scriptName] Install Chocolately, Python and Python Package Manager, each PowerShell session will reload the PATH from previous step`n"
+executeExpression 'iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex'
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-Write-Host
-Write-Host "[$scriptName] ---------- stop -----------"
-Write-Host
+executeExpression 'choco install -y python3'
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+executeExpression 'pip install -r requirements.txt' 
+
+Write-Host "`n[$scriptName] ---------- stop ----------"

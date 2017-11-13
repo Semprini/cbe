@@ -1,10 +1,10 @@
 Param (
-  [string]$serviceAccount,
-  [string]$password,
-  [string]$adminAccount,
-  [string]$instance,
-  [string]$media,
-  [string]$features
+	[string]$serviceAccount,
+	[string]$adminAccount,
+	[string]$instance,
+	[string]$media,
+	[string]$features,
+	[string]$password
 )
 $scriptName = 'SQLServer.ps1'
 
@@ -16,23 +16,17 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     return $output
 }
 
-Write-Host "`nSQL Server 2012 and above."
+# SQL Server 2012 and above.
 Write-Host "`n[$scriptName] ---------- start ----------"
 if ($serviceAccount) {
     Write-Host "[$scriptName] serviceAccount : $serviceAccount"
 } else {
 	$serviceAccount = 'sqlServiceAccount'
     Write-Host "[$scriptName] serviceAccount : $serviceAccount (default)"
-}
-
-if ($password) {
-    Write-Host "[$scriptName] password       : **********"
-} else {
-	$password = 'password'
-    Write-Host "[$scriptName] password       : ********** (default)"
 }
 
 if ($adminAccount) {
@@ -83,9 +77,11 @@ if ($features) { # https://docs.microsoft.com/en-us/sql/database-engine/install-
 	$features = 'SQLEngine,FullText,Conn'
     Write-Host "[$scriptName] features       : $features (default)"
 }
-# Provisioning Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $serviceAccount `'**********`' $adminAccount $instance $media $features `""
+
+if ($password) {
+    Write-Host "[$scriptName] password       : `$password"
+} else {
+    Write-Host "[$scriptName] password       : (not supplied, assuming managed service account)"
 }
 
 $EditionId = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -Name 'EditionID').EditionId
@@ -103,49 +99,71 @@ if ($env:interactive) {
 
 $executable = Get-ChildItem $media -Filter *.exe
 
-# Reference: https://msdn.microsoft.com/en-us/library/ms144259.aspx
-# Argument list initially loaded for logging purposes only ...
-$argList = @(
-	'/Q',
-	'/ACTION="Install"',
-	"/INDICATEPROGRESS=$logToConsole",
-	'/IACCEPTSQLSERVERLICENSETERMS',
-	'/ENU=true',
-	'/UPDATEENABLED=false',
-	"/FEATURES=$features",
-	'/INSTALLSHAREDDIR="C:\Program Files\Microsoft SQL Server"',
-	"/INSTANCENAME=`"$instance`"",
-	'/INSTANCEDIR="C:\Program Files\Microsoft SQL Server"',
-	'/SQLSVCSTARTUPTYPE="Automatic"',
-	'/SQLCOLLATION="SQL_Latin1_General_CP1_CI_AS"',
-	"/SQLSVCACCOUNT=`"$serviceAccount`"",
-	"/SQLSVCPASSWORD=`"`$password`"",
-	"/SQLSYSADMINACCOUNTS=`"$adminAccount`"",
-	'/TCPENABLED=1',
-	'/NPENABLED=1'
-)
-Write-Host "[$scriptName] `$proc = Start-Process -FilePath `"$media$executable`" -ArgumentList `"$argList`" $sessionControl"
-
-# ... reload the argument list to use the service account password
-$argList = @(
-	'/Q',
-	'/ACTION="Install"',
-	"/INDICATEPROGRESS=$logToConsole",
-	'/IACCEPTSQLSERVERLICENSETERMS',
-	'/ENU=true',
-	'/UPDATEENABLED=false',
-	"/FEATURES=$features",
-	'/INSTALLSHAREDDIR="C:\Program Files\Microsoft SQL Server"',
-	"/INSTANCENAME=`"$instance`"",
-	'/INSTANCEDIR="C:\Program Files\Microsoft SQL Server"',
-	'/SQLSVCSTARTUPTYPE="Automatic"',
-	'/SQLCOLLATION="SQL_Latin1_General_CP1_CI_AS"',
-	"/SQLSVCACCOUNT=`"$serviceAccount`"",
-	"/SQLSVCPASSWORD=`"$password`"",
-	"/SQLSYSADMINACCOUNTS=`"$adminAccount`"",
-	'/TCPENABLED=1',
-	'/NPENABLED=1'
-)
+if ( $password ) {
+	# Reference: https://msdn.microsoft.com/en-us/library/ms144259.aspx
+	# Argument list initially loaded for logging purposes only ...
+	$argList = @(
+		'/Q',
+		'/ACTION="Install"',
+		"/INDICATEPROGRESS=$logToConsole",
+		'/IACCEPTSQLSERVERLICENSETERMS',
+		'/ENU=true',
+		'/UPDATEENABLED=false',
+		"/FEATURES=$features",
+		'/INSTALLSHAREDDIR="C:\Program Files\Microsoft SQL Server"',
+		"/INSTANCENAME=`"$instance`"",
+		'/INSTANCEDIR="C:\Program Files\Microsoft SQL Server"',
+		'/SQLSVCSTARTUPTYPE="Automatic"',
+		'/SQLCOLLATION="SQL_Latin1_General_CP1_CI_AS"',
+		"/SQLSVCACCOUNT=`"$serviceAccount`"",
+		"/SQLSVCPASSWORD=`"`$password`"",
+		"/SQLSYSADMINACCOUNTS=`"$adminAccount`"",
+		'/TCPENABLED=1',
+		'/NPENABLED=1'
+	)
+	Write-Host "[$scriptName] `$proc = Start-Process -FilePath `"$media$executable`" -ArgumentList `"$argList`" $sessionControl"
+	
+	# ... reload the argument list to use the service account password
+	$argList = @(
+		'/Q',
+		'/ACTION="Install"',
+		"/INDICATEPROGRESS=$logToConsole",
+		'/IACCEPTSQLSERVERLICENSETERMS',
+		'/ENU=true',
+		'/UPDATEENABLED=false',
+		"/FEATURES=$features",
+		'/INSTALLSHAREDDIR="C:\Program Files\Microsoft SQL Server"',
+		"/INSTANCENAME=`"$instance`"",
+		'/INSTANCEDIR="C:\Program Files\Microsoft SQL Server"',
+		'/SQLSVCSTARTUPTYPE="Automatic"',
+		'/SQLCOLLATION="SQL_Latin1_General_CP1_CI_AS"',
+		"/SQLSVCACCOUNT=`"$serviceAccount`"",
+		"/SQLSVCPASSWORD=`"$password`"",
+		"/SQLSYSADMINACCOUNTS=`"$adminAccount`"",
+		'/TCPENABLED=1',
+		'/NPENABLED=1'
+	)
+} else {
+	$argList = @(
+		'/Q',
+		'/ACTION="Install"',
+		"/INDICATEPROGRESS=$logToConsole",
+		'/IACCEPTSQLSERVERLICENSETERMS',
+		'/ENU=true',
+		'/UPDATEENABLED=false',
+		"/FEATURES=$features",
+		'/INSTALLSHAREDDIR="C:\Program Files\Microsoft SQL Server"',
+		"/INSTANCENAME=`"$instance`"",
+		'/INSTANCEDIR="C:\Program Files\Microsoft SQL Server"',
+		'/SQLSVCSTARTUPTYPE="Automatic"',
+		'/SQLCOLLATION="SQL_Latin1_General_CP1_CI_AS"',
+		"/SQLSVCACCOUNT=`"$serviceAccount`"",
+		"/SQLSYSADMINACCOUNTS=`"$adminAccount`"",
+		'/TCPENABLED=1',
+		'/NPENABLED=1'
+	)
+	Write-Host "[$scriptName] `$proc = Start-Process -FilePath `"$media$executable`" -ArgumentList `"$argList`" $sessionControl"
+}
 
 # Note, the actual call passes the argument list as a literal
 $proc = executeExpression "Start-Process -FilePath `"$media$executable`" -ArgumentList `'$argList`' $sessionControl"

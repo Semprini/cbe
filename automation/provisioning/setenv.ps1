@@ -7,6 +7,7 @@ function executeExpression ($expression) {
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
 $scriptName = 'setenv.ps1'
@@ -38,10 +39,6 @@ if ($target) {
     Write-Host "[$scriptName] target   : $target (default, choices user or machine)"
 }
 
-# Provisionig Script builder
-if ( $env:PROV_SCRIPT_PATH ) {
-	Add-Content "$env:PROV_SCRIPT_PATH" "executeExpression `"./automation/provisioning/$scriptName $variable $value $target`""
-}
 
 Write-Host
 executeExpression "[Environment]::SetEnvironmentVariable(`'$variable`', `'$value`', `'$target`')"
