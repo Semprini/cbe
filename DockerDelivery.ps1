@@ -1,8 +1,10 @@
 Param (
-	[string]$buildNumber
+	[string]$buildNumber,
+	[string]$rebuildImage
 )
 
 $scriptName = 'DockerDelivery.ps1'
+cmd /c "exit 0"
 
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
@@ -55,7 +57,7 @@ function executeRetry ($expression) {
 # Use the CDAF provisioning helpers
 Write-Host "`n[$scriptName] ---------- start ----------`n"
 if ( $buildNumber ) { 
-	Write-Host "[$scriptName]   buildNumber : $buildNumber"
+	Write-Host "[$scriptName]   buildNumber  : $buildNumber"
 } else {
 	# Use a simple text file (buildnumber.counter) for incrimental build number
 	if ( Test-Path imagenumber.counter ) {
@@ -68,20 +70,31 @@ if ( $buildNumber ) {
 		$buildNumber += 1
 	}
 	Out-File imagenumber.counter -InputObject $buildNumber
-	Write-Host "[$scriptName]   buildNumber : $buildNumber (using locally generated counter)"
+	Write-Host "[$scriptName]   buildNumber  : $buildNumber (using locally generated counter)"
+}
+
+if ( $rebuildImage ) {
+	Write-Host "[$scriptName]   rebuildImage : $rebuildImage (choices are yes or no)"
+} else {
+	$rebuildImage = 'no'
+	Write-Host "[$scriptName]   rebuildImage : $rebuildImage (not supplied, so set to default)"
 }
 
 $imageName = "cbe"
-Write-Host "[$scriptName]   imageName   : $imageName"
+Write-Host "[$scriptName]   imageName    : $imageName"
 
 Write-Host "`nCreate the base image, relying on docker cache to avoid unnecessary reprovisioning"
-executeExpression ".\automation\remote\containerBuild.ps1 $imageName -rebuildImage imageonly"
-
-# Retrieve the latest image number
-$imageTag = 0
-foreach ( $imageDetails in docker images --filter label=cdaf.${imageName}.image.version --format "{{.Tag}}" ) {
-	if ($imageTag -lt [INT]$imageDetails ) { $imageTag = [INT]$imageDetails }
+executeExpression "cat Dockerfile"
+	
+if ( $rebuildImage -eq 'yes') {
+	# Force rebuild, i.e. no-cache
+	executeExpression "automation/remote/dockerBuild.ps1 $imageName $buildNumber -rebuild yes"
+} else {
+	executeExpression "automation/remote/dockerBuild.ps1 $imageName $buildNumber"
 }
+
+# Remove any older images	
+executeExpression "automation/remote/dockerClean.ps1 $imageName $buildNumber"
 
 Write-Host "`nCleanup from previously failed builds`n"
 executeExpression "`$env:CORE_IMAGE = '${imageName}'"
@@ -89,7 +102,7 @@ executeExpression "docker-compose down"
 executeExpression "docker-compose rm"
 
 Write-Host "Create Test Containers`n"
-executeExpression "`$env:CORE_IMAGE = '${imageName}:$imageTag'"
+executeExpression "`$env:CORE_IMAGE = '${imageName}:$buildNumber'"
 executeExpression "docker-compose up -d"
 
 Write-Host "Wait for migrations to start"
