@@ -19,7 +19,7 @@ docker-compose up -d
 
 Write-Host "Wait for container to start"
 
-sleep 30
+sleep 60
 docker-compose logs
 
 Write-Host "Disable outbound proxy and test container (http://${env:COMPUTERNAME}:${publishedPort}/admin)"
