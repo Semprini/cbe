@@ -1,1 +1,6 @@
 cbe
+requirements.txt
+deploy.py
+manage.py
+setup.py
+start.ps1
