@@ -31,9 +31,9 @@ vCPU = scale
 # If this environment variable is set, then the location defined will be used for media
 # [Environment]::SetEnvironmentVariable('SYNCED_FOLDER', 'E:\.provision', 'Machine')
 if ENV['SYNCED_FOLDER']
-  provision = ENV['SYNCED_FOLDER']
+  synchedFolder = ENV['SYNCED_FOLDER']
 else
-  provision = '../.provision'
+  synchedFolder = '../.provision'
 end
 
 Vagrant.configure(2) do |config|
@@ -55,12 +55,11 @@ Vagrant.configure(2) do |config|
     virtualbox.gui = false
     virtualbox.memory = "#{vRAM}"
     virtualbox.cpus = "#{vCPU}"
-    override.vm.synced_folder "#{provision}", '/.provision'
+    override.vm.synced_folder "#{synchedFolder}", '/.provision'
     override.vm.network 'private_network', ip: '10.10.8.101'
     override.vm.network 'forwarded_port', guest: 3389, host: 13389 # Remote Desktop
     override.vm.network 'forwarded_port', guest: 5985, host: 15985 # WinRM HTTP
     override.vm.network 'forwarded_port', guest: 5986, host: 15986 # WinRM HTTPS
-    override.vm.network 'forwarded_port', guest: 8079, host: 8079 # WinRM HTTPS
     override.vm.network 'forwarded_port', guest: 8000, host: 8000 # WinRM HTTPS
     override.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
     override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1'

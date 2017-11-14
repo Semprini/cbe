@@ -1,0 +1,14 @@
+TasksLocal\cbe\routers.py
+TasksLocal\cbe\settings.py
+TasksLocal\cbe\signals.py
+TasksLocal\cbe\tests.py
+TasksLocal\cbe\urls.py
+TasksLocal\cbe\views.py
+TasksLocal\cbe\wsgi.py
+TasksLocal\cbe\__init__.py
+TasksLocal\requirements.txt
+TasksLocal\deploy.py
+TasksLocal\manage.py
+TasksLocal\setup.py
+TasksLocal\start.ps1
+TasksLocal\docker-compose.yml

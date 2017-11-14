@@ -116,3 +116,4 @@ web.config
 /.pydevproject
 /buildnumber.counter
 /imagenumber.counter
+/build.tsk

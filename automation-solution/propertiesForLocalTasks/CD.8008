@@ -1,4 +1,4 @@
 # Launch instances, need to set DOCKER_HOST if remote containers
+deployTaskOverride=compose.tsk
 publishedPort=8008
 environment=cd
-url=cdaf.info:81

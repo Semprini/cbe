@@ -56,8 +56,14 @@ Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data m
 To use a virtual environment requires VirtualBox and Vagrant, from the workspace run:
 
     vagrant up
-    
-### Direct PowerShell Access
+
+If you have Docker for Windows installed, swaitch to Windows Containers and run delivery emulation:
+
+    ./automation/cdEmulate.bat
+
+Note: If Docker is not available, the emulation will fall back to using native Python on the host
+
+## Direct PowerShell Access
 
 To access the buildserver using native remote PowerShell.
 Allow credential delegation, one-off step needed on the host when using VirtualBox/Vagrant. 
