@@ -1,1 +1,2 @@
-start powershell .\start.ps1
+#start powershell .\start.ps1
+powershell .\start.ps1
