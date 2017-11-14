@@ -62,8 +62,8 @@ Vagrant.configure(2) do |config|
     override.vm.network 'forwarded_port', guest: 5986, host: 15986 # WinRM HTTPS
     override.vm.network 'forwarded_port', guest: 8000, host: 8000 # WinRM HTTPS
     override.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
-    override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1'
-    override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1' # Execute twice to verify rebuild works
+    override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', privileged: false
+    override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', privileged: false # Execute twice to verify rebuild works
   end
   
   # Microsoft Hyper-V does not support NAT or setting hostname: vagrant up target --provider hyperv

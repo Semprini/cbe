@@ -31,9 +31,16 @@ node {
       bat "cat automation/CDAF.windows | grep productVersion"
     }
 
-    stage ('Get latest image and Test') {
+    stage ('Get latest image and Test using Docker') {
       bat "docker pull microsoft/windowsservercore"
       bat "automation\\cdEmulate.bat"
+    }
+
+    stage ('Test Using Vagrant') {
+      bat "cat Vagrantfile"
+      bat "vagrant destroy -f & verify >nul"
+      bat "vagrant box list & verify >nul"
+      bat "vagrant up"
     }
 
   } catch (e) {
@@ -45,6 +52,7 @@ node {
   } finally {
 
     stage ('Discard GitHub branch') {
+      bat "vagrant destroy -f & verify >nul"
       bat "git checkout -- ."
       bat "git checkout master"
       bat "git branch -D local_branch"
