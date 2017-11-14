@@ -12,5 +12,5 @@ django.setup()
 
 # Create a superuser
 from django.contrib.auth.models import User
-if User.objects.filter(username='john').count > 0:
+if User.objects.filter(username='john').count == 0:
     superuser = User.objects.create_superuser('john', 'john@snow.com', 'johnpassword')
