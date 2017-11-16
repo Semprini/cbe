@@ -87,18 +87,18 @@ if ($versionTest -like '*not recognized*') {
 	$array = $versionTest.split(" ")
 	Write-Host "[$scriptName]   Docker      : $($array[2])"
 
-	Write-Host "`nDisable debug"
-	REPLAC cbe/settings.py 'DEBUG = True' 'DEBUG = False'
-	cat cbe/settings.py | findstr /C:"DEBUG ="
+#	Write-Host "`nDisable debug"
+#	REPLAC cbe/settings.py 'DEBUG = True' 'DEBUG = False'
+#	cat cbe/settings.py | findstr /C:"DEBUG ="
 	
 	Write-Host "`nCreate the base image, relying on docker cache to avoid unnecessary reprovisioning"
 	cat Dockerfile
 	
 	executeExpression "automation/remote/dockerBuild.ps1 $SOLUTION $BUILDNUMBER"
 	
-	Write-Host "`nRe-enable debug"
-	REPLAC cbe/settings.py 'DEBUG = False' 'DEBUG = True'
-	cat cbe/settings.py | findstr /C:"DEBUG ="
+#	Write-Host "`nRe-enable debug"
+#	REPLAC cbe/settings.py 'DEBUG = False' 'DEBUG = True'
+#	cat cbe/settings.py | findstr /C:"DEBUG ="
 	
 	Write-Host "`nCleanup any previously failed smoke test`n"
 	executeExpression "`$env:CORE_IMAGE = '${SOLUTION}'"

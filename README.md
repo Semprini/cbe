@@ -53,11 +53,17 @@ Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data m
 
 # Virtual Desktop Environment
 
+The following delivery emulations are available for Windows
+
+## Windows Virtual Machine
+
 To use a virtual environment requires VirtualBox and Vagrant, from the workspace run:
 
     vagrant up
 
-If you have Docker for Windows installed, swaitch to Windows Containers and run delivery emulation:
+## Windows Containers
+
+If you have Docker for Windows installed, switch to Windows Containers and run delivery emulation:
 
     ./automation/cdEmulate.bat
 
