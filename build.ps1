@@ -8,7 +8,6 @@ Param (
 )
 
 $scriptName = 'build.ps1'
-cmd /c "exit 0"
 
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
@@ -80,6 +79,7 @@ Write-Host "[$scriptName]   ENVIRONMENT : $ENVIRONMENT"
 Write-Host "[$scriptName]   ACTION      : $ACTION"
 
 $versionTest = cmd /c docker --version 2`>`&1
+cmd /c "exit 0"
 if ($versionTest -like '*not recognized*') {
 	Write-Host "[$scriptName]   Docker      : not installed"
 	Write-Host "`n[$scriptName] Docker not installed so no build activity required."
@@ -87,18 +87,18 @@ if ($versionTest -like '*not recognized*') {
 	$array = $versionTest.split(" ")
 	Write-Host "[$scriptName]   Docker      : $($array[2])"
 
-	Write-Host "`nDisable debug"
-	REPLAC cbe/settings.py 'DEBUG = True' 'DEBUG = False'
-	cat cbe/settings.py | findstr /C:"DEBUG ="
+#	Write-Host "`nDisable debug"
+#	REPLAC cbe/settings.py 'DEBUG = True' 'DEBUG = False'
+#	cat cbe/settings.py | findstr /C:"DEBUG ="
 	
 	Write-Host "`nCreate the base image, relying on docker cache to avoid unnecessary reprovisioning"
 	cat Dockerfile
 	
 	executeExpression "automation/remote/dockerBuild.ps1 $SOLUTION $BUILDNUMBER"
 	
-	Write-Host "`nRe-enable debug"
-	REPLAC cbe/settings.py 'DEBUG = False' 'DEBUG = True'
-	cat cbe/settings.py | findstr /C:"DEBUG ="
+#	Write-Host "`nRe-enable debug"
+#	REPLAC cbe/settings.py 'DEBUG = False' 'DEBUG = True'
+#	cat cbe/settings.py | findstr /C:"DEBUG ="
 	
 	Write-Host "`nCleanup any previously failed smoke test`n"
 	executeExpression "`$env:CORE_IMAGE = '${SOLUTION}'"
@@ -108,18 +108,11 @@ if ($versionTest -like '*not recognized*') {
 	Write-Host "Create Test Containers`n"
 	executeExpression "`$env:CORE_IMAGE = '${SOLUTION}:$BUILDNUMBER'"
 	executeExpression "docker-compose up -d"
-	
-	Write-Host "Wait for migrations to start"
-	executeExpression "sleep 30"
-	executeExpression "docker-compose logs"
-	
-	Write-Host "Disable outbound proxy and test container"
-	$url = "http://${env:COMPUTERNAME}:8001/admin"
-	Write-Host "`$webClient = New-Object System.Net.WebClient"
-	$webClient = New-Object System.Net.WebClient
-	executeExpression "`$webClient.Proxy = [System.Net.GlobalProxySelection]::GetEmptyWebProxy()"
-	executeRetry "`$webClient.DownloadString('$url') | findstr /C:`"Common Business Entities`""
-	
+
+	Write-Host "Use shared test script, setting published port to that in the docker-compose.yml`n"
+	$publishedPort = 8001
+	executeExpression ".\automation-solution\customLocal\test.ps1 $publishedPort"
+
 	Write-Host "`nTear down`n"
 	executeExpression "docker-compose down"
 	executeExpression "docker-compose rm"

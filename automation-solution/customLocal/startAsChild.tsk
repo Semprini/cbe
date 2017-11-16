@@ -1,1 +1,4 @@
 start powershell .\start.ps1
+
+Write-Host "Test on `$publishedPort $publishedPort`n"
+.\test.ps1 $publishedPort

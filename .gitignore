@@ -117,3 +117,5 @@ web.config
 /buildnumber.counter
 /imagenumber.counter
 /build.tsk
+/storeForLocal_manifest.txt
+/storeForRemote_manifest.txt

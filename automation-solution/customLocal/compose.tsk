@@ -17,17 +17,8 @@ mv $workspace/docker-compose.yml "/$SOLUTION/$environment/docker-compose.yml"
 cat "/$SOLUTION/$environment/docker-compose.yml"
 docker-compose up -d
 
-Write-Host "Wait for container to start"
+Write-Host "Test on `$publishedPort $publishedPort`n"
+& ${workspace}\test.ps1 $publishedPort
 
-if ( -not ($secondsToMigrate)) { $secondsToMigrate = 30 }
-Write-Host "`$secondsToMigrate = $secondsToMigrate`n"
-sleep $secondsToMigrate
-docker-compose logs
-
-Write-Host "Disable outbound proxy and test container (http://${env:COMPUTERNAME}:${publishedPort}/admin)"
-$url = "http://${env:COMPUTERNAME}:${publishedPort}/admin"
-$webClient = New-Object System.Net.WebClient
-$webClient.Proxy = [System.Net.GlobalProxySelection]::GetEmptyWebProxy()
-$webClient.DownloadString($url) | findstr /C:"Common Business Entities"
-
+Write-Host "Return to `$workspace $workspace`n"
 cd $workspace

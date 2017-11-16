@@ -1,4 +1,4 @@
-cbe
+cbe -Recurse
 requirements.txt
 deploy.py
 manage.py
