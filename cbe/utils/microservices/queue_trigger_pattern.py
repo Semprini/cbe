@@ -14,7 +14,7 @@ TEST_NAME = 'test.queue_trigger_pattern'
 TEST_EXCHANGES = (('notify.retail.sale.Sale.updated',None),('notify.retail.sale.Sale.created',{'store':'Test Store 1'}))
 
 
-class RequeableError( Exception ):
+class RetryableError( Exception ):
     pass
     
     
@@ -61,7 +61,7 @@ class QueueTriggerPattern():
         if response.status_code >= 500 or response.status_code in (401,403):
             # Retryable errors which can be requeued
             logging.warning( "Retryable " + error_message + "{}".format(response.content) )
-            raise RequeableError("Get {} returned: {}".format(url, response.status_code))
+            raise RetryableError("Get {} returned: {}".format(url, response.status_code))
         elif response.status_code != 200:
             # Fatal errors which can't be retried
             logging.error( "Fatal " + error_message + "{}".format(response.content) )

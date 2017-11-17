@@ -15,7 +15,7 @@ from cbe.location.serializers import CountrySerializer
 class IndividualSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
 
-    identifications = serializers.HyperlinkedRelatedField(
+    identifiers = serializers.HyperlinkedRelatedField(
         view_name='identification-detail',
         many=True,
         read_only=True
@@ -29,7 +29,7 @@ class IndividualSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializ
     class Meta:
         model = Individual
         fields = ('type', 'url', 'user', 'name', 'given_names', 'family_names', 'middle_names',
-                  'form_of_address', 'gender', 'legal_name', 'marital_status', 'nationality', 'place_of_birth', 'identifications', )
+                  'form_of_address', 'gender', 'legal_name', 'marital_status', 'nationality', 'place_of_birth', 'identifiers', )
 
 
 class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
@@ -41,7 +41,7 @@ class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerial
         read_only=True
     )
 
-    identifications = serializers.HyperlinkedRelatedField(
+    identifiers = serializers.HyperlinkedRelatedField(
         view_name='identification-detail',
         many=True,
         read_only=True
@@ -49,7 +49,7 @@ class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerial
     
     class Meta:
         model = Organisation
-        fields = ('type', 'url', 'parent', 'name', 'sub_organisations', 'identifications', )
+        fields = ('type', 'url', 'parent', 'name', 'sub_organisations', 'identifiers', )
 
         
 class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):

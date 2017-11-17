@@ -34,34 +34,11 @@ class GenericPartyRoleAdminForm(forms.ModelForm):
                     instance.party.id, instance.party.__class__.__name__, instance.party)
 
 
-class PhysicalContactInline(GenericTabularInline):
-    model = PhysicalContact
-    extra = 0
-    ct_field = 'party_role_content_type'
-    ct_fk_field = 'party_role_object_id'
-
-
-class EmailContactInline(GenericTabularInline):
-    model = EmailContact
-    extra = 0
-    ct_field = 'party_role_content_type'
-    ct_fk_field = 'party_role_object_id'
-
-
-class TelephoneNumberInline(GenericTabularInline):
-    model = TelephoneNumber
-    extra = 0
-    ct_field = 'party_role_content_type'
-    ct_fk_field = 'party_role_object_id'
-
-
 # TODO: Validate the role name vs other roles (E.g. Customer) and force
 # users to admin the correct role.
 class GenericPartyRoleAdmin(admin.ModelAdmin):
     list_display = ('party', 'name')
     form = GenericPartyRoleAdminForm
-    inlines = [PhysicalContactInline,
-               EmailContactInline, TelephoneNumberInline]
     fields = ('valid_to', 'name', 'party')
 
     def save_model(self, request, obj, form, change):
@@ -74,7 +51,7 @@ class GenericPartyRoleAdmin(admin.ModelAdmin):
 
 
 class TelephoneNumberAdmin(admin.ModelAdmin):
-    list_display = ('party_role', 'number')
+    list_display = ('number',)
 
 
 admin.site.register(Organisation)

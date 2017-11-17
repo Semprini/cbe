@@ -17,14 +17,12 @@ class IdentificationType( models.Model ):
         
 
 class Identification( models.Model ):
+    valid_from = models.DateTimeField(auto_now_add=True)
+    valid_to = models.DateTimeField(null=True, blank=True)
+
     number = models.CharField(max_length=200)
     pin = models.CharField(max_length=50, null=True, blank=True)
     identification_type = models.ForeignKey( IdentificationType )
-
-    party_content_type = models.ForeignKey(
-        ContentType, related_name="%(app_label)s_%(class)s_ownership")
-    party_object_id = models.PositiveIntegerField()
-    party = GenericForeignKey('party_content_type', 'party_object_id')
 
     class Meta:
         ordering = ['id']

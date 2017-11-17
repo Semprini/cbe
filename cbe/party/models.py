@@ -7,6 +7,7 @@ from gm2m import GM2MField
 
 from cbe.location.models import Country
 from cbe.party.models_contact_medium import ContactMedium, TelephoneNumber, EmailContact, PhysicalContact
+from cbe.resource.models import PhysicalResource, LogicalResource
 
 GENDER_CHOICES = (('Undisclosed', 'Undisclosed'),
                   ('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other'))
@@ -14,11 +15,10 @@ MARITAL_STATUS_CHOICES = (('Undisclosed', 'Undisclosed'),
                           ('Single', 'Single'), ('Married', 'Married'), ('Other', 'Other'))
 
 
+    
 class Party(models.Model):
     name = models.CharField(max_length=200)
-
-    identifications = GenericRelation('human_resources.Identification', 
-                                        object_id_field="party_object_id", content_type_field='party_content_type',)    
+    identifiers = models.ManyToManyField( 'human_resources.Identification', blank=True )
     
     class Meta:
         abstract = True
@@ -97,24 +97,26 @@ class PartyRole(models.Model):
     valid_to = models.DateTimeField(null=True, blank=True)
 
     name = models.CharField(max_length=200)
+    identifiers = models.ManyToManyField('human_resources.Identification', blank=True )    
     
     individual = models.ForeignKey(Individual, blank=True, null=True)
     organisation = models.ForeignKey(Organisation, blank=True, null=True)
-    
-    #party_content_type = models.ForeignKey(
-    #    ContentType, related_name="%(app_label)s_%(class)s_ownership")
-    #party_object_id = models.PositiveIntegerField()
-    #party = GenericForeignKey('party_content_type', 'party_object_id')
-
 
     associations_from = GenericRelation(PartyRoleAssociation, 
                                         object_id_field="association_from_object_id", content_type_field='association_from_content_type',)
     associations_to = GenericRelation(PartyRoleAssociation, 
                                         object_id_field="association_to_object_id", content_type_field='association_to_content_type')
 
-    telephone_numbers = GenericRelation(TelephoneNumber,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
-    email_contacts = GenericRelation(EmailContact,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
-    physical_contacts = GenericRelation(PhysicalContact,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
+    #telephone_numbers = GenericRelation(TelephoneNumber,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
+    #email_contacts = GenericRelation(EmailContact,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
+    #physical_contacts = GenericRelation(PhysicalContact,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
+
+    physical_contacts = models.ManyToManyField(PhysicalContact, blank=True, related_name="%(app_label)s_%(class)s_physical_contacts" )
+    telephone_numbers = models.ManyToManyField(TelephoneNumber, blank=True, related_name="%(app_label)s_%(class)s_telephone_numbers" )
+    email_contacts = models.ManyToManyField(EmailContact, blank=True, related_name="%(app_label)s_%(class)s_email_contacts" )
+    
+    physical_resources = models.ManyToManyField(PhysicalResource, blank=True, related_name="%(app_label)s_%(class)s_physical_resources" )
+    logical_resources = models.ManyToManyField(LogicalResource, blank=True, related_name="%(app_label)s_%(class)s_logical_resources" )
 
     class Meta:
         abstract = True

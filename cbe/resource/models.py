@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from gm2m import GM2MField
 
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem
-from cbe.party.models import Owner
+#from cbe.party.models import Owner
 
 
 POWER_STATES = (('on', 'on'), ('off', 'off'), ('starting', 'starting'), ('stopping', 'stopping'))
@@ -15,7 +15,7 @@ class Resource(models.Model):
     usage_state = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=100,null=True, blank=True )
     
-    owner = models.ForeignKey(Owner,blank=True, null=True)
+    owner = models.ForeignKey('party.Owner',blank=True, null=True)
 
     serial_number = models.CharField(max_length=100,blank=True, null=True)
     

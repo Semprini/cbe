@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.admin import GenericTabularInline
 
 from cbe.party.models import Organisation, Individual, PhysicalContact, EmailContact, TelephoneNumber, GenericPartyRole
-from cbe.party.admin import GenericPartyRoleAdminForm, GenericPartyRoleAdmin, PhysicalContactInline, EmailContactInline, TelephoneNumberInline
+from cbe.party.admin import GenericPartyRoleAdminForm, GenericPartyRoleAdmin
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountRelationship, CustomerAccountContact
 
 
@@ -33,8 +33,6 @@ class CustomerAccountContactAdmin(GenericPartyRoleAdmin):
     list_display = ('name', 'party',)
     #form = CustomerAdminForm
     #readonly_fields = ('name', 'party_content_type', 'party_object_id')
-    inlines = [PhysicalContactInline,
-               EmailContactInline, TelephoneNumberInline]
 
 
 class CustomerAccountAdmin(admin.ModelAdmin):
