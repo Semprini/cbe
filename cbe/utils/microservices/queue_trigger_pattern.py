@@ -87,7 +87,7 @@ class QueueTriggerPattern():
             # Create a disctionary from message body
             message_json=json.loads(body.decode('utf-8'))
             self.worker(message_json)
-        except RequeableError as err:
+        except RetryableError as err:
             logging.info( "requeued: %s"%channel.basic_publish( self.retry_exchange, '', body ) )
         except FatalError as err:
             logging.error( "Fatal error: %s"%body )

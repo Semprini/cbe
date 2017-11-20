@@ -24,6 +24,10 @@ class Identification( models.Model ):
     pin = models.CharField(max_length=50, null=True, blank=True)
     identification_type = models.ForeignKey( IdentificationType )
 
+    party_content_type = models.ForeignKey( ContentType, related_name="%(app_label)s_%(class)s_ownership")
+    party_object_id = models.PositiveIntegerField()
+    party = GenericForeignKey('party_content_type', 'party_object_id')
+
     class Meta:
         ordering = ['id']
 
