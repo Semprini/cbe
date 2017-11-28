@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
 from cbe.party.models import PartyRole, Individual, Organisation
-
+from cbe.project.models import Project
 
 class IdentificationType( models.Model ):
     name = models.CharField(primary_key=True, max_length=200)
@@ -48,3 +48,20 @@ class Staff(PartyRole):
 
     def __str__(self):
         return "{}".format(self.name,)
+        
+        
+class Timesheet(models.Model):
+    staff = models.ForeignKey(Staff)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    
+    
+class TimesheetEntry(models.Model):
+    timesheet = models.ForeignKey(Timesheet, related_name="timesheet_entries")
+    project = models.ForeignKey(Project)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+    duration = models.DurationField()
+    notes = models.TextField(blank=True)
+    
+    
