@@ -98,6 +98,7 @@ class PartyRole(models.Model):
     valid_to = models.DateTimeField(null=True, blank=True)
 
     name = models.CharField(max_length=200)
+    code = models.CharField(max_length=50, blank=True, null=True)
     
     individual = models.ForeignKey(Individual, blank=True, null=True)
     organisation = models.ForeignKey(Organisation, blank=True, null=True)
