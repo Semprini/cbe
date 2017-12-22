@@ -71,6 +71,7 @@ class GeographicAddress(Place):
     country = models.ForeignKey(Country, blank=True, null=True)
     city = models.ForeignKey(City, blank=True, null=True)
     province = models.ForeignKey(Province, blank=True, null=True)
+    land_mass = models.CharField(max_length=50, blank=True, choices=(('North Island','North Island'),('South Island','South Island')))
 
     class Meta:
         abstract = True
@@ -145,13 +146,13 @@ class PoBoxAddress(GeographicAddress):
 
 
 
-class Location(Place):
+class Location(GeographicAddress):
     name = models.CharField(max_length=200, blank=True)
+    postcode = models.CharField(max_length=50, blank=True)
 
-    address_type = models.CharField(max_length=150, blank=True, choices=(('RuralPropertyAddress','RuralPropertyAddress'),('UrbanPropertyAddress','UrbanPropertyAddress')))
+    type = models.CharField(max_length=50, blank=True, choices=(('Rural','Rural'),('Urban','Urban')))
     rural_property_address = models.ForeignKey(RuralPropertyAddress, blank=True, null=True)
     urban_property_address = models.ForeignKey(UrbanPropertyAddress, blank=True, null=True)
-    
     
     def __str__(self):
         return self.name
@@ -160,16 +161,16 @@ class Location(Place):
     def address(self):
         if self.rural_property_address:
             return self.rural_property_address
-        else:
+        elif self.urban_property_address:
             return self.urban_property_address
         
         
     def save(self, *args, **kwargs):
         if self.rural_property_address:
-            self.address_type = "RuralPropertyAddress"
+            self.type = "Rural"
             self.urban_property_address = None
-        else:
-            self.address_type = "UrbanPropertyAddress"
+        elif self.urban_property_address:
+            self.type = "Urban"
             self.rural_property_address = None
         super(Location, self).save(*args, **kwargs)
         
