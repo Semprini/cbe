@@ -5,7 +5,6 @@ from django.contrib.contenttypes.models import ContentType
 from gm2m import GM2MField
 
 from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem
-#from cbe.party.models import Owner
 
 
 POWER_STATES = (('on', 'on'), ('off', 'off'), ('starting', 'starting'), ('stopping', 'stopping'))
