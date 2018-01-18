@@ -19,13 +19,13 @@ if ( Test-Path "c:\vagrant" ) {
 	executeExpression 'cd c:\vagrant'
 }
 
-Write-Host "[$scriptName] Install Chocolately, Python and Python Package Manager, each PowerShell session will reload the PATH from previous step`n"
-executeExpression 'iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex'
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+Write-Host "[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
+executeExpression "./automation/provisioning/base.ps1 python3"
 
-executeExpression 'choco install -y python3'
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+Write-Host "[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
+cat requirements.txt
 
+Write-Host
 executeExpression 'pip install -r requirements.txt' 
 
-Write-Host "`n[$scriptName] ---------- stop ----------"
+Write-Host "`n[$scriptName] ---------- stop ----------`n"
