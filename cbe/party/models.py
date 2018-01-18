@@ -18,8 +18,9 @@ MARITAL_STATUS_CHOICES = (('Undisclosed', 'Undisclosed'),
     
 class Party(models.Model):
     name = models.CharField(max_length=200)
-    identifiers = models.ManyToManyField( 'human_resources.Identification', blank=True )
-    
+
+    identifiers = GenericRelation('human_resources.Identification', 
+                                       object_id_field="party_object_id", content_type_field='party_content_type',)    
     class Meta:
         abstract = True
 
@@ -97,7 +98,7 @@ class PartyRole(models.Model):
     valid_to = models.DateTimeField(null=True, blank=True)
 
     name = models.CharField(max_length=200)
-    identifiers = models.ManyToManyField('human_resources.Identification', blank=True )    
+    code = models.CharField(max_length=50, blank=True, null=True)
     
     individual = models.ForeignKey(Individual, blank=True, null=True)
     organisation = models.ForeignKey(Organisation, blank=True, null=True)
@@ -110,6 +111,8 @@ class PartyRole(models.Model):
     #telephone_numbers = GenericRelation(TelephoneNumber,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
     #email_contacts = GenericRelation(EmailContact,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
     #physical_contacts = GenericRelation(PhysicalContact,object_id_field="party_role_object_id", content_type_field='party_role_content_type')
+    identifiers = GenericRelation('human_resources.Identification', 
+                                       object_id_field="party_role_object_id", content_type_field='party_role_content_type',)    
 
     physical_contacts = models.ManyToManyField(PhysicalContact, blank=True, related_name="%(app_label)s_%(class)s_physical_contacts" )
     telephone_numbers = models.ManyToManyField(TelephoneNumber, blank=True, related_name="%(app_label)s_%(class)s_telephone_numbers" )

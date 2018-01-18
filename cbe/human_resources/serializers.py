@@ -8,7 +8,7 @@ from rest_framework import serializers
 from cbe.utils.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import IndividualSerializer, OrganisationSerializer
 from cbe.party.models import Individual, Organisation
-from cbe.human_resources.models import IdentificationType, Identification, Staff
+from cbe.human_resources.models import IdentificationType, Identification, Staff, Timesheet, TimesheetEntry
 
 
 class IdentificationTypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -45,3 +45,20 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Staff
         fields = ('type', 'url', 'company', 'party' )
+
+        
+class TimesheetEntrySerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+    
+    class Meta:
+        model = TimesheetEntry
+        fields = ('type', 'url', 'timesheet', 'project', 'start', 'end', 'duration', 'notes' )  
+        
+        
+class TimesheetSerializer(serializers.HyperlinkedModelSerializer):
+    type = TypeField()
+    
+    class Meta:
+        model = Timesheet
+        fields = ('type', 'url', 'staff', 'start_date', 'end_date', 'timesheet_entries' )  
+        

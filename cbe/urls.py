@@ -49,6 +49,8 @@ humanresourcesrouter = AppRouter(root_view_name='app-human_resources')
 humanresourcesrouter.register(r'staff', HumanResourcesViews.StaffViewSet)
 humanresourcesrouter.register(r'identification', HumanResourcesViews.IdentificationViewSet)
 humanresourcesrouter.register(r'identification_type', HumanResourcesViews.IdentificationTypeViewSet)
+humanresourcesrouter.register(r'timesheet', HumanResourcesViews.TimesheetViewSet)
+humanresourcesrouter.register(r'timesheet_entries', HumanResourcesViews.TimesheetEntryViewSet)
 
 resourcerouter = AppRouter(root_view_name='app-resource')
 resourcerouter.register(r'physical_resource', ResourceViews.PhysicalResourceViewSet)
