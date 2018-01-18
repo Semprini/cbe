@@ -49,6 +49,9 @@ Vagrant.configure(2) do |config|
   config.vm.graceful_halt_timeout = 180 # 3 minutes
   config.vm.provision 'shell', path: './automation-solution/bootstrapAgent.ps1'
   config.vm.provision 'shell', path: './automation/remote/capabilities.ps1'
+  config.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
+  config.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', privileged: false
+  config.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', privileged: false # Execute twice to verify rebuild works
     
   # Oracle VirtualBox, cannot use 172.0.0.0/8 range, as that is allocated to Windows Container network
   config.vm.provider 'virtualbox' do |virtualbox, override|
@@ -61,18 +64,14 @@ Vagrant.configure(2) do |config|
     override.vm.network 'forwarded_port', guest: 5985, host: 15985 # WinRM HTTP
     override.vm.network 'forwarded_port', guest: 5986, host: 15986 # WinRM HTTPS
     override.vm.network 'forwarded_port', guest: 8000, host: 8000 # WinRM HTTPS
-    override.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
-    override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', privileged: false
-    override.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', privileged: false # Execute twice to verify rebuild works
   end
   
   # Microsoft Hyper-V does not support NAT or setting hostname: vagrant up target --provider hyperv
   config.vm.provider 'hyperv' do |hyperv, override|
     hyperv.memory = "#{vRAM}"
     hyperv.cpus = "#{vCPU}"
-    hyperv.ip_address_timeout = 240 # 4 minutes to report IP
-    override.vm.synced_folder ".", "/vagrant", type: "smb", smb_host: "#{ENV['COMPUTERNAME']}", smb_username: "#{ENV['USER_NAME']}", smb_password: "#{ENV['USER_PASS']}"
-    override.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
-    override.vm.provision 'shell', inline: 'dir c:\vagrant'
+    hyperv.ip_address_timeout = 420 # 7 minutes, default is 2 minutes (120 seconds)
+    override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
+    override.vm.synced_folder "#{synchedFolder}", "/.provision", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
   end
 end
