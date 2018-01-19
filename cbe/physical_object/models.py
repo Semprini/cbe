@@ -29,6 +29,7 @@ class ManufacturedObject(PhysicalObject):
         
 class Structure(ManufacturedObject):
     name = models.CharField(max_length=200,blank=True, null=True)
+    floor_square_metres = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return "{} by {}".format(self.physical_object_type, self.make)

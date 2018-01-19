@@ -14,10 +14,9 @@ class Place(models.Model):
         abstract = True
 
 
-# class GeographicPlace(Place):
-#
-#    class Meta:
-#        abstract = True
+class GeographicArea(models.Model):
+    name = models.CharField(max_length=200)
+
 
 
 # class LocalPlace(Place):
@@ -88,6 +87,10 @@ class UrbanPropertyAddress(GeographicAddress):
     street_suffix = models.CharField(max_length=50, blank=True)
     street_type = models.CharField(max_length=100, blank=True)
 
+    line1 = models.CharField(max_length=150, blank=True, null=True)
+    line2 = models.CharField(max_length=150, blank=True, null=True)
+    
+    
     def __str__(self):
         ret = ""
         if self.street_number_first is not None:
@@ -125,6 +128,7 @@ class RuralPropertyAddress(GeographicAddress):
     postcode = models.CharField(max_length=50, blank=True)
     locality = models.CharField(max_length=200, blank=True)
 
+   
     
 class RuralPropertySubAddress(GeographicAddress):
     rural_property_address = models.ForeignKey(RuralPropertyAddress,)
@@ -153,6 +157,11 @@ class Location(GeographicAddress):
     type = models.CharField(max_length=50, blank=True, choices=(('Rural','Rural'),('Urban','Urban')))
     rural_property_address = models.ForeignKey(RuralPropertyAddress, blank=True, null=True)
     urban_property_address = models.ForeignKey(UrbanPropertyAddress, blank=True, null=True)
+    address_line1 = models.CharField(max_length=250, blank=True, null=True)
+    address_line2 = models.CharField(max_length=150, blank=True, null=True)
+    
+    latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True)
+    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True)
     
     def __str__(self):
         return self.name
