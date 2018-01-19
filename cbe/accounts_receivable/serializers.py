@@ -1,8 +1,3 @@
-from urllib.parse import urlparse
-
-from django.core.urlresolvers import resolve
-from django.contrib.contenttypes.models import ContentType
-
 from rest_framework import serializers
 
 from cbe.utils.serializer_fields import TypeField

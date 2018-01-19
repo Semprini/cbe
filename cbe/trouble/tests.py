@@ -5,7 +5,7 @@ from django.contrib.admin.sites import AdminSite
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, CoreAPIClient
 
 from cbe.trouble.models import TroubleTicket, TroubleTicketItem, TROUBLE_TICKET_CHOICES, Problem, ResourceAlarm, TrackingRecord
 from cbe.location.models import PoBoxAddress
@@ -47,12 +47,16 @@ class TroubleAPITests(APITestCase):
     def setUp(self):
         self.superuser = User.objects.create_superuser(
             'john', 'john@snow.com', 'johnpassword')
-        self.client.login(username='john', password='johnpassword')
+        #self.client.login(username='john', password='johnpassword')
         self.problem = Problem.objects.create(
             originating_system="Test", description="Test", reason="Boo")
         self.address = PoBoxAddress.objects.create(
             box_number="1", locality="Testville")
         #self.factory = APIRequestFactory()
+
+        self.client = CoreAPIClient()
+        self.client.session.auth = HTTPBasicAuth('john', 'johnpassword')
+        self.client.session.headers.update({'x-test': 'true'})
 
     def test_create_problem(self):
         """

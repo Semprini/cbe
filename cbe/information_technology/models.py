@@ -1,3 +1,4 @@
+import django
 from django.db import models
 
 from cbe.resource.models import LogicalResource
@@ -19,8 +20,8 @@ class Process(models.Model):
     hierarchy_id = models.CharField(max_length=20)
     level = models.IntegerField(default=1)
     
-    framework = models.ForeignKey(ProcessFramework, blank=True, null=True, related_name='processes')
-    parent = models.ForeignKey("Process", blank=True, null=True, related_name='child_processes')
+    framework = models.ForeignKey(ProcessFramework, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True, related_name='processes')
+    parent = models.ForeignKey("Process", on_delete=django.db.models.deletion.CASCADE, blank=True, null=True, related_name='child_processes')
     name = models.CharField(max_length=200)
     friendly_name = models.CharField(max_length=200,blank=True, default='')
 
@@ -49,7 +50,7 @@ class ComponentClassification(models.Model):
 
 
 class Component(models.Model):
-    parent = models.ForeignKey("Component", blank=True, null=True, related_name='sub_components')
+    parent = models.ForeignKey("Component", on_delete=django.db.models.deletion.CASCADE, blank=True, null=True, related_name='sub_components')
 
     name = models.CharField(max_length=200)
     processes = models.ManyToManyField(Process, blank=True, related_name='components')
@@ -65,6 +66,6 @@ class Component(models.Model):
 
         
 class Deployment(LogicalResource):
-    component = models.ForeignKey(Component, related_name='deployments')
+    component = models.ForeignKey(Component, on_delete=django.db.models.deletion.CASCADE, related_name='deployments')
 
         

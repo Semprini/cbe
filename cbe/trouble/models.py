@@ -1,3 +1,4 @@
+import django
 from django.db import models
 from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -23,7 +24,7 @@ class TroubleTicket(BusinessInteraction):
 
 class TroubleTicketItem(BusinessInteractionItem):
     # , related_name="item_trouble_ticket")
-    trouble_ticket = models.ForeignKey(TroubleTicket)
+    trouble_ticket = models.ForeignKey(TroubleTicket, on_delete=django.db.models.deletion.CASCADE)
 
     def __str__(self):
         return "%s:%s" % (self.trouble_ticket, self.action)
@@ -63,7 +64,7 @@ class ResourceAlarm(models.Model):
     alarmType = models.CharField(max_length=100)
     perceivedSeverity = models.CharField(max_length=100, blank=True, null=True)
     probableCause = models.CharField(max_length=100, blank=True, null=True)
-    specificProblem = models.ForeignKey(Problem, blank=True, null=True)
+    specificProblem = models.ForeignKey(Problem, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
     # managedObjectClass
     # alarmRaisedTime
     # alarmClearedTime
@@ -85,12 +86,12 @@ class ResourceAlarm(models.Model):
 
 
 class TrackingRecord(models.Model):
-    problem = models.ForeignKey(Problem)
+    problem = models.ForeignKey(Problem, on_delete=django.db.models.deletion.CASCADE)
     description = models.TextField(blank=True, null=True)
     system = models.CharField(max_length=100)
     time = models.DateTimeField(auto_now_add=True)
     # user
-    resource_alarm = models.ForeignKey(ResourceAlarm, blank=True, null=True)
+    resource_alarm = models.ForeignKey(ResourceAlarm, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return "{}:{}:{}:{}".format(self.id, self.problem, self.system, self.time)

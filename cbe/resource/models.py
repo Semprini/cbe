@@ -1,3 +1,4 @@
+import django
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -15,7 +16,7 @@ class Resource(models.Model):
     usage_state = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=100,null=True, blank=True )
     
-    owner = models.ForeignKey('party.Owner',blank=True, null=True)
+    owner = models.ForeignKey('party.Owner', on_delete=django.db.models.deletion.CASCADE,blank=True, null=True)
 
     serial_number = models.CharField(max_length=100,blank=True, null=True)
     
@@ -28,7 +29,7 @@ class PhysicalResource(Resource):
     physical_objects = GM2MField(related_name="objects") #TODO: Restrict to physical_object derivatives
 
     place_content_type = models.ForeignKey(
-        ContentType, null=True, blank=True, related_name="%(app_label)s_%(class)s_ownership")
+        ContentType, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True, related_name="%(app_label)s_%(class)s_ownership")
     place_object_id = models.PositiveIntegerField(null=True, blank=True)
     place = GenericForeignKey('place_content_type', 'place_object_id')
 

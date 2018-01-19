@@ -1,3 +1,4 @@
+import django
 from django.db import models
 
 from cbe.party.models import PartyRole
@@ -18,7 +19,7 @@ class SupplierAccount(models.Model):
     valid_to = models.DateField(null=True, blank=True)
     
     account_number = models.CharField(primary_key=True, max_length=200)
-    supplier = models.ForeignKey(Supplier, related_name="customer_accounts")
+    supplier = models.ForeignKey(Supplier, on_delete=django.db.models.deletion.CASCADE, related_name="customer_accounts")
     account_status = models.CharField(max_length=100)
     account_type = models.CharField(max_length=200)
     name = models.CharField(max_length=300)

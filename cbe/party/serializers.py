@@ -1,7 +1,7 @@
 from urllib.parse import urlparse
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import resolve
+from django.urls import resolve
 
 from rest_framework import serializers
 

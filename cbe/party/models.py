@@ -1,3 +1,4 @@
+import django
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -26,7 +27,7 @@ class Party(models.Model):
 
 
 class Individual(Party):
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
     gender = models.CharField(
         max_length=50, blank=True, null=True, choices=GENDER_CHOICES)
     family_names = models.CharField(max_length=200, blank=True)
@@ -36,7 +37,7 @@ class Individual(Party):
     legal_name = models.CharField(max_length=200, blank=True)
     marital_status = models.CharField(
         max_length=100, null=True, blank=True, choices=MARITAL_STATUS_CHOICES)
-    nationality = models.ForeignKey(Country, blank=True, null=True)
+    nationality = models.ForeignKey(Country, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
     place_of_birth = models.CharField(max_length=200, blank=True)
 
     class Meta:
@@ -60,7 +61,7 @@ class Individual(Party):
 
 
 class Organisation(Party):  # Eg IRD
-    parent = models.ForeignKey('Organisation', blank=True, null=True, related_name='sub_organisations')
+    parent = models.ForeignKey('Organisation', on_delete=django.db.models.deletion.CASCADE, blank=True, null=True, related_name='sub_organisations')
     organisation_type = models.CharField(max_length=200, blank=True, null=True)
     
     class Meta:
@@ -77,12 +78,12 @@ class PartyRoleAssociation(models.Model):
     association_type = models.CharField(max_length=200)
     
     association_from_content_type = models.ForeignKey(
-        ContentType, related_name="%(app_label)s_%(class)s_from")
+        ContentType, on_delete=django.db.models.deletion.CASCADE, related_name="%(app_label)s_%(class)s_from")
     association_from_object_id = models.CharField(max_length=200)
     association_from = GenericForeignKey('association_from_content_type', 'association_from_object_id')
 
     association_to_content_type = models.ForeignKey(
-        ContentType, related_name="%(app_label)s_%(class)s_to")
+        ContentType, on_delete=django.db.models.deletion.CASCADE, related_name="%(app_label)s_%(class)s_to")
     association_to_object_id = models.CharField(max_length=200)
     association_to = GenericForeignKey('association_to_content_type', 'association_to_object_id')
 
@@ -100,8 +101,8 @@ class PartyRole(models.Model):
     name = models.CharField(max_length=200)
     code = models.CharField(max_length=50, blank=True, null=True)
     
-    individual = models.ForeignKey(Individual, blank=True, null=True)
-    organisation = models.ForeignKey(Organisation, blank=True, null=True)
+    individual = models.ForeignKey(Individual, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
+    organisation = models.ForeignKey(Organisation, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
 
     associations_from = GenericRelation(PartyRoleAssociation, 
                                         object_id_field="association_from_object_id", content_type_field='association_from_content_type',)

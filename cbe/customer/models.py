@@ -1,5 +1,6 @@
 from functools import partial
 
+import django
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -16,7 +17,7 @@ credit_status_choices = (('active', 'active'), ('stop', 'stop'),)
 class Customer(PartyRole):
     customer_number = models.CharField(primary_key=True, max_length=200)
     customer_status = models.CharField(max_length=100, choices=customer_status_choices)
-    managed_by = models.ForeignKey(Organisation, null=True, blank=True,related_name='manages_customers')
+    managed_by = models.ForeignKey(Organisation, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True,related_name='manages_customers')
 
     class Meta:
         ordering = ['customer_number']
@@ -43,14 +44,14 @@ class CustomerAccount(models.Model):
     valid_to = models.DateField(null=True, blank=True)
     
     account_number = models.CharField(primary_key=True, max_length=200)
-    customer = models.ForeignKey(Customer, related_name="customer_accounts")
+    customer = models.ForeignKey(Customer, on_delete=django.db.models.deletion.CASCADE, related_name="customer_accounts")
     account_status = models.CharField(max_length=100)
     account_type = models.CharField(max_length=200)
     name = models.CharField(max_length=300)
     pin = models.CharField(max_length=100, null=True, blank=True)
     customer_account_contact = models.ManyToManyField(CustomerAccountContact, blank=True, related_name="customer_accounts")
 
-    managed_by = models.ForeignKey(Organisation, null=True, blank=True, related_name = "accounts_managed")
+    managed_by = models.ForeignKey(Organisation, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True, related_name = "accounts_managed")
 
     class Meta:
         ordering = ['created']
@@ -63,7 +64,7 @@ class CustomerAccountRelationship(models.Model):
     valid_from = models.DateField(null=True, blank=True)
     valid_to = models.DateField(null=True, blank=True)
     relationship_type = models.CharField(max_length=200)
-    from_account = models.ForeignKey( CustomerAccount, related_name='related_from_account')
-    to_account = models.ForeignKey( CustomerAccount, related_name='related_to_account')
+    from_account = models.ForeignKey( CustomerAccount, on_delete=django.db.models.deletion.CASCADE, related_name='related_from_account')
+    to_account = models.ForeignKey( CustomerAccount, on_delete=django.db.models.deletion.CASCADE, related_name='related_to_account')
 
 

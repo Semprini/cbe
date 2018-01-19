@@ -1,3 +1,4 @@
+import django
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -7,7 +8,7 @@ from cbe.project.models import Project
 
 class IdentificationType( models.Model ):
     name = models.CharField(primary_key=True, max_length=200)
-    issuer = models.ForeignKey(Organisation, null=True, blank=True)
+    issuer = models.ForeignKey(Organisation, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True)
 
     class Meta:
         ordering = ['name']
@@ -22,13 +23,13 @@ class Identification( models.Model ):
 
     number = models.CharField(max_length=200)
     pin = models.CharField(max_length=50, null=True, blank=True)
-    identification_type = models.ForeignKey( IdentificationType )
+    identification_type = models.ForeignKey( IdentificationType, on_delete=django.db.models.deletion.CASCADE )
 
-    party_content_type = models.ForeignKey( ContentType, related_name="%(app_label)s_%(class)s_party_identifiers", null=True, blank=True)
+    party_content_type = models.ForeignKey( ContentType, on_delete=django.db.models.deletion.CASCADE, related_name="%(app_label)s_%(class)s_party_identifiers", null=True, blank=True)
     party_object_id = models.PositiveIntegerField(null=True, blank=True)
     party = GenericForeignKey('party_content_type', 'party_object_id')
 
-    party_role_content_type = models.ForeignKey( ContentType, related_name="%(app_label)s_%(class)s_party_role_identifiers", null=True, blank=True)
+    party_role_content_type = models.ForeignKey( ContentType, on_delete=django.db.models.deletion.CASCADE, related_name="%(app_label)s_%(class)s_party_role_identifiers", null=True, blank=True)
     party_role_object_id = models.PositiveIntegerField(null=True, blank=True)
     party_role = GenericForeignKey('party_role_content_type', 'party_role_object_id')
     
@@ -40,7 +41,7 @@ class Identification( models.Model ):
 
 
 class Staff(PartyRole):
-    company = models.ForeignKey(Organisation, null=True, blank=True, related_name='employer')
+    company = models.ForeignKey(Organisation, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True, related_name='employer')
 
     def save(self, *args, **kwargs):
         if self.name is None or self.name == "":
@@ -55,14 +56,14 @@ class Staff(PartyRole):
         
         
 class Timesheet(models.Model):
-    staff = models.ForeignKey(Staff)
+    staff = models.ForeignKey(Staff, on_delete=django.db.models.deletion.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
     
     
 class TimesheetEntry(models.Model):
-    timesheet = models.ForeignKey(Timesheet, related_name="timesheet_entries")
-    project = models.ForeignKey(Project)
+    timesheet = models.ForeignKey(Timesheet, on_delete=django.db.models.deletion.CASCADE, related_name="timesheet_entries")
+    project = models.ForeignKey(Project, on_delete=django.db.models.deletion.CASCADE)
     start = models.DateTimeField()
     end = models.DateTimeField()
     duration = models.DurationField()

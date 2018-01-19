@@ -6,13 +6,14 @@ from django.contrib.admin.sites import AdminSite
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import force_authenticate
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, CoreAPIClient
 
 from cbe.party.models import Individual, Organisation, GenericPartyRole
 from cbe.customer.models import Customer, CustomerAccount, CustomerAccountContact
 from cbe.customer.views import CustomerViewSet
 from cbe.customer.admin import CustomerAccountAdmin
 
+from requests.auth import HTTPBasicAuth
 
 class MockRequest(object):
     pass
@@ -96,13 +97,18 @@ class CustomerAPITests(APITestCase):
     def setUp(self):
         self.superuser = User.objects.create_superuser(
             'john', 'john@snow.com', 'johnpassword')
-        self.client.login(username='john', password='johnpassword')
+        #self.client.login(username='john', password='johnpassword')
         self.individual = Individual.objects.create(
             given_names="John", family_names="Doe")
         self.organisation = Organisation.objects.create(name='Pen Inc.')
         self.customer = Customer.objects.create(
             party=self.individual, customer_number="1", customer_status="new")
         self.factory = APIRequestFactory()
+
+        self.client = CoreAPIClient()
+        self.client.session.auth = HTTPBasicAuth('john', 'johnpassword')
+        self.client.session.headers.update({'x-test': 'true'})
+
 
     def test_get_customer(self):
         """

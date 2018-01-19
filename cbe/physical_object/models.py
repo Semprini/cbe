@@ -1,3 +1,4 @@
+import django
 from django.db import models
 
 from cbe.party.models import Organisation, PartyRole, Owner
@@ -8,18 +9,18 @@ class PhysicalObject(models.Model):
     end_date = models.DateTimeField(null=True,blank=True)
     physical_object_type = models.CharField(max_length=100)
 
-    location = models.ForeignKey(Location,blank=True, null=True)
+    location = models.ForeignKey(Location, on_delete=django.db.models.deletion.CASCADE,blank=True, null=True)
     
     class Meta:
         abstract = True
 
         
 class ManufacturedObject(PhysicalObject):
-    make = models.ForeignKey(Organisation,blank=True, null=True)
+    make = models.ForeignKey(Organisation, on_delete=django.db.models.deletion.CASCADE,blank=True, null=True)
     series = models.CharField(max_length=100,blank=True, null=True)
     model = models.CharField(max_length=100,blank=True, null=True)
     serial_number = models.CharField(max_length=100,blank=True, null=True)
-    owner = models.ForeignKey(Owner,blank=True, null=True)
+    owner = models.ForeignKey(Owner, on_delete=django.db.models.deletion.CASCADE,blank=True, null=True)
 
     #TODO: Compound objects
 

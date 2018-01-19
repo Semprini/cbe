@@ -1,3 +1,4 @@
+import django
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -31,6 +32,6 @@ class EmailContact(ContactMedium):
 class PhysicalContact(ContactMedium):
     # TODO: Restrict to Address derrived types
     address_content_type = models.ForeignKey(
-        ContentType, related_name="%(app_label)s_%(class)s_address_ownership")
+        ContentType, on_delete=django.db.models.deletion.CASCADE, related_name="%(app_label)s_%(class)s_address_ownership")
     address_object_id = models.PositiveIntegerField()
     address = GenericForeignKey('address_content_type', 'address_object_id')

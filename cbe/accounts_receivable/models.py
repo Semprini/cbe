@@ -1,5 +1,6 @@
 import datetime
 
+import django
 from django.db import models
 
 from cbe.party.models import Organisation
@@ -17,14 +18,14 @@ class PaymentChannel(models.Model):
 
         
 class CustomerPayment(models.Model):
-    channel = models.ForeignKey(PaymentChannel)
-    vendor = models.ForeignKey(Organisation, null=True,blank=True)
+    channel = models.ForeignKey(PaymentChannel, on_delete=django.db.models.deletion.CASCADE)
+    vendor = models.ForeignKey(Organisation, on_delete=django.db.models.deletion.CASCADE, null=True,blank=True)
 
     datetime = models.DateTimeField(default=datetime.datetime.now)
     docket_number = models.CharField(max_length=50, null=True,blank=True )
 
-    customer = models.ForeignKey(Customer, db_index=True, null=True,blank=True)
-    account = models.ForeignKey(CustomerAccount, db_index=True, null=True,blank=True)
+    customer = models.ForeignKey(Customer, on_delete=django.db.models.deletion.CASCADE, db_index=True, null=True,blank=True)
+    account = models.ForeignKey(CustomerAccount, on_delete=django.db.models.deletion.CASCADE, db_index=True, null=True,blank=True)
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     tax = models.DecimalField(max_digits=10, decimal_places=2)

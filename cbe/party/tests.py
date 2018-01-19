@@ -13,8 +13,10 @@ from django.utils import six
 
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
+from requests.auth import HTTPBasicAuth
+
 from rest_framework.test import force_authenticate
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, CoreAPIClient
 
 from cbe.party.models import Individual, Organisation, TelephoneNumber, EmailContact, GenericPartyRole, Owner
 from cbe.party.views import IndividualViewSet
@@ -131,10 +133,14 @@ class PartyAPITests(APITestCase):
     def setUp(self):
         self.superuser = User.objects.create_superuser(
             'john', 'john@snow.com', 'johnpassword')
-        self.client.login(username='john', password='johnpassword')
+        #self.client.login(username='john', password='johnpassword')
         self.individual = Individual.objects.create(
             given_names="John", family_names="Doe")
         self.factory = APIRequestFactory()
+
+        self.client = CoreAPIClient()
+        self.client.session.auth = HTTPBasicAuth('john', 'johnpassword')
+        self.client.session.headers.update({'x-test': 'true'})
 
     def test_get_individual(self):
         """
@@ -175,13 +181,17 @@ class OwnerAPITests(APITestCase):
     def setUp(self):
         self.superuser = User.objects.create_superuser(
             'john', 'john@snow.com', 'johnpassword')
-        self.client.login(username='john', password='johnpassword')
+        #self.client.login(username='john', password='johnpassword')
         self.individual = Individual.objects.create(
             given_names="John", family_names="Doe")
         self.organisation = Organisation.objects.create(name='Pen Inc.')
         self.owner = Owner.objects.create(
             party=self.individual, )
         self.factory = APIRequestFactory()
+
+        self.client = CoreAPIClient()
+        self.client.session.auth = HTTPBasicAuth('john', 'johnpassword')
+        self.client.session.headers.update({'x-test': 'true'})
 
     def test_get_owner(self):
         """

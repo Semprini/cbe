@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import django
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -53,7 +54,7 @@ class Country(Place):
 class City(Place):
     code = models.CharField(max_length=5, primary_key=True)
     name = models.CharField(max_length=200)
-    country = models.ForeignKey(Country)
+    country = models.ForeignKey(Country, on_delete=django.db.models.deletion.CASCADE)
 
     def __str__(self):
         return self.name
@@ -68,9 +69,9 @@ class Province(Place):
         
 
 class GeographicAddress(Place):
-    country = models.ForeignKey(Country, blank=True, null=True)
-    city = models.ForeignKey(City, blank=True, null=True)
-    province = models.ForeignKey(Province, blank=True, null=True)
+    country = models.ForeignKey(Country, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
+    city = models.ForeignKey(City, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
+    province = models.ForeignKey(Province, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
     land_mass = models.CharField(max_length=50, blank=True, choices=(('North Island','North Island'),('South Island','South Island')))
 
     class Meta:
@@ -110,8 +111,8 @@ class UrbanPropertyAddress(GeographicAddress):
 
 
 class UrbanPropertySubAddress(GeographicAddress):
-    urban_property_address = models.ForeignKey(UrbanPropertyAddress,)
-    building = models.ForeignKey('physical_object.Structure', blank=True, null=True)
+    urban_property_address = models.ForeignKey(UrbanPropertyAddress, on_delete=django.db.models.deletion.CASCADE,)
+    building = models.ForeignKey('physical_object.Structure', on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
     level_number = models.CharField(max_length=20, blank=True, null=True)
     level_type = models.CharField(max_length=50, blank=True, null=True)
     private_street_name = models.CharField(
@@ -127,8 +128,8 @@ class RuralPropertyAddress(GeographicAddress):
 
     
 class RuralPropertySubAddress(GeographicAddress):
-    rural_property_address = models.ForeignKey(RuralPropertyAddress,)
-    building = models.ForeignKey('physical_object.Structure', blank=True, null=True)
+    rural_property_address = models.ForeignKey(RuralPropertyAddress, on_delete=django.db.models.deletion.CASCADE,)
+    building = models.ForeignKey('physical_object.Structure', on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
 
     private_street_name = models.CharField(
         max_length=150, blank=True, null=True)
@@ -151,8 +152,8 @@ class Location(GeographicAddress):
     postcode = models.CharField(max_length=50, blank=True)
 
     type = models.CharField(max_length=50, blank=True, choices=(('Rural','Rural'),('Urban','Urban')))
-    rural_property_address = models.ForeignKey(RuralPropertyAddress, blank=True, null=True)
-    urban_property_address = models.ForeignKey(UrbanPropertyAddress, blank=True, null=True)
+    rural_property_address = models.ForeignKey(RuralPropertyAddress, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
+    urban_property_address = models.ForeignKey(UrbanPropertyAddress, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
     
     def __str__(self):
         return self.name

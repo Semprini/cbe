@@ -1,5 +1,6 @@
 from functools import partial
 
+import django
 from django.utils import timezone
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -16,7 +17,7 @@ class BusinessInteraction(models.Model):
     previous_state = {}
 
     place_content_type = models.ForeignKey(
-        ContentType, null=True, blank=True, related_name="%(app_label)s_%(class)s_place_ownership")
+        ContentType, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True, related_name="%(app_label)s_%(class)s_place_ownership")
     place_object_id = models.PositiveIntegerField(null=True, blank=True)
     place = GenericForeignKey('place_content_type', 'place_object_id')
 
@@ -29,7 +30,7 @@ class BusinessInteraction(models.Model):
 
 class BusinessInteractionItem(models.Model):
     business_interaction_content_type = models.ForeignKey(
-        ContentType, null=True, blank=True, related_name="%(app_label)s_%(class)s_interaction_ownership")
+        ContentType, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True, related_name="%(app_label)s_%(class)s_interaction_ownership")
     business_interaction_object_id = models.PositiveIntegerField(null=True, blank=True)
     business_interaction = GenericForeignKey('business_interaction_content_type', 'business_interaction_object_id')
 
@@ -38,7 +39,7 @@ class BusinessInteractionItem(models.Model):
         null=True, blank=True, max_length=50, choices=ACTION_CHOICES)
 
     place_content_type = models.ForeignKey(
-        ContentType, null=True, blank=True, related_name="%(app_label)s_%(class)s_ownership")
+        ContentType, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True, related_name="%(app_label)s_%(class)s_ownership")
     place_object_id = models.PositiveIntegerField(null=True, blank=True)
     place = GenericForeignKey('place_content_type', 'place_object_id')
 
@@ -51,7 +52,7 @@ class BusinessInteractionItem(models.Model):
 
 class BusinessInteractionRole(models.Model):
     business_interaction_content_type = models.ForeignKey(
-        ContentType, null=True, blank=True, related_name="%(app_label)s_%(class)s_interaction_ownership")
+        ContentType, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True, related_name="%(app_label)s_%(class)s_interaction_ownership")
     business_interaction_object_id = models.PositiveIntegerField(null=True, blank=True)
     business_interaction = GenericForeignKey('business_interaction_content_type', 'business_interaction_object_id')
 
@@ -59,7 +60,7 @@ class BusinessInteractionRole(models.Model):
 
     # This can be resource or party role
     interaction_role_content_type = models.ForeignKey(
-        ContentType, null=True, blank=True, related_name="%(app_label)s_%(class)s_role_ownership")
+        ContentType, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True, related_name="%(app_label)s_%(class)s_role_ownership")
     interaction_role_object_id = models.PositiveIntegerField(
         null=True, blank=True)
     interaction_role = GenericForeignKey(
