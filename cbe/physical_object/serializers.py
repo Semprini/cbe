@@ -24,7 +24,7 @@ class StructureSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerialize
 
     class Meta:
         model = Structure
-        fields = ('type', 'url', 'start_date', 'end_date', 'physical_object_type', 'make', 'location' )                  
+        fields = ('type', 'url', 'start_date', 'end_date', 'physical_object_type', 'name', 'floor_square_metres', 'make', 'location' )                  
         
         
 class DeviceSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):

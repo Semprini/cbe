@@ -20,8 +20,6 @@ MARITAL_STATUS_CHOICES = (('Undisclosed', 'Undisclosed'),
 class Party(models.Model):
     name = models.CharField(max_length=200)
 
-    identifiers = GenericRelation('human_resources.Identification', 
-                                       object_id_field="party_object_id", content_type_field='party_content_type',)    
     class Meta:
         abstract = True
 
@@ -39,6 +37,8 @@ class Individual(Party):
         max_length=100, null=True, blank=True, choices=MARITAL_STATUS_CHOICES)
     nationality = models.ForeignKey(Country, on_delete=django.db.models.deletion.CASCADE, blank=True, null=True)
     place_of_birth = models.CharField(max_length=200, blank=True)
+
+    identifiers = GenericRelation('human_resources.Identification', object_id_field="party_object_id", content_type_field='party_content_type', related_query_name='individual')    
 
     class Meta:
         ordering = ['id']
@@ -62,7 +62,11 @@ class Individual(Party):
 
 class Organisation(Party):  # Eg IRD
     parent = models.ForeignKey('Organisation', on_delete=django.db.models.deletion.CASCADE, blank=True, null=True, related_name='sub_organisations')
+    enterprise_id = models.IntegerField(null=True)
+    code = models.CharField(max_length=200, blank=True, null=True)
     organisation_type = models.CharField(max_length=200, blank=True, null=True)
+
+    identifiers = GenericRelation('human_resources.Identification', object_id_field="party_object_id", content_type_field='party_content_type', related_query_name='organisation')    
     
     class Meta:
         ordering = ['id']

@@ -1,20 +1,32 @@
 import django
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
 from cbe.party.models import PartyRole, Individual, Organisation
 from cbe.project.models import Project
 
+# def increment_id():
+    # last = IdentificationType.objects.all().order_by('id').last()
+    # if not last:
+        # return 1
+    # return last.id+1
+
 class IdentificationType( models.Model ):
-    name = models.CharField(primary_key=True, max_length=200)
+    name = models.CharField(max_length=200)
     issuer = models.ForeignKey(Organisation, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True)
+    system = models.ForeignKey('resource.LogicalResource', on_delete=django.db.models.deletion.CASCADE, null=True, blank=True)
 
     class Meta:
         ordering = ['name']
 
     def __str__(self):
-        return "{}".format(self.name,)
+        ret = ""
+        if self.issuer:
+            ret = "{}|".format(self.issuer.name)
+        if self.system:
+            ret += "{}|".format(self.system.name)
+        return "{}{}".format(ret,self.name,)
         
 
 class Identification( models.Model ):
@@ -42,6 +54,7 @@ class Identification( models.Model ):
 
 class Staff(PartyRole):
     company = models.ForeignKey(Organisation, on_delete=django.db.models.deletion.CASCADE, null=True, blank=True, related_name='employer')
+    identifiers = GenericRelation(Identification, object_id_field="party_object_id", content_type_field='party_content_type', related_query_name='individual')    
 
     def save(self, *args, **kwargs):
         if self.name is None or self.name == "":

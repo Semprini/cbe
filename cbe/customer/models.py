@@ -6,8 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_init, post_save
 
-from cbe.party.models import GenericPartyRole, PartyRole, Organisation
-from cbe.business_interaction.models import BusinessInteraction, BusinessInteractionItem
+from cbe.party.models import PartyRole, Organisation
 
 customer_status_choices = (('new', 'new'), ('active', 'active'),
                            ('inactive', 'inactive'), ('prospective', 'prospective'))

@@ -1,8 +1,7 @@
 Param (
-  [string]$userDomain,
-  [string]$userAlias
+  [string]$userName
 )
-$scriptName = 'addFeature.ps1'
+$scriptName = 'setServiceLogon.ps1'
 
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
@@ -17,80 +16,76 @@ function executeExpression ($expression) {
 }
 
 Write-Host "`n[$scriptName] ---------- start ----------"
-if ($userDomain) {
-    Write-Host "[$scriptName] userDomain   : $userDomain"
+if ($userName) {
+    Write-Host "[$scriptName] userName          : $userName"
 } else {
-    Write-Host "[$scriptName] userDomain not passed, exit with LASTEXITCODE 100"; exit 100
+	$userName = $(whoami)
+    Write-Host "[$scriptName] userName          : $userName (not passed, defaulted to current user)"
 }
 
-if ($userAlias) {
-    Write-Host "[$scriptName] userAlias   : $userAlias"
-} else {
-    Write-Host "[$scriptName] userAlias not passed, exit with LASTEXITCODE 101"; exit 101
+# Separate domain and uername
+$userDomain,$userAlias = $userName.split('\')
+if ( $userDomain -eq '.' ) {
+	$userDomain = $env:COMPUTERNAME
 }
-
-#Desc: Grants log on as service rights on the computer. This script needs to run in elevated mode (admin)
-#created by: Sachin Patil
+Write-Host "[$scriptName] userDomain        : $userDomain"
+Write-Host "[$scriptName] userAlias         : $userAlias"
+$workingDirectory = $(pwd)
+Write-Host "[$scriptName] $workingDirectory : $workingDirectory"
 
 $scriptPath = (Get-Location).Path
-
-$infFile =  Join-Path $scriptPath "GrantLogOnAsService.inf"
-$logFile = Join-Path $scriptPath "OutputLog.txt"
-if(Test-Path $infFile) {
-    Remove-Item -Path $infFile -Force
-}
 
 $objUser = New-Object System.Security.Principal.NTAccount($userDomain, $userAlias)
 $strSID = $objUser.Translate([System.Security.Principal.SecurityIdentifier])
 $sid = $strSID.Value
 
-#NT Service/ALL SERVICES
-$objUser2 = New-Object System.Security.Principal.NTAccount("NT SERVICE", "ALL SERVICES")
-$strSID2 = $objUser2.Translate([System.Security.Principal.SecurityIdentifier])
-$sid2 = $strSID2.Value
-
 Write-Host "User SID: $sid"
-Write-Host "Creating template file $infFile"
 
-Add-Content $infFile "[Unicode]"
-Add-Content $infFile "Unicode=yes"
-Add-Content $infFile "[Version]"
-Add-Content $infFile "signature=`"`$CHICAGO$`""
-Add-Content $infFile "Revision=1"
-Add-Content $infFile "[Registry Values]"
-Add-Content $infFile "[Profile Description]"
-Add-Content $infFile "Description=This is security template to grant log on as service access"
-Add-Content $infFile "[Privilege Rights]"
-Add-Content $infFile "SeServiceLogonRight = *$sid,*$sid2" #add more users here if needed
+executeExpression "secedit /export /cfg c:\backup.txt"
+$fileName = 'c:\backup.inf'
+executeExpression "Copy-Item 'c:\backup.txt' '$fileName' -Force"
+$token = foreach ( $line in Get-Content 'C:\backup.inf' ) { if ( $line -match 'SeServiceLogonRight' ) { $line } }
+Write-Host "[$scriptName] token : $token"
+if ( $token -match $sid ) {
+	Write-Host "[$scriptName] User $userAlias already has login rights, no action attempted"; exit 0
+}
+$value = $token + ",*$sid"
+Write-Host "[$scriptName] value : $value"
+(Get-Content $fileName | ForEach-Object { $_ -replace [regex]::Escape($token), "$value" } ) | Set-Content $fileName
 
-$seceditFile = "c:\Windows\security\database\secedit.sdb"
-#Make sure it exists
+$seceditFile = "$env:SystemRoot\security\database\secedit.sdb"
+write-host "Verify default database exists ($seceditFile)"
 if((Test-Path $seceditFile) -eq $false)
 {
     Write-Error "Security database does not exist $seceditFile"
 }
-write-host "Validating new security template .inf file"
-#validate if template is correct
-secedit /validate $infFile
+
+write-host "Validating new security template file ($fileName)"
+executeExpression "secedit /validate $fileName"
 $exitcode = $LASTEXITCODE
 if($exitcode -ne 0)
 {
-    Write-Error "Error in validating template file, $infFile exit code $exitcode"
+    Write-Error "Error in validating template file, $fileName exit code $exitcode"
     exit $exitcode
 }
 
-write-host "Appliying security template to default secedit.sdb"
+write-host "Apply configuration from user home directory to avoid 'access denied' issues"
+executeExpression "cd ~"
 
-secedit /configure /db secedit.sdb /cfg "$infFile" /log "$logFile"
+write-host "Applying security template to default database ($seceditFile)"
+executeExpression "secedit /configure /db secedit.sdb /cfg '$fileName'"
 $exitcode = $LASTEXITCODE
 if($exitcode -ne 0)
 {
-    Write-Error "Error in secedit call, exit code $exitcode"
+    Write-Error "Error in secedit call, exit code $exitcode`n"
+    cat "$env:windir\security\logs\scesrv.log"
     exit $exitcode
 }
-get-content "$logFile"
-write-host "Successfully granted log on as service access to user $userAlias" -ForegroundColor Green
-gpupdate /force
+write-host "Successfully granted log on as service access to user ${userAlias}, return to working dirctory" -ForegroundColor Green
+executeExpression "cd $workingDirectory"
+
+write-host "Reload Group Policy"
+executeExpression "gpupdate /force"
 
 Write-Host "`n[$scriptName] ---------- stop ----------"
 exit 0

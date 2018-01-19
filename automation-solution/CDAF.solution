@@ -1,5 +1,5 @@
 # Template Solution Properties file
 # Is using symantic versioning, substitute build number at the end of version
-productVersion=0.0.1
+productVersion=0.2.0
 productName=Common Business Entities
 solutionName=cbe
