@@ -36,7 +36,7 @@ class ExtendedModelSerializerField(serializers.Field):
                 return []
             else:
                 attr = getattr( self.parent.instance, self.source )
-                setattr( self.parent.instance, self.source, [] )
+                attr.clear()
                 for object in data:
                     attr.add( self.to_internal_value( object ) )
                 self.parent.instance.save()
@@ -95,7 +95,7 @@ class GenericRelatedField(serializers.Field):
                 return []
             else:
                 attr = getattr( self.parent.instance, self.source )
-                setattr( self.parent.instance, self.source, [] )
+                attr.clear()
                 for object in data:
                     attr.add( self.to_internal_value( object ) )
                 self.parent.instance.save()
