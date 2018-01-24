@@ -31,6 +31,11 @@ class IndividualSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializ
         fields = ('type', 'url', 'user', 'name', 'given_names', 'family_names', 'middle_names',
                   'form_of_address', 'gender', 'legal_name', 'marital_status', 'nationality', 'place_of_birth', 'identifiers', )
 
+    def create(self, validated_data):
+        validated_data.pop('identifiers', None)
+        print(validated_data)
+        return Individual.objects.create(**validated_data)
+                  
 
 class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()

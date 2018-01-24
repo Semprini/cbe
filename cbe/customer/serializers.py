@@ -25,10 +25,22 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
                   'customer_status', 'party', 'customer_accounts', 'associations_from', 'associations_to',)
 
     def create(self, validated_data):
-        validated_data.pop('customer_accounts')
+        validated_data.pop('customer_accounts', None)
+        validated_data.pop('associations_from', None)
+        validated_data.pop('associations_to', None)
+        
         return Customer.objects.create(**validated_data)
 
+    def update(self, instance, validated_data):
+        validated_data.pop('customer_accounts', None)
+        validated_data.pop('associations_from', None)
+        validated_data.pop('associations_to', None)
+        
+        for key, value in validated_data.items():
+            setattr( instance, key, value )
 
+        instance.save()
+        return instance  
 
 class CustomerAccountContactSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
