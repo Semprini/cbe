@@ -53,11 +53,10 @@ if ($mediaDir) {
 }
 
 if (!( Test-Path $mediaDir )) {
-	Write-Host "[$scriptName] mkdir $mediaDir"
-	mkdir $mediaDir
+	Write-Host "[$scriptName] Created $(mkdir $mediaDir)"
 }
 if ($env:interactive) {
-    Write-Host "[$scriptName] env:interactive : $env:interactive, run in current window"
+    Write-Host "[$scriptName] `$env:interactive = `$env:interactive, run in current window"
     $sessionControl = '-PassThru -Wait -NoNewWindow'
 } else {
     $sessionControl = '-PassThru -Wait'
