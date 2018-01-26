@@ -54,7 +54,7 @@ class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerial
     
     class Meta:
         model = Organisation
-        fields = ('type', 'url', 'parent', 'name', 'sub_organisations', 'identifiers', )
+        fields = ('type', 'url', 'parent', 'enterprise_id', 'name', 'sub_organisations', 'identifiers', )
 
         
 class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):
