@@ -16,22 +16,29 @@ class IdentificationTypeSerializer(serializers.HyperlinkedModelSerializer):
                   
 class IdentificationSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    identification_type_name = serializers.SerializerMethodField()
     
-    party = GenericRelatedField( many=False, 
+    party = GenericRelatedField( many=False, url_only=True,
         serializer_dict={ 
             Individual: IndividualSerializer(),
             Organisation: OrganisationSerializer(),
         })
+    party_role = GenericRelatedField( many=False, url_only=True, serializer_dict={})
 
     class Meta:
         model = Identification
-        fields = ('type', 'url', 'identification_type', 'number', 'pin', 'party', 'valid_from', 'valid_to')                  
-        
+        fields = ('type', 'url', 'identification_type', 'identification_type_name', 'valid_from', 'valid_to', 'number', 'party', 'party_role')
+    
+    def get_identification_type_name(self,obj):
+        if obj.identification_type:
+            return obj.identification_type.name
+        else:
+            return None
 
        
 class StaffSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
-    party = GenericRelatedField( many=False,
+    party = GenericRelatedField( many=False, 
         serializer_dict={ 
             Individual: IndividualSerializer(),
             Organisation: OrganisationSerializer(),

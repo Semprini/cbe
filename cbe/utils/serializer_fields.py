@@ -61,6 +61,7 @@ class GenericRelatedField(serializers.Field):
 
     def __init__(self, serializer_dict, *args, **kwargs):
         self.many = kwargs.pop('many')
+        self.url_only = kwargs.pop('url_only', False)
         super(GenericRelatedField, self).__init__(*args, **kwargs)
 
         self.serializer_dict = serializer_dict
@@ -78,9 +79,14 @@ class GenericRelatedField(serializers.Field):
         # find a serializer correspoding to the instance class
         for key in self.serializer_dict.keys():
             if isinstance(instance, key):
-                # Return the result of the classes serializer
-                return self.serializer_dict[key].to_representation(instance=instance)
-
+                # Generate the result of the classes serializer
+                if self.url_only == False:
+                    representation = self.serializer_dict[key].to_representation(instance=instance)
+                    return representation
+                else:
+                    return '{}'.format(self.serializer_dict[key].fields['url'].to_representation(value=instance))
+                    
+                
         return '{}'.format(instance)
 
 
