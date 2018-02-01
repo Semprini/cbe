@@ -123,6 +123,7 @@ MQ_FRAMEWORK = {
     'HTTP_REST_CONTEXT': {
         'SERVER_NAME': '127.0.0.1',
         'SERVER_PORT': 8000,
+        'SERVER_PROTOCOL': 'http',
     }
 }
 
