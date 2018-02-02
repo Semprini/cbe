@@ -5,6 +5,7 @@ from cbe.utils.serializers import LimitDepthMixin
 from cbe.utils.serializer_fields import TypeField, ExtendedModelSerializerField
 from cbe.party.serializers import OrganisationSerializer
 
+from cbe.party.models import Organisation
 from cbe.physical_object.models import Structure, Vehicle, Device
     
 
@@ -21,6 +22,7 @@ class VehicleSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer)
                   
 class StructureSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    make = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
 
     class Meta:
         model = Structure

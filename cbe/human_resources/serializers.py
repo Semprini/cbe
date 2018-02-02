@@ -8,10 +8,11 @@ from cbe.human_resources.models import IdentificationType, Identification, Staff
 
 class IdentificationTypeSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    issuer = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
     
     class Meta:
         model = IdentificationType
-        fields = ('type', 'url', 'name' )  
+        fields = ('type', 'url', 'name', 'issuer', 'system' )  
                  
                   
 class IdentificationSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,6 +44,7 @@ class StaffSerializer(serializers.HyperlinkedModelSerializer):
             Individual: IndividualSerializer(),
             Organisation: OrganisationSerializer(),
         })
+    company = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
         
     class Meta:
         model = Staff

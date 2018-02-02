@@ -66,6 +66,7 @@ customerrouter.register(r'customer_account_contact', CustomerViews.CustomerAccou
 
 creditrouter = AppRouter(root_view_name='app-credit')
 creditrouter.register(r'credit', CreditViews.CreditViewSet)
+creditrouter.register(r'credit_alert', CreditViews.CreditAlertViewSet)
 creditrouter.register(r'credit_balance_event', CreditViews.CreditBalanceEventViewSet)
 creditrouter.register(r'credit_profile', CreditViews.CreditProfileViewSet)
       

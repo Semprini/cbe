@@ -16,6 +16,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
             Organisation: OrganisationSerializer(),
         })
 
+    managed_by = serializers.HyperlinkedRelatedField( required=False, allow_null=True, view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
     associations_from = GenericRelatedField( many=True, serializer_dict={PartyRoleAssociation: PartyRoleAssociationFromBasicSerializer(), } )
     associations_to = GenericRelatedField( many=True, serializer_dict={ PartyRoleAssociation: PartyRoleAssociationToBasicSerializer(), } )
     
@@ -42,6 +43,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
         instance.save()
         return instance  
 
+        
 class CustomerAccountContactSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
     party = GenericRelatedField( many=False,
@@ -58,6 +60,7 @@ class CustomerAccountContactSerializer(serializers.HyperlinkedModelSerializer):
 class CustomerAccountSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
     credit_liabilities = CreditSerializer(many=True,)
+    managed_by = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
 
     class Meta:
         model = CustomerAccount

@@ -183,7 +183,7 @@ class OwnerAPITests(APITestCase):
         self.client.login(username='john', password='johnpassword')
         self.individual = Individual.objects.create(
             given_names="John", family_names="Doe")
-        self.organisation = Organisation.objects.create(name='Pen Inc.')
+        self.organisation = Organisation.objects.create(name='Pen Inc.', enterprise_id=1234)
         self.owner = Owner.objects.create(
             party=self.individual, )
         self.factory = APIRequestFactory()
@@ -220,7 +220,7 @@ class OwnerAPITests(APITestCase):
             "association_type": "Ownership",
             "party": {
                 "type": "Organisation",
-                "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.pk)},
+                "url": "http://127.0.0.1:8000/api/party/organisation/{}/".format(self.organisation.enterprise_id)},
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)           

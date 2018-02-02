@@ -1,7 +1,12 @@
+import logging
+
 from urllib.parse import urlparse
 from django.urls import resolve
 from django.utils import six
 from rest_framework import serializers
+
+logger = logging.getLogger(__name__)
+
 
 class ExtendedModelSerializerField(serializers.Field):
     """
@@ -112,7 +117,13 @@ class GenericRelatedField(serializers.Field):
             # Extract details from the url and grab real object
             resolved_func, unused_args, resolved_kwargs = resolve(
                 urlparse(data['url']).path)
-            object = resolved_func.cls.queryset.get(pk=resolved_kwargs['pk'])
+            db_table = resolved_func.cls.serializer_class.Meta.model._meta.db_table
+            lookup_field = resolved_func.cls.lookup_field
+            if lookup_field == 'pk':
+                lookup_field = 'id'
+            lookup_value = resolved_kwargs[resolved_func.cls.lookup_field]
+            object = resolved_func.cls.serializer_class.Meta.model.objects.raw('SELECT * from {} where {}={}'.format(db_table,lookup_field,lookup_value ))[0]
+            #object = resolved_func.cls.queryset.get(pk=resolved_kwargs[resolved_func.cls.lookup_field])
         else:
             # If url is not specified then object is new and must have a 'type'
             # field to allow us to create correct object from list of
