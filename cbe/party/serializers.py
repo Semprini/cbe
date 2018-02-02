@@ -39,6 +39,10 @@ class IndividualSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializ
 
 class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):
     type = TypeField()
+    url = serializers.HyperlinkedIdentityField(
+        view_name='organisation-detail',
+        lookup_field='enterprise_id'
+    )
     name = serializers.CharField( required=False )
     sub_organisations = serializers.HyperlinkedRelatedField(
         view_name='organisation-detail',
@@ -54,7 +58,7 @@ class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerial
     
     class Meta:
         model = Organisation
-        fields = ('type', 'url', 'parent', 'enterprise_id', 'name', 'sub_organisations', 'identifiers', )
+        fields = ('type', 'url', 'parent', 'organisation_type', 'enterprise_id', 'name', 'sub_organisations', 'identifiers', )
 
         
 class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):

@@ -24,7 +24,8 @@ class IndividualViewSet(viewsets.ModelViewSet):
 class OrganisationViewSet(viewsets.ModelViewSet):
     queryset = Organisation.objects.all()
     serializer_class = OrganisationSerializer
-
+    filter_fields = ('organisation_type',)
+    lookup_field = 'enterprise_id'
 
 class TelephoneNumberViewSet(viewsets.ModelViewSet):
     queryset = TelephoneNumber.objects.all()
