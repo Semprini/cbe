@@ -42,6 +42,7 @@ partyrouter.register(r'owner', PartyViews.OwnerViewSet)
 partyrouter.register(r'party_role_association', PartyViews.PartyRoleAssociationViewSet)
 
 locationrouter = AppRouter(root_view_name='app-location')
+locationrouter.register(r'geographic_area', LocationViews.GeographicAreaViewSet)
 locationrouter.register(r'country', LocationViews.CountryViewSet)
 locationrouter.register(r'city', LocationViews.CityViewSet)
 locationrouter.register(r'urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
