@@ -10,10 +10,8 @@ from cbe.location.serializers import CountrySerializer, CitySerializer, UrbanPro
 
 
 class ProblemSerializer(GenericHyperlinkedSerializer):
-    underlying_problems = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='problem-detail')
-    affected_locations = GenericRelatedField(
-        many=True,
+    underlying_problems = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='problem-detail')
+    affected_locations = GenericRelatedField( many=True,
         serializer_dict={
             UrbanPropertyAddress: UrbanPropertyAddressSerializer(),
             PoBoxAddress: PoBoxAddressSerializer(),

@@ -67,8 +67,7 @@ class TroubleAPITests(APITestCase):
             "description": "test problem",
             "reason": "boo",
             "affected_locations": [
-                    "http://127.0.0.1:8000/api/location/po_box_address/{}/".format(
-                        self.address.pk)
+                    "http://127.0.0.1:8000/api/location/po_box_address/{}/".format(self.address.pk)
             ]
         }
         response = self.client.post(url, data, format='json')
