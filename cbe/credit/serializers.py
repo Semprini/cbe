@@ -20,7 +20,7 @@ class CreditAlertSerializer(serializers.HyperlinkedModelSerializer):
     credit_agency = serializers.HyperlinkedRelatedField(view_name='organisation-detail', lookup_field='enterprise_id', queryset=Organisation.objects.all())
 
     class Meta:
-        model = Credit
+        model = CreditAlert
         fields = ('type', 'url', 'customer', 'profile', 'credit_agency', 
                   'alert_type', 'description',)                  
                   

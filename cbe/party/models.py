@@ -1,3 +1,5 @@
+from datetime import datetime  
+
 import django
 from django.db import models
 from django.contrib.auth.models import User, Group
@@ -76,7 +78,7 @@ class Organisation(Party):  # Eg IRD
 
 
 class PartyRoleAssociation(models.Model):
-    valid_from = models.DateTimeField(auto_now_add=True)
+    valid_from = models.DateTimeField(default=datetime.now, null=True, blank=True)
     valid_to = models.DateTimeField(null=True, blank=True)
 
     association_type = models.CharField(max_length=200)
@@ -99,7 +101,7 @@ class PartyRoleAssociation(models.Model):
 
         
 class PartyRole(models.Model):
-    valid_from = models.DateTimeField(auto_now_add=True)
+    valid_from = models.DateTimeField(default=datetime.now, null=True, blank=True)
     valid_to = models.DateTimeField(null=True, blank=True)
 
     name = models.CharField(max_length=200)
