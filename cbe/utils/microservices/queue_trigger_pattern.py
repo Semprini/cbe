@@ -24,7 +24,7 @@ class FatalError( Exception ):
     
 class QueueTriggerPattern():
     """
-    Boiler plate of queue triggered microservices. Should be inherited and 'worker' function overriden.
+    Boiler plate of queue triggered micro-services. Should be inherited and 'worker' function overridden.
     
     Provided exchanges is a list of tuples. Each tuple contains an exchange name and exchange args dictionary (or None)
     Args example: {'ham': 'good', 'x-match':'any'}
@@ -43,9 +43,9 @@ class QueueTriggerPattern():
         self.queue_pass = queue_pass
     
     
-    def worker(self, message_json):
+    def worker(self, message_json, properties):
         """
-        Function as a placeholder to be overriden which is called for each message received on the subscribed queues
+        Function as a placeholder to be overridden which is called for each message received on the subscribed queues
         """
         print( "Should override worker and do something here" )
     
@@ -72,7 +72,7 @@ class QueueTriggerPattern():
     def queue_callback(self, channel, method, properties, body):
         """
         Handler for messages received off subscribed queues. Handles Acks, failures and requeues.
-        Calls the worker function which a microservice should implement
+        Calls the worker function which a micro-service should implement
         """
         # Always ack before work has completed as we have assumed responsibility for message. Retry handled via new message passed to retry exchange
         try:
@@ -84,9 +84,9 @@ class QueueTriggerPattern():
 
         # Load the message as json and call worker function
         try:
-            # Create a disctionary from message body
+            # Create a dictionary from message body
             message_json=json.loads(body.decode('utf-8'))
-            self.worker(message_json)
+            self.worker(message_json, properties)
         except RetryableError as err:
             logging.info( "requeued: %s"%channel.basic_publish( self.retry_exchange, '', body ) )
         except FatalError as err:
