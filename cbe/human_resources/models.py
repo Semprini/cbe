@@ -1,3 +1,5 @@
+from datetime import datetime  
+
 import django
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -30,7 +32,7 @@ class IdentificationType( models.Model ):
         
 
 class Identification( models.Model ):
-    valid_from = models.DateTimeField(auto_now_add=True)
+    valid_from = models.DateTimeField(default=datetime.now, null=True, blank=True)
     valid_to = models.DateTimeField(null=True, blank=True)
 
     number = models.CharField(max_length=200)
