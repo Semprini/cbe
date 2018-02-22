@@ -37,9 +37,9 @@ class GenericPartyRoleAdminForm(forms.ModelForm):
 # TODO: Validate the role name vs other roles (E.g. Customer) and force
 # users to admin the correct role.
 class GenericPartyRoleAdmin(admin.ModelAdmin):
-    list_display = ('party', 'name')
+    list_display = ('code', 'valid_from', 'valid_to', 'party', 'name')
     form = GenericPartyRoleAdminForm
-    fields = ('valid_to', 'name', 'party')
+    fields = ('code', 'valid_from', 'valid_to', 'name', 'party', )
 
     def save_model(self, request, obj, form, change):
         splitparty = form.cleaned_data['party'].split('::')
