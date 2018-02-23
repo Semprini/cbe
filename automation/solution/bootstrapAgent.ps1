@@ -1,7 +1,6 @@
-Param (
-  [int]$buildNumber
-)
+$scriptName = 'buildAgent.ps1'
 
+# Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
 	Write-Host "[$scriptName] $expression"
@@ -13,24 +12,16 @@ function executeExpression ($expression) {
     if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
-$scriptName = 'entrypoint.ps1'
-
-# Runtime script corresponding to containerBuild and default Docker configuration
-
+# Use the CDAF provisioning helpers
 Write-Host "`n[$scriptName] ---------- start ----------`n"
-if ( $buildNumber ) {
-	Write-Host "[$scriptName]   buildNumber : ${buildNumber}"
-} else {
-	Write-Host "[$scriptName]   buildNumber : (not supplied, CD Emulation will be used, i.e. for Vagression testing)"
+
+if ( Test-Path "c:\vagrant" ) {
+	executeExpression 'cd c:\vagrant'
 }
 
-executeExpression "cd c:\workspace"
+Write-Host "[$scriptName] List components of the base image`n"
+executeExpression './automation/remote/capabilities.ps1'
 
-if ( $buildNumber ) {
-	executeExpression ".\automation\processor\buildPackage.ps1 $buildNumber"
-} else {
-	executeExpression ".\automation\cdEmulate.bat buildonly"
-}
+executeExpression './automation/provisioning/installDotnetCore.ps1 -sdk yes'
 
 Write-Host "`n[$scriptName] ---------- stop ----------"
-exit 0

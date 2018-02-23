@@ -11,5 +11,7 @@ COPY automation-solution/bootstrapAgent.ps1 automation-solution/bootstrapAgent.p
 # Provision Build Dependancies
 RUN automation\provisioning\runner.bat automation-solution\bootstrapAgent.ps1
 
-# Default entry point, if build number not passed, will build using CDAF Emulator build counter
-CMD automation\provisioning\runner.bat automation\remote\entrypoint.ps1
+# Change workdir to the mapped folder so that the build artefacts are available on the host
+WORKDIR workspace
+
+CMD echo Usage: docker run --tty --volume ${workspace}\:C:/solution/workspace ${imageName}:${imageTag} automation\processor\buildPackage.bat $buildNumber revision containerbuild
