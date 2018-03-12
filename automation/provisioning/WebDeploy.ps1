@@ -10,51 +10,61 @@ $versionChoices = '2, 3.5 or 3.6'
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
-	Write-Host "[$scriptName] $expression"
+	Write-Host "$expression"
 	try {
 		$output = Invoke-Expression $expression
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
-	if ( $LASTEXITCODE -ne 0 ) { exit $LASTEXITCODE }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
     if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
     return $output
 }
 
-Write-Host "`n[$scriptName] Install Web Deploy. As of Visual Studio 2015 Web Deploy build targets are automatically"
-Write-Host "[$scriptName] included, so the default action for this provisioner is now agent."
+function listAndContinue {
+	Write-Host "[$scriptName] Error accessing cache falling back to `$env:temp"
+	$mediaDir = $env:temp
+	$fullpath = $mediaDir + '\' + $file
+	return $fullpath
+}
+
+cmd /c "exit 0"
+Write-Host "`n[$scriptName] Install Web Deploy. As of Visual Studio 2015 Web Deploy build targets are automatically included, so the default action for this provisioner is now agent."
 Write-Host "`n[$scriptName] ---------- start ----------"
 if ($Installtype) {
-    Write-Host "[$scriptName] Installtype     : $Installtype"
+    Write-Host "[$scriptName] Installtype  : $Installtype"
 } else {
 	$Installtype = 'agent'
-    Write-Host "[$scriptName] Installtype     : $Installtype (default, choices agent or build)"
+    Write-Host "[$scriptName] Installtype  : $Installtype (default, choices agent or build)"
 }
 
 if ($MsDepSvcPort) {
-    Write-Host "[$scriptName] MsDepSvcPort    : $MsDepSvcPort"
+    Write-Host "[$scriptName] MsDepSvcPort : $MsDepSvcPort"
 } else {
 	$MsDepSvcPort = '80'
-    Write-Host "[$scriptName] MsDepSvcPort    : $MsDepSvcPort (default)"
+    Write-Host "[$scriptName] MsDepSvcPort : $MsDepSvcPort (default)"
 }
 
 if ($version) {
-    Write-Host "[$scriptName] version         : $version"
+    Write-Host "[$scriptName] version      : $version"
 } else {
 	$version = '3.6'
-    Write-Host "[$scriptName] version         : $version (default, choices $versionChoices)"
+    Write-Host "[$scriptName] version      : $version (default, choices $versionChoices)"
 }
 
 if ($mediaDir) {
-    Write-Host "[$scriptName] mediaDir        : $mediaDir"
+    Write-Host "[$scriptName] mediaDir     : $mediaDir`n"
 } else {
 	$mediaDir = 'C:\.provision'
-    Write-Host "[$scriptName] mediaDir        : $mediaDir (default)"
+    Write-Host "[$scriptName] mediaDir     : $mediaDir (default)`n"
 }
 
-if (!( Test-Path $mediaDir )) {
+# Create media cache if missing
+if ( Test-Path $mediaDir ) {
+    Write-Host "`n[$scriptName] `$mediaDir ($mediaDir) exists"
+} else {
 	Write-Host "[$scriptName] Created $(mkdir $mediaDir)"
 }
+
 if ($env:interactive) {
     Write-Host "[$scriptName] `$env:interactive = `$env:interactive, run in current window"
     $sessionControl = '-PassThru -Wait -NoNewWindow'
@@ -97,19 +107,22 @@ if ( $InstallPath ) {
 	
 	# Prepare Install Media
 	$installFile = $mediaDir + '\' + $file
-	Write-Host "[$scriptName] installFile     : $installFile"
+	Write-Host "[$scriptName] installFile = $installFile"
 	
 	$logFile = $installDir = [Environment]::GetEnvironmentVariable('TEMP', 'user') + '\' + $file + '.log'
-	Write-Host "[$scriptName] logFile         : $logFile"
+	Write-Host "[$scriptName] logFile     = $logFile`n"
 	
-	Write-Host
-	$fullpath = $mediaDir + '\' + $file
-	if ( Test-Path $fullpath ) {
-		Write-Host "[$scriptName] $fullpath exists, download not required"
+	if ( Test-Path $installFile ) {
+		Write-Host "[$scriptName] $installFile exists, download not required"
 	} else {
-		$webclient = new-object system.net.webclient
-		Write-Host "[$scriptName] $webclient.DownloadFile(`"$uri`", `"$fullpath`")"
-		$webclient.DownloadFile($uri, $fullpath)
+		Write-Host "[$scriptName] $file does not exist in $mediaDir, listing contents"
+		try {
+			Get-ChildItem $mediaDir | Format-Table name
+		    if(!$?) { $installFile = listAndContinue }
+		} catch { $installFile = listAndContinue }
+
+		Write-Host "[$scriptName] Attempt download"
+		executeExpression "(New-Object System.Net.WebClient).DownloadFile('$uri', '$installFile')"
 	}
 	
 	# Output File (plain text or XML depending on method) must be supplioed
@@ -158,8 +171,10 @@ if ( $InstallPath ) {
 	$failed = Select-String $logFile -Pattern "Installation failed"
 	if ( $failed  ) { 
 		Select-String $logFile -Pattern "Installation success or error status"
-		exit 4
+		exit 4900
 	}
 }
 
 Write-Host "`n[$scriptName] ---------- stop ----------"
+$error.clear()
+exit 0

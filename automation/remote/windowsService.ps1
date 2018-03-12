@@ -1,7 +1,10 @@
 Param (
   [string]$serviceName,
   [string]$binpath,
-  [string]$start
+  [string]$start,
+  [string]$windowsServiceLocalAdmin,
+  [string]$windowsServiceLocalAdminPassword
+
 )
 
 function executeRetry ($expression) {
@@ -36,26 +39,40 @@ function executeRetry ($expression) {
 $scriptName = 'windowsService.ps1'
 Write-Host "`n[$scriptName] ---------- start ----------"
 if ($serviceName) {
-    Write-Host "[$scriptName] serviceName : $serviceName"
+    Write-Host "[$scriptName] serviceName                      : $serviceName"
 } else {
     Write-Host "[$scriptName] serviceName not passed, exit with LASTEXITCODE 564"; exit 564
 }
 if ($binpath) {
-    Write-Host "[$scriptName] binpath     : $binpath"
+    Write-Host "[$scriptName] binpath                          : $binpath"
 	if ($start) {
-	    Write-Host "[$scriptName] start       : $start"
+	    Write-Host "[$scriptName] start                            : $start"
 	} else {
 		$start = 'yes'
-	    Write-Host "[$scriptName] start       : $start (default)"
+	    Write-Host "[$scriptName] start                            : $start (default)"
 	}
 } else {
     Write-Host "[$scriptName] binpath not passed, delete service"
+}
+if ($windowsServiceLocalAdmin) {
+    Write-Host "[$scriptName] windowsServiceLocalAdmin         : $windowsServiceLocalAdmin"
+} else {
+    Write-Host "[$scriptName] windowsServiceLocalAdminPassword : (not supplied)"
+}
+if ($windowsServiceLocalAdminPassword) {
+    Write-Host "[$scriptName] windowsServiceLocalAdminPassword : `$windowsServiceLocalAdminPassword"
+} else {
+    Write-Host "[$scriptName] windowsServiceLocalAdminPassword : (not supplied)"
 }
 
 if ($binpath) {
 
     Write-Host "[$scriptName] sc.exe create $serviceName displayname= `"$binpath`" binpath= `"$binpath`" start= auto"
 	sc.exe create $serviceName displayname= "$binpath" binpath= "$binpath" start= auto
+	
+	if ( $windowsServiceLocalAdmin ){
+		sc.exe config $serviceName obj= $windowsServiceLocalAdmin password= $windowsServiceLocalAdminPassword
+	}
 	if ( $start -eq 'yes' ) {
 		executeRetry "Start-Service $serviceName"
 	} else {

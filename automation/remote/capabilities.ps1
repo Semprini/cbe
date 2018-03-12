@@ -43,8 +43,12 @@ if ($versionTest -like '*not recognized*') {
 	Write-Host "  dotnet core             : not installed"
 } else {
 	$versionLine = $(foreach ($line in dotnet) { Select-String  -InputObject $line -CaseSensitive "Version  " })
+	if ( $versionLine ) {
 	$arr = $versionLine -split ':'
-	Write-Host "  dotnet core             :$($arr[1])"
+		Write-Host "  dotnet core             : $($arr[1])"
+	} else {
+		Write-Host "  dotnet core             : $versionTest"
+	}
 }
 
 $versionTest = cmd /c choco --version 2`>`&1
@@ -75,12 +79,20 @@ if ($versionTest -like '*not recognized*') {
 	}
 }
 
-$versionTest = cmd /c mvn --version 2`>`&1
+$versionTest = cmd /c ant -version 2`>`&1
 if ($versionTest -like '*not recognized*') {
-	Write-Host "  Maven                   : not installed"
+	Write-Host "  Apache Ant              : not installed"
 } else {
 	$array = $versionTest.split(" ")
-	Write-Host "  Maven                   : $($array[2])"
+	Write-Host "  Apache Ant              : $($array[3])"
+}
+
+$versionTest = cmd /c mvn --version 2`>`&1
+if ($versionTest -like '*not recognized*') {
+	Write-Host "  Apache Maven            : not installed"
+} else {
+	$array = $versionTest.split(" ")
+	Write-Host "  Apache Maven            : $($array[2])"
 }
 
 $versionTest = cmd /c NuGet 2`>`&1
@@ -211,5 +223,6 @@ $job = Start-Job {
 Receive-Job $job
 
 Write-Host "`n[$scriptName] ---------- finish ----------`n"
+cmd /c "exit 0"
 $error.clear()
 exit 0
