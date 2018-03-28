@@ -1,29 +1,13 @@
-# Common expression logging and error handling function, copied, not referenced to ensure atomic process
-function executeExpression ($expression) {
-	$error.clear()
-	Write-Host "[$scriptName] $expression"
-	try {
-		Invoke-Expression $expression
-	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
-	} catch { echo $_.Exception|format-list -force; exit 2 }
-    if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
-    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
-}
-
 # Override function used in entry points
 function exceptionExit ($taskName) {
-    write-host
-    write-host "[$scriptName] --- Emulation Error Handling ---" -ForegroundColor Red
-    write-host
-    write-host "[$scriptName] This logging will not appear in toolset" -ForegroundColor Red
-    write-host
-    write-host "[$scriptName] $taskName failed!" -ForegroundColor Red
+    write-host "`n[$scriptName] --- Emulation Error Handling ---" -ForegroundColor Red
+    write-host "`n[$scriptName] This logging will not appear in toolset" -ForegroundColor Red
+    write-host "`n[$scriptName] $taskName failed!" -ForegroundColor Red
     write-host "[$scriptName]   Returning errorlevel (-2) to emulation wrapper" -ForegroundColor Magenta
-    $host.SetShouldExit(-2) # Returning exit code to DOS
-    exit
+    exit 2034
 }
 
-$scriptName          = $MyInvocation.MyCommand.Name
+$scriptName = $MyInvocation.MyCommand.Name
 
 $ACTION = $args[0]
 Write-Host "[$scriptName]   ACTION              : $ACTION"
@@ -37,8 +21,8 @@ if ($AUTOMATIONROOT) {
 }
 
 # Use a simple text file (buildnumber.counter) for incrimental build number
-if ( Test-Path buildnumber.counter ) {
-	$buildNumber = Get-Content buildnumber.counter
+if ( Test-Path "$env:USERPROFILE\buildnumber.counter" ) {
+	$buildNumber = Get-Content "$env:USERPROFILE\buildnumber.counter"
 } else {
 	$buildNumber = 0
 }
@@ -46,11 +30,11 @@ if ( Test-Path buildnumber.counter ) {
 if ( $ACTION -ne "cdonly" ) { # Do not incriment when just deploying
 	$buildNumber += 1
 }
-Out-File buildnumber.counter -InputObject $buildNumber
+Out-File "$env:USERPROFILE\buildnumber.counter" -InputObject $buildNumber
 Write-Host "[$scriptName]   buildNumber         : $buildNumber"
-$revision = 'master' # Assuming source control is Git
+$revision = 'master'
 Write-Host "[$scriptName]   revision            : $revision"
-$release = $buildNumber += 1 # Assuming Release is an integer, set it to a different value from build number 
+$release = 'emulatioon-release' 
 Write-Host "[$scriptName]   release             : $release"
 
 # Check for user defined solution folder, i.e. outside of automation root, if found override solution root
@@ -126,85 +110,61 @@ if ( $solutionName ) {
     $host.SetShouldExit(1) # Returning exit code to DOS
     exit
 }
+	
+$workDirLocal = 'TasksLocal'
+Write-Host "[$scriptName]   workDirLocal        : $workDirLocal (default, see readme for changing this location)"
 
-$containerBuild=$(& .\$AUTOMATIONROOT\remote\getProperty.ps1 $solutionRoot\CDAF.solution 'containerBuild')
-if ( $containerBuild ) {
-	$versionTest = cmd /c docker --version 2`>`&1; cmd /c "exit 0"
-	if ($versionTest -like '*not recognized*') {
-		Write-Host "[$scriptName]   Docker              : containerBuild defined in $solutionRoot\CDAF.solution, but Docker not installed, will attempt to execute natively"
-	} else {
-		$array = $versionTest.split(" ")
-		$dockerRun = $($array[2])
-		Write-Host "[$scriptName]   Docker              : $dockerRun"
-	}
+if ( $ACTION ) { # Do not list configuration instructions when an action is passed
+	write-host "`n[$scriptName] Action is $ACTION"
 } else {
-	Write-Host "[$scriptName]   containerBuild      : (not defined in $solutionRoot\CDAF.solution)"
-}
-	
-if ( $dockerRun ) {
-
 	write-host "`n[$scriptName] ---------- CI Toolset Configuration Guide -------------`n"
-    write-host "$containerBuild"
-	write-host "`n[$scriptName] -------------------------------------------------------`n"
-	executeExpression $containerBuild
-
-} else { # Native build
-	
-	$workDirLocal = 'TasksLocal'
-	Write-Host "[$scriptName]   workDirLocal        : $workDirLocal (default, see readme for changing this location)"
-	
-	if ( $ACTION ) { # Do not list configuration instructions when an action is passed
-		write-host "`n[$scriptName] Action is $ACTION"
-	} else {
-		write-host "`n[$scriptName] ---------- CI Toolset Configuration Guide -------------`n"
-	    write-host 'For TeamCity ...'
-	    write-host "  Command Executable  : $ciInstruction"
-	    write-host "  Command parameters  : %build.number% %build.vcs.number%"
-	    write-host
-	    write-host 'For Bamboo ...'
-	    write-host "  Script file         : $ciProcess"
-	    write-host "  Argument            : `${bamboo.buildNumber} `${bamboo.repository.revision.number}"
-	    write-host
-	    write-host 'For Jenkins ...'
-	    write-host "  Command : $ciProcess %BUILD_NUMBER% %SVN_REVISION%"
-	    write-host
-	    write-host 'For BuildMaster ...'
-	    write-host "  Executable file     : $ciProcess"
-	    write-host "  Arguments           : `${BuildNumber}"
-	    write-host
-	    write-host 'For Team Foundation Server/Visual Studio Team Services'
-	    write-host '  XAML ...'
-	    write-host "    Command Filename  : SourcesDirectory + `"$ciProcess`""
-	    write-host "    Command arguments : BuildDetail.BuildNumber + revision"
-	    write-host
-	    write-host '  Team Build (vNext)...'
-	    write-host '    Use the visual studio template and delete the nuget and VS tasks.'
-		write-host '    NOTE: The BUILD DEFINITION NAME must not contain spaces in the name as it is the directory.'
-		write-host '          recommend using solution name, then the Release instructions can be used unchanged.'
-		write-host '          Set the build number $(rev:r)'
-		write-host '    Recommend using the navigation UI to find the entry script.'
-		write-host '    Cannot use %BUILD_SOURCEVERSION% with external Git'
-	    write-host "    Command Filename  : $ciProcess"
-	    write-host "    Command arguments : %BUILD_BUILDNUMBER% %BUILD_SOURCEVERSION%"
-	    write-host
-	    write-host 'For GitLab (requires shell runner) ...'
-	    write-host '  In .gitlab-ci.yml (in the root of the repository) add the following hook into the CI job'
-	    write-host "    script: `"automation/processor/ciProcess.sh `${CI_BUILD_ID} `{CI_BUILD_REF_NAME}`""
-		write-host "`n[$scriptName] -------------------------------------------------------"
+    write-host 'For TeamCity ...'
+    write-host "  Command Executable  : $ciInstruction"
+    write-host "  Command parameters  : %build.number% %build.vcs.number%"
+    write-host
+    write-host 'For Bamboo ...'
+    write-host "  Script file         : $ciProcess"
+    write-host "  Argument            : `${bamboo.buildNumber} `${bamboo.repository.revision.number}"
+    write-host
+    write-host 'For Jenkins ...'
+    write-host "  Command : $ciProcess %BUILD_NUMBER% %SVN_REVISION%"
+    write-host
+    write-host 'For BuildMaster ...'
+    write-host "  Executable file     : $ciProcess"
+    write-host "  Arguments           : `${BuildNumber}"
+    write-host
+    write-host 'For Team Foundation Server/Visual Studio Team Services'
+    write-host '  XAML ...'
+    write-host "    Command Filename  : SourcesDirectory + `"$ciProcess`""
+    write-host "    Command arguments : BuildDetail.BuildNumber + revision"
+    write-host
+    write-host '  Team Build (vNext)...'
+    write-host '    Use the visual studio template and delete the nuget and VS tasks.'
+	write-host '    NOTE: The BUILD DEFINITION NAME must not contain spaces in the name as it is the directory.'
+	write-host '          recommend using solution name, then the Release instructions can be used unchanged.'
+	write-host '          Set the build number $(rev:r)'
+	write-host '    Recommend using the navigation UI to find the entry script.'
+	write-host '    Cannot use %BUILD_SOURCEVERSION% with external Git'
+    write-host "    Command Filename  : $ciProcess"
+    write-host "    Command arguments : %BUILD_BUILDNUMBER% %BUILD_SOURCEVERSION%"
+    write-host
+    write-host 'For GitLab (requires shell runner) ...'
+    write-host '  In .gitlab-ci.yml (in the root of the repository) add the following hook into the CI job, see example in sample folder'
+    write-host "    script: `"automation/processor/buildPackage.bat %CI_BUILD_ID% %CI_BUILD_REF_NAME%`""
+	write-host "`n[$scriptName] -------------------------------------------------------"
+}
+# Process Build and Package
+if ( $ACTION -eq "cdonly" ) { # Case insensitive
+	Write-Host "[$scriptName] Action is $ACTION so skipping build and package (CI) process"
+} else {
+	& $ciProcess $buildNumber $revision $ACTION
+	if($LASTEXITCODE -ne 0){
+	    write-host "[$scriptName] CI_NON_ZERO_EXIT $ciProcess $buildNumber $revision $ACTION" -ForegroundColor Magenta
+	    write-host "[$scriptName]   `$host.SetShouldExit($LASTEXITCODE)" -ForegroundColor Red
+	    $host.SetShouldExit($LASTEXITCODE) # Returning exit code to DOS
+	    exit
 	}
-	# Process Build and Package
-	if ( $ACTION -eq "cdonly" ) { # Case insensitive
-		Write-Host "[$scriptName] Action is $ACTION so skipping build and package (CI) process"
-	} else {
-		& $ciProcess $buildNumber $revision $ACTION
-		if($LASTEXITCODE -ne 0){
-		    write-host "[$scriptName] CI_NON_ZERO_EXIT $ciProcess $buildNumber $revision $ACTION" -ForegroundColor Magenta
-		    write-host "[$scriptName]   `$host.SetShouldExit($LASTEXITCODE)" -ForegroundColor Red
-		    $host.SetShouldExit($LASTEXITCODE) # Returning exit code to DOS
-		    exit
-		}
-		if(!$?){ exceptionExit "$ciProcess $buildNumber $revision $ACTION" }
-	}
+	if(!$?){ exceptionExit "$ciProcess $buildNumber $revision $ACTION" }
 }
 	
 if ( $ACTION ) {
@@ -291,3 +251,5 @@ if ( $execCD -eq 'yes' ) {
 write-host "`n[$scriptName] ------------------"
 write-host "[$scriptName] Emulation Complete"
 write-host "[$scriptName] ------------------`n"
+$error.clear()
+exit 0

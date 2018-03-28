@@ -182,6 +182,26 @@ function IGNORE()
 	}
 }
 
+# Run command elevated (as inbuit NT SYSTEM account)
+function ELEVAT ($command) { 
+    $scriptBlock = [scriptblock]::Create($command)
+    configuration elevated
+    {
+        Set-StrictMode -Off
+        Node localhost
+        {
+            Script execute
+            {
+                SetScript = $scriptBlock
+                TestScript = { return $false }
+                GetScript = { return @{ 'Result' = 'RUN' } }
+            }
+        }
+    }
+    elevated
+    Start-DscConfiguration -Wait -Path ./elevated -Verbose -Force
+}
+
 $SOLUTION    = $args[0]
 $BUILDNUMBER = $args[1]
 $TARGET      = $args[2]
@@ -189,6 +209,7 @@ $TASK_LIST   = $args[3]
 $ACTION      = $args[4]
 
 cmd /c "exit 0"
+$error.clear()
 
 # Set the temporary directory (system wide)
 $TMPDIR = [Environment]::GetEnvironmentVariable("TEMP","Machine")

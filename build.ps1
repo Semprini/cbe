@@ -102,7 +102,7 @@ if ($versionTest -like '*not recognized*') {
 	
 	Write-Host "`nCleanup any previously failed smoke test`n"
 	executeExpression "`$env:CORE_IMAGE = '${SOLUTION}'"
-	executeExpression "docker-compose down"
+	executeExpression "docker-compose down --remove-orphans"
 	executeExpression "docker-compose rm"
 	
 	Write-Host "Create Test Containers`n"
