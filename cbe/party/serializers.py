@@ -5,8 +5,8 @@ from django.urls import resolve
 
 from rest_framework import serializers
 
-from cbe.utils.serializers import LimitDepthMixin
-from cbe.utils.serializer_fields import TypeField, GenericRelatedField
+from drf_nest.serializers import LimitDepthMixin
+from drf_nest.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.models import Individual, Organisation, GENDER_CHOICES, MARITAL_STATUS_CHOICES, TelephoneNumber, GenericPartyRole, Owner, PartyRoleAssociation
 from cbe.customer.models import Customer
 from cbe.location.serializers import CountrySerializer

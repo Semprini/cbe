@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField
+from drf_nest.serializer_fields import TypeField
 from cbe.party.models import Organisation
 from cbe.accounts_receivable.models import CustomerPayment, PaymentChannel
 from cbe.customer.serializers import CustomerAccountSerializer

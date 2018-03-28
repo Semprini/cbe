@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField
+from drf_nest.serializer_fields import TypeField
 from cbe.location.models import GeographicArea, UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, Location, Country, City, Location
 
 

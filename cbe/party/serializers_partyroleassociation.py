@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField, GenericRelatedField
+from drf_nest.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.models import GenericPartyRole, Owner, PartyRoleAssociation
 from cbe.party.serializers import GenericPartyRoleSerializer
 from cbe.customer.models import Customer

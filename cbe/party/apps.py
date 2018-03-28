@@ -6,7 +6,7 @@ class PartyConfig(AppConfig):
     name = 'cbe.party'
 
     def ready(self):
-        import cbe.signals
+        import drf_nest.signals
         from cbe.party.models import Individual, Organisation
         from cbe.party.serializers import IndividualSerializer, OrganisationSerializer
 
@@ -14,13 +14,13 @@ class PartyConfig(AppConfig):
         exchange_header_list_individual = ('marital_status',)
         exchange_header_list_organisation = ('organisation_type',)
         
-        post_save.connect(  cbe.signals.notify_extra_args(   serializer=IndividualSerializer, 
+        post_save.connect(  drf_nest.signals.notify_extra_args(   serializer=IndividualSerializer, 
                                                                 exchange_prefix=exchange_prefix + ".Individual", 
-                                                                exchange_header_list=exchange_header_list_individual)(cbe.signals.notify_save_instance), 
+                                                                exchange_header_list=exchange_header_list_individual)(drf_nest.signals.notify_save_instance), 
                             sender=Individual, weak=False)
 
-        post_save.connect(  cbe.signals.notify_extra_args(   serializer=OrganisationSerializer, 
+        post_save.connect(  drf_nest.signals.notify_extra_args(   serializer=OrganisationSerializer, 
                                                                 exchange_prefix=exchange_prefix + ".Organisation", 
-                                                                exchange_header_list=exchange_header_list_organisation)(cbe.signals.notify_save_instance), 
+                                                                exchange_header_list=exchange_header_list_organisation)(drf_nest.signals.notify_save_instance), 
                             sender=Organisation, weak=False)
                             

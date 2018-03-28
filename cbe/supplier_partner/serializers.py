@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField, GenericRelatedField
+from drf_nest.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import IndividualSerializer, OrganisationSerializer, TelephoneNumberSerializer
 from cbe.party.models import Individual, Organisation, TelephoneNumber
 from cbe.supplier_partner.models import Supplier, SupplierAccount, Buyer, Partner
