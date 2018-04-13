@@ -9,7 +9,7 @@ from django.contrib import admin
 
 from rest_framework.routers import DefaultRouter
 
-from cbe.routers import AppRouter
+from drf_nest.routers import AppRouter
 from . import views
 
 import cbe.views as CBEViews

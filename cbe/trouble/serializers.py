@@ -1,15 +1,15 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import GenericRelatedField
-from cbe.utils.serializers import GenericHyperlinkedSerializer
+from drf_nest.serializer_fields import GenericRelatedField
+from drf_nest.serializers import ExtendedHyperlinkedSerialiser
 
 from cbe.trouble.models import Problem
 from cbe.location.models import UrbanPropertyAddress, PoBoxAddress, Country, City
 from cbe.location.serializers import CountrySerializer, CitySerializer, UrbanPropertyAddressSerializer, PoBoxAddressSerializer
 
 
-class ProblemSerializer(GenericHyperlinkedSerializer):
+class ProblemSerializer(ExtendedHyperlinkedSerialiser):
     underlying_problems = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='problem-detail')
     affected_locations = GenericRelatedField( many=True,
         serializer_dict={

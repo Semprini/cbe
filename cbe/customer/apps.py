@@ -6,20 +6,20 @@ class CustomerConfig(AppConfig):
     name = 'cbe.customer'
 
     def ready(self):
-        import cbe.signals
+        import drf_nest.signals
         from cbe.customer.models import Customer, CustomerAccount
         from cbe.customer.serializers import CustomerSerializer,CustomerAccountSerializer
 
         exchange_prefix = settings.MQ_FRAMEWORK['EXCHANGE_PREFIX'] + self.name
         exchange_header_list = ('managed_by',)
         
-        post_save.connect(  cbe.signals.notify_extra_args(   serializer=CustomerSerializer, 
+        post_save.connect(  drf_nest.signals.notify_extra_args(   serializer=CustomerSerializer, 
                                                                 exchange_prefix=exchange_prefix + ".Customer", 
-                                                                exchange_header_list=exchange_header_list)(cbe.signals.notify_save_instance), 
+                                                                exchange_header_list=exchange_header_list)(drf_nest.signals.notify_save_instance), 
                             sender=Customer, weak=False)
 
-        post_save.connect(  cbe.signals.notify_extra_args(   serializer=CustomerAccountSerializer, 
+        post_save.connect(  drf_nest.signals.notify_extra_args(   serializer=CustomerAccountSerializer, 
                                                                 exchange_prefix=exchange_prefix + ".CustomerAccount", 
-                                                                exchange_header_list=exchange_header_list)(cbe.signals.notify_save_instance), 
+                                                                exchange_header_list=exchange_header_list)(drf_nest.signals.notify_save_instance), 
                             sender=CustomerAccount, weak=False)
                             

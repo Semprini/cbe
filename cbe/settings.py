@@ -110,8 +110,8 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
-        'cbe.utils.api.BrowsableAPIRendererWithoutForms',
-        'cbe.utils.api.PaginatedCSVRenderer',
+        'drf_nest.api.BrowsableAPIRendererWithoutForms',
+        'drf_nest.api.PaginatedCSVRenderer',
     ),
 }
 

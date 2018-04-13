@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField, GenericRelatedField
+from drf_nest.serializer_fields import TypeField, GenericRelatedField
 from cbe.party.serializers import IndividualSerializer, OrganisationSerializer
 from cbe.party.models import Individual, Organisation
 from cbe.human_resources.models import IdentificationType, Identification, Staff, Timesheet, TimesheetEntry

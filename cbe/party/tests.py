@@ -104,9 +104,9 @@ class PartyAdminTests(TestCase):
         self.assertTrue(ma.has_add_permission(request))
 
         self.assertEqual(
-            list(ma.get_fields(request)), ['valid_to', 'name', 'party'])
+            list(ma.get_fields(request)), ['code', 'valid_from', 'valid_to', 'name', 'party'])
         self.assertEqual(
-            list(ma.get_form(request).base_fields), ['valid_to', 'name', 'party'])
+            list(ma.get_form(request).base_fields), ['code', 'valid_from', 'valid_to', 'name', 'party'])
         self.assertIsValid(GenericPartyRoleAdmin, GenericPartyRole)
 
     def test_genericpartyrole_form(self):

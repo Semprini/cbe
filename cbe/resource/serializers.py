@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cbe.utils.serializer_fields import TypeField, GenericRelatedField
+from drf_nest.serializer_fields import TypeField, GenericRelatedField
 
 from cbe.physical_object.models import Device
 from cbe.physical_object.serializers import DeviceSerializer
