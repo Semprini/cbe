@@ -20,7 +20,7 @@ if ( Test-Path "c:\vagrant" ) {
 }
 
 Write-Host "[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
-executeExpression "./automation/provisioning/base.ps1 python3"
+executeExpression "./automation/provisioning/base.ps1 'python3 git'"
 
 Write-Host "[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
 cat requirements.txt
