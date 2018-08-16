@@ -1,6 +1,7 @@
 Param (
 	[string]$enableTCP,
-	[string]$restart
+	[string]$restart,
+	[string]$httpProxy
 )
 
 cmd /c "exit 0"
@@ -49,7 +50,7 @@ function executeRetry ($expression) {
 		    if(!$?) { Write-Host "[$scriptName] `$? = $?"; $exitCode = 1 }
 		} catch { Write-Host "[$scriptName] $_"; $exitCode = 2 }
 	    if ( $error[0] ) { Write-Host "[$scriptName] Warning, message in `$error[0] = $error"; $error.clear() } # do not treat messages in error array as failure
-	    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$lastExitCode = $lastExitCode "; $exitCode = $lastExitCode }
+		if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { $exitCode = $LASTEXITCODE; Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE " -ForegroundColor Red; cmd /c "exit 0" }
 	    if ($exitCode -ne 0) {
 			if ($retryCount -ge $retryMax ) {
 				Write-Host "[$scriptName] Retry maximum ($retryCount) reached, exiting with `$LASTEXITCODE = $exitCode.`n"
@@ -79,17 +80,38 @@ if ($restart) {
 	$restart = 'yes'
     Write-Host "[$scriptName]  restart   : $restart (set to default)"
 }
+if ($httpProxy) {
+    Write-Host "[$scriptName]  httpProxy : $httpProxy"
+	$proxyParameter = "-Proxy '$httpProxy'"
+	[system.net.webrequest]::defaultwebproxy = new-object system.net.webproxy($httpProxy)
+} else {
+    Write-Host "[$scriptName]  httpProxy : (not set)"
+	$proxyURI = $([system.net.webrequest]::defaultwebproxy.Address).AbsoluteUri
+	
+	if ( $proxyURI ) {
+		$proxyParameter = "-Proxy $proxyURI"
+	    Write-Host "[$scriptName]  proxyURI  : $proxyURI"
+	    [system.net.webrequest]::defaultwebproxy = new-object system.net.webproxy($env:HTTP_PROXY)
+	}
+}
 
-Write-Host "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Verbose -Force"
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Verbose -Force
+executeExpression "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Verbose -Force $proxyParameter"
 
+# Found these repositories unreliable so included retry logic
+$galleryAvailable = Get-PSRepository -Name PSGallery*
+if ($galleryAvailable) {
+	Write-Host "[$scriptName] $((Get-PSRepository -Name PSGallery).Name) is already available"
+} else {
+	executeRetry "Register-PSRepository -Default"
+}
+
+# Avoid "You are installing the modules from an untrusted repository" message
 executeRetry "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted"
 
-executeRetry "Find-PackageProvider *docker* | Format-Table Name, Version, Source"
+executeRetry "Find-PackageProvider $proxyParameter *docker* | Format-Table Name, Version, Source"
 
 executeRetry "Install-Module NuGet -Confirm:`$False"
 
-Write-Host "`n[$scriptName] Found these repositories unreliable`n"
 executeRetry "Install-Module -Name DockerMsftProviderInsider -Repository PSGallery -Confirm:`$False -Verbose -Force"
 executeRetry "Install-Package -Name docker -ProviderName DockerMsftProviderInsider -Confirm:`$False -Verbose -Force"
 
