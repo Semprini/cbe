@@ -17,6 +17,9 @@ mv $workspace/docker-compose.yml "/$SOLUTION/$environment/docker-compose.yml"
 cat "/$SOLUTION/$environment/docker-compose.yml"
 docker-compose up -d
 
+pwd
+dir
+
 ./dockerLog.ps1 DOCKER-COMPOSE runserver 300 # wait up to 5 minutes for migrations
 
 Write-Host "Test on `$publishedPort $publishedPort`n"
