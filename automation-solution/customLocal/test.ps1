@@ -70,12 +70,6 @@ if ($versionTest -like '*not recognized*') {
 	$docker = $versionTest.split(" ")
 	Write-Host "[$scriptName]   Docker      : $($docker[2])"
 }
-	
-Write-Host "Wait for migrations to start"
-executeExpression "sleep 30"
-if ($docker) {
-	executeExpression "docker-compose logs"
-}
 
 Write-Host "Disable outbound proxy and test container"
 $url = "http://${env:COMPUTERNAME}:${testPort}/admin"

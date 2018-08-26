@@ -124,7 +124,7 @@ if ( $ACTION ) { # Do not list configuration instructions when an action is pass
     write-host
     write-host 'For Bamboo ...'
     write-host "  Script file         : $ciProcess"
-    write-host "  Argument            : `${bamboo.buildNumber} `${bamboo.repository.revision.number}"
+    write-host "  Argument            : `${bamboo.buildNumber} `${bamboo.repository.branch.name}"
     write-host
     write-host 'For Jenkins ...'
     write-host "  Command : $ciProcess %BUILD_NUMBER% %SVN_REVISION%"
@@ -133,7 +133,7 @@ if ( $ACTION ) { # Do not list configuration instructions when an action is pass
     write-host "  Executable file     : $ciProcess"
     write-host "  Arguments           : `${BuildNumber}"
     write-host
-    write-host 'For Team Foundation Server/Visual Studio Team Services'
+    write-host 'For Team Foundation Server (TFS)/Visual Studio Team Services (VSTS)'
     write-host '  XAML ...'
     write-host "    Command Filename  : SourcesDirectory + `"$ciProcess`""
     write-host "    Command arguments : BuildDetail.BuildNumber + revision"
@@ -190,15 +190,13 @@ if ( $ACTION ) {
 	write-host '  Name    : Package '
 	write-host '  Pattern : *.zip'
 	write-host
-	write-host 'For VSTS / TFS 2015 ...'
+    write-host 'For Team Foundation Server (TFS)/Visual Studio Team Services (VSTS)'
 	write-host '  Use the combination of Copy files and Retain Artefacts from Visual Studio Solution Template'
 	write-host '  Source Folder   : $(Agent.BuildDirectory)\s'
 	write-host '  Copy files task : TasksLocal/**'
 	write-host '                    *.zip'
+
 	write-host "`n[$scriptName] ---------- CD Toolset Configuration Guide -------------`n"
-	write-host 'Note: artifact retention typically does include file attribute for executable, so'
-	write-host '  set the first step of deploy process to make all scripts executable'
-	write-host '  chmod +x ./*/*.sh'
 	write-host
 	write-host 'For TeamCity (each environment requires a literal definiion) ...'
 	write-host "  Command Executable  : $workDirLocal/$cdInstruction"
@@ -209,20 +207,15 @@ if ( $ACTION ) {
 	write-host "  Argument            : `${bamboo.deploy.environment} `${bamboo.deploy.release}"
 	write-host
 	write-host 'For Jenkins (each environment requires a literal definition) ...'
-	write-host "  Command             : $workDirLocal\$cdInstruction $solutionName <environment literal> %SVN_REVISION%"
+	write-host "  Command             : $workDirLocal\$cdInstruction <environment literal> %SVN_REVISION%"
 	write-host
 	write-host 'For BuildMaster ...'
 	write-host "  Executable file     : $workDirLocal\$cdInstruction"
 	write-host "  Arguments           : `${EnvironmentName} `${ReleaseNumber}"
 	write-host
-	write-host 'For Team Foundation Server/Visual Studio Team Services'
-	write-host '  For XAML (lineal deploy only) ...'
-	write-host "    Command Filename  : SourcesDirectory + `"\$workDirLocal\$cdInstruction`""
-	write-host "    Command arguments : `" + $environmentDelivery`""
-	write-host
-	write-host '  For Team Release ...'
+    write-host 'For Team Foundation Server (TFS)/Visual Studio Team Services (VSTS)'
 	write-host '  Verify the queue for each Environment definition, and ensure Environment names do not contain spaces.'
-	write-host '  Run an empty release initially to load the workspace, which can then be navigated to for following configuration.'
+	write-host '  Run an template build initially to load the workspace, which can then be navigated to for following configuration.'
 	write-host "    Command Filename  : `$(System.DefaultWorkingDirectory)/$solutionName/drop/$workDirLocal/$cdInstruction"
 	write-host "    Command arguments : %RELEASE_ENVIRONMENTNAME% %RELEASE_RELEASENAME%"
 	write-host "    Working folder    : `$(System.DefaultWorkingDirectory)/$solutionName/drop"

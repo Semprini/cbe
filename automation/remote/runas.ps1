@@ -1,10 +1,11 @@
 Param (
+	[string]$command,
 	[string]$userName,
 	[string]$userPass,
-	[string]$workspace,
-	[string]$OPT_ARG
+	[string]$workspace
 )
-$scriptName = 'CDAF.ps1'
+$scriptName = 'runas.ps1'
+cmd /c "exit 0" # Clear from any previously failed run
 
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
@@ -19,16 +20,13 @@ function executeExpression ($expression) {
     return $output
 }
 
-cmd /c "exit 0" # Clear from any previously failed run
-
-Write-Host "`n[$scriptName] Execute the Continous Delivery Automation Framework for the solution."
-Write-Host "[$scriptName] This process is dependant on the solution being synchonised onto the"
-Write-Host "[$scriptName] `"build server`" using Vagrant and VirtualBox, which maps the local workspace"
-Write-Host "[$scriptName] at C:\vagrant. If this is not used, then the workspace must be passed."
-Write-Host "`n[$scriptName] By default the emulation is performed using the local Vagrant user, however"
-Write-Host "[$scriptName] alternate credentials can be passed and a remote PowerShell connection will"
-Write-Host "[$scriptName] be attempted, connecting back to the `"build server`" via the localhost adapter."
 Write-Host "`n[$scriptName] ---------- start ----------`n"
+if ($command) {
+    Write-Host "[$scriptName] command   : $command"
+} else {
+    Write-Host "[$scriptName] command   : (not supplied)"
+}
+
 if ($userName) {
     Write-Host "[$scriptName] userName  : $userName"
 } else {
@@ -48,19 +46,13 @@ if ($workspace) {
     Write-Host "[$scriptName] workspace : $workspace (default)"
 }
 
-if ($OPT_ARG) {
-    Write-Host "[$scriptName] OPT_ARG   : $OPT_ARG"
-} else {
-    Write-Host "[$scriptName] OPT_ARG   : (not supplied)"
-}
-
 if ($userName) {
 
 	# To capture the exit code of the remote execution, the LASTEXITCODE is stored in an environment variable, and retrieved in a subsequent
 	# call, if return of LASTEXITCODE is attempted during excution, all standard out is consumed by the result.
 	$securePassword = executeExpression "ConvertTo-SecureString `$userPass -asplaintext -force"
 	$cred = executeExpression "New-Object System.Management.Automation.PSCredential (`"$userName`", `$securePassword)"
-	$script = [scriptblock]::Create("cd $workspace; .\automation\cdEmulate.bat $OPT_ARG; [Environment]::SetEnvironmentVariable(`'PREVIOUS_EXIT_CODE`', `"`$LASTEXITCODE`", `'User`')")
+	$script = [scriptblock]::Create("cd $workspace; $command; [Environment]::SetEnvironmentVariable(`'PREVIOUS_EXIT_CODE`', `"`$LASTEXITCODE`", `'User`')")
 	Write-Host "[$scriptName] Invoke-Command -ComputerName localhost -Credential `$cred -ScriptBlock $script"
 	try {
 		Invoke-Command -ComputerName localhost -Credential $cred -ScriptBlock $script
@@ -78,7 +70,7 @@ if ($userName) {
 
 	Write-Host "[$scriptName] Execute as $(whoami) using workspace ($workspace)"
 	executeExpression "cd $workspace"
-	& .\automation\cdEmulate.bat $OPT_ARG
+	executeExpression $command
 	if($LASTEXITCODE -ne 0){
 	    write-host "[$scriptName] CURRENT_USER_NON_ZERO_EXIT & .\automation\cdEmulate.bat $OPT_ARG" -ForegroundColor Magenta
 	    write-host "[$scriptName]   Exit with `$LASTEXITCODE $LASTEXITCODE" -ForegroundColor Red

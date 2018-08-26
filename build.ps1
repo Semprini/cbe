@@ -91,7 +91,7 @@ if ($versionTest -like '*not recognized*') {
 #	REPLAC cbe/settings.py 'DEBUG = True' 'DEBUG = False'
 #	cat cbe/settings.py | findstr /C:"DEBUG ="
 	
-	Write-Host "`nCreate the base image, relying on docker cache to avoid unnecessary reprovisioning"
+	Write-Host "`n[$scriptName] Create the base image, relying on docker cache to avoid unnecessary reprovisioning"
 	cat Dockerfile
 	
 	executeExpression "automation/remote/dockerBuild.ps1 $SOLUTION $BUILDNUMBER"
@@ -100,22 +100,24 @@ if ($versionTest -like '*not recognized*') {
 #	REPLAC cbe/settings.py 'DEBUG = False' 'DEBUG = True'
 #	cat cbe/settings.py | findstr /C:"DEBUG ="
 	
-	Write-Host "`nCleanup any previously failed smoke test`n"
+	Write-Host "`n[$scriptName] Cleanup any previously failed smoke test`n"
 	executeExpression "`$env:CORE_IMAGE = '${SOLUTION}'"
-	executeExpression "docker-compose down --remove-orphans"
-	executeExpression "docker-compose rm"
+	executeExpression 'docker-compose down --remove-orphans'
+	executeExpression 'docker-compose rm'
 	
-	Write-Host "Create Test Containers`n"
+	Write-Host "[$scriptName] Create Test Containers`n"
 	executeExpression "`$env:CORE_IMAGE = '${SOLUTION}:$BUILDNUMBER'"
-	executeExpression "docker-compose up -d"
+	executeExpression 'docker-compose up -d'
 
-	Write-Host "Use shared test script, setting published port to that in the docker-compose.yml`n"
+	executeExpression './automation/remote/dockerLog.ps1 DOCKER-COMPOSE runserver 300' # wait up to 5 minutes for migrations
+
+	Write-Host "[$scriptName] Use shared test script, setting published port to that in the docker-compose.yml`n"
 	$publishedPort = 8001
 	executeExpression ".\automation-solution\customLocal\test.ps1 $publishedPort"
 
-	Write-Host "`nTear down`n"
-	executeExpression "docker-compose down"
-	executeExpression "docker-compose rm"
+	Write-Host "`n[$scriptName] Tear down`n"
+	executeExpression 'docker-compose down'
+	executeExpression 'docker-compose rm'
 }
 
 Write-Host "`n[$scriptName] ---------- stop ----------"

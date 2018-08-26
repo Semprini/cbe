@@ -10,7 +10,7 @@ EXPOSE 8000
 # Copy solution, provision and then build
 WORKDIR solution
 
-COPY automation automation
+COPY automation/provisioning automation/provisioning
 COPY requirements.txt requirements.txt
 COPY automation-solution/bootstrapAgent.ps1 automation-solution/bootstrapAgent.ps1
 

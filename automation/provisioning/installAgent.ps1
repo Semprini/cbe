@@ -1,20 +1,20 @@
 Param (
-  [string]$url,
-  [string]$pat,
-  [string]$pool,
-  [string]$agentName,
-  [string]$serviceAccount,
-  [string]$servicePassword,
-  [string]$deploymentgroup,
-  [string]$projectname,
-  [string]$mediaDirectory
+[string]$url,
+[string]$pat,
+[string]$pool,
+[string]$agentName,
+[string]$serviceAccount,
+[string]$servicePassword,
+[string]$deploymentgroup,
+[string]$projectname,
+[string]$mediaDirectory
 )
 $scriptName = 'installAgent.ps1'
 
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
-	Write-Host "[$scriptName] $expression"
+	Write-Host "$expression"
 	try {
 		$output = Invoke-Expression $expression
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
@@ -79,23 +79,20 @@ if ( $mediaDirectory ) {
 	Write-Host "[$scriptName] mediaDirectory  : $mediaDirectory (not supplied, set to default)"
 }
 
+$version = '2.136.1'
+Write-Host "[$scriptName] version         : $version"
+
 $fullpath = 'C:\agent\config.cmd'
 $workspace = $(pwd)
 
 executeExpression 'Add-Type -AssemblyName System.IO.Compression.FileSystem'
+$mediaFileName = "vsts-agent-win-x64-${version}.zip"
 
-$files = Get-ChildItem "$mediaDirectory/vsts-*"
-if ($files) {
-	Write-Host;	Write-Host "[$scriptName] Files available ..."
-	foreach ($file in $files) {
-		Write-Host "[$scriptName]   $($file.name)"
-		$mediaFileName = $($file.name)
-	}
-	Write-Host; Write-Host "[$scriptName] Using latest file ($mediaFileName)"
-} else {
-	Write-Host "[$scriptName] mediaFileName with prefix `'vsts-`' not found, exiting with error code 1"; exit 1
-}
-
+Write-Host "[$scriptName] Download VSTS Agent (using TLS 1.1 or 1.2)"
+# As per guidance here https://stackoverflow.com/questions/36265534/invoke-webrequest-ssl-fails
+$AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
+[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
+executeExpression './automation/provisioning/GetMedia.ps1 https://vstsagentpackage.azureedge.net/agent/${version}/${mediaFileName}'
 
 Write-Host "`nExtract using default instructions from Microsoft"
 if (Test-Path "C:\agent") {
@@ -134,9 +131,15 @@ if ( $url ) {
 	    exit $proc.ExitCode
 	}
 
-	Write-Host "[$scriptName] Set the service to delated start"
-	$agentService = get-service vstsagent*
-	executeExpression "sc.exe config $($agentService.name) start= delayed-auto"
+    $agentService = get-service vstsagent*
+    if ( $agentService ) {
+    	Write-Host "[$scriptName] Set the service to delayed start"
+    	executeExpression "sc.exe config $($agentService.name) start= delayed-auto"
+    	executeExpression "Start-Service $($agentService.name)"
+    } else {
+    	Write-Host "[$scriptName] Service not found! Exiting with exit code 3345"
+    	exit 3345
+	}
 } else {
 	Write-Host "`n[$scriptName] URL not supplied. Agent software extracted to C:\agent`n"
 }
