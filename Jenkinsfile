@@ -54,7 +54,7 @@ node {
     stage ('Discard GitHub branch') {
       bat "vagrant destroy -f & verify >nul"
       bat "git checkout -- ."
-      bat "git checkout master"
+      bat "git checkout -f master"
       bat "git branch -D local_branch"
     }
   }

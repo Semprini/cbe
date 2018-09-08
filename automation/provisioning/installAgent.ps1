@@ -88,11 +88,22 @@ $workspace = $(pwd)
 executeExpression 'Add-Type -AssemblyName System.IO.Compression.FileSystem'
 $mediaFileName = "vsts-agent-win-x64-${version}.zip"
 
-Write-Host "[$scriptName] Download VSTS Agent (using TLS 1.1 or 1.2)"
-# As per guidance here https://stackoverflow.com/questions/36265534/invoke-webrequest-ssl-fails
-$AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
-[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
-executeExpression './automation/provisioning/GetMedia.ps1 https://vstsagentpackage.azureedge.net/agent/${version}/${mediaFileName}'
+if (Test-Path "${mediaDirectory}\${mediaFileName}") {
+	Write-Host "[$scriptName] Media ${mediaDirectory}\${mediaFileName} exists"
+} else {
+	Write-Host "[$scriptName] Download VSTS Agent (using TLS 1.1 or 1.2)"
+	if (Test-Path $mediaDirectory) {
+		Write-Host "[$scriptName] Media Directory $mediaDirectory exists"
+	} else {
+		$result = executeExpression "mkdir $mediaDirectory"
+	}
+	
+	# As per guidance here https://stackoverflow.com/questions/36265534/invoke-webrequest-ssl-fails
+	$AllProtocols = [System.Net.SecurityProtocolType]'Tls11,Tls12'
+	[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
+	$mediaURL = "https://vstsagentpackage.azureedge.net/agent/${version}/${mediaFileName}"
+	executeExpression "(New-Object System.Net.WebClient).DownloadFile('$mediaURL', '${mediaDirectory}\${mediaFileName}')"
+}
 
 Write-Host "`nExtract using default instructions from Microsoft"
 if (Test-Path "C:\agent") {
@@ -123,7 +134,7 @@ if ( $url ) {
 	
 	executeExpression "cd C:\agent"
 	Write-Host "[$scriptName] Start-Process $fullpath -ArgumentList $printList -PassThru -Wait"
-	$proc = Start-Process $fullpath -ArgumentList $argList -PassThru -Wait
+	$proc = Start-Process $fullpath -ArgumentList $argList -PassThru -Wait -NoNewWindow
 	if ( $proc.ExitCode -ne 0 ) {
 		Write-Host "`n[$scriptName] Error occured, listing last 40 lines of log $((Get-ChildItem C:\agent\_diag)[0].FullName)`n"
 		Get-Content (Get-ChildItem C:\agent\_diag)[0].FullName -tail 40
