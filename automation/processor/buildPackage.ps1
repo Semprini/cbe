@@ -216,3 +216,10 @@ if ( $containerBuild ) {
 		if(!$?){ taskWarning "package.ps1" }
 	}
 }
+
+if ( $ACTION -like 'staging@*' ) { # Primarily for VSTS / Azure pipelines
+	$parts = $ACTION.split('@')
+	$stageTarget = $parts[1]
+	executeExpression "Copy-Item -Recurse '.\TasksLocal\' '$stageTarget'"
+	executeExpression "Copy-Item '*.zip' '$stageTarget'"
+}
