@@ -1,5 +1,5 @@
 $workspace = "$(pwd)"
-$CORE_IMAGE = "${SOLUTION}:$BUILDNUMBER"
+$env:CORE_IMAGE = "${SOLUTION}:$BUILDNUMBER"
 
 Write-Host "Transform developer settings`n"
 REPLAC docker-compose.yml '8001:8000' "${publishedPort}:8000"
