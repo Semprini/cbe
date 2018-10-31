@@ -1,8 +1,7 @@
-$workspace = $(pwd)
-Write-Host "`$workspace = $workspace`n"
+`$workspace = $(pwd)
 
 Write-Host "Transform developer settings`n"
-REPLAC docker-compose.yml '${CORE_IMAGE}' "${SOLUTION}:$BUILDNUMBER"
+REPLAC docker-compose.yml '`${CORE_IMAGE}' "${SOLUTION}:$BUILDNUMBER"
 REPLAC docker-compose.yml '8001:8000' "${publishedPort}:8000"
 
 Write-Host "Each environment has it's own persistent store (/$SOLUTION/$environment) to ensure teardown based on the compose file they were created with`n"
