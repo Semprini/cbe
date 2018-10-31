@@ -1,4 +1,4 @@
-`$workspace = $(pwd)
+$workspace = $(pwd)
 
 Write-Host "Transform developer settings`n"
 REPLAC docker-compose.yml '`${CORE_IMAGE}' "${SOLUTION}:$BUILDNUMBER"
