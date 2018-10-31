@@ -12,10 +12,10 @@ function executeExpression ($expression) {
 	$error.clear()
     # Do not echo line if it is an echo itself
     if (-not (($expression -match 'Write-Host') -or ($expression -match 'echo'))) {
-		$ExecutionContext.InvokeCommand.ExpandString($expression)
+    	$escapeAssign = $expression -replace "^$", "`$"
+		$ExecutionContext.InvokeCommand.ExpandString($escapeAssign)
     }
 	try {
-		Write-Host "$expression"
 		Invoke-Expression $expression
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
 	} catch { echo $_.Exception|format-list -force; exit 2 }
@@ -36,7 +36,7 @@ function MAKDIR ($itemPath) {
 		}	
 	} else {
 		mkdir $itemPath > $null
-		if(!$?) {taskFailure "[$scriptName (MAKDIR)] $itemPath Creation failed" }
+		if(!$?) { taskFailure "[$scriptName (MAKDIR)] $itemPath Creation failed" }
 	}
 }
 
@@ -45,7 +45,7 @@ function REMOVE ($itemPath) {
 	if ( Test-Path $itemPath ) {
 		write-host "[REMOVE] Delete $itemPath"
 		Remove-Item $itemPath -Recurse -Force
-		if(!$?) {taskFailure "[$scriptName (REMOVE)] Remove-Item $itemPath -Recurse -Force" }
+		if(!$?) { taskFailure "[$scriptName (REMOVE)] Remove-Item $itemPath -Recurse -Force" }
 	}
 }
 
