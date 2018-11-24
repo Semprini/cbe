@@ -1,3 +1,7 @@
+# Initialise
+cmd /c "exit 0"
+$scriptName = $MyInvocation.MyCommand.Name
+
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
@@ -53,16 +57,6 @@ function itemRemove ($itemPath) {
 	}
 }
 
-function removeTempFiles { 
-    if (Test-Path projectsToBuild.txt) {
-        Remove-Item projectsToBuild.txt -recurse
-    }
-
-    if (Test-Path projectDirectories.txt) {
-        Remove-Item projectDirectories.txt -recurse
-    }
-}
-
 function pathTest ($pathToTest) { 
 	if ( Test-Path $pathToTest ) {
 		Write-Host "found ($pathToTest)"
@@ -79,8 +73,6 @@ function getProp ($propName, $propertiesFile) {
 	
     return $propValue
 }
-
-$scriptName = $MyInvocation.MyCommand.Name
 
 # Load automation root out of sequence as needed for solution root derivation
 $AUTOMATIONROOT = $args[4]
@@ -215,4 +207,11 @@ if ( $containerBuild ) {
 		}
 		if(!$?){ taskWarning "package.ps1" }
 	}
+}
+
+if ( $ACTION -like 'staging@*' ) { # Primarily for VSTS / Azure pipelines
+	$parts = $ACTION.split('@')
+	$stageTarget = $parts[1]
+	executeExpression "Copy-Item -Recurse '.\TasksLocal\' '$stageTarget'"
+	executeExpression "Copy-Item '*.zip' '$stageTarget'"
 }

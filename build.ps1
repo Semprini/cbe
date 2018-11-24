@@ -99,25 +99,7 @@ if ($versionTest -like '*not recognized*') {
 #	Write-Host "`nRe-enable debug"
 #	REPLAC cbe/settings.py 'DEBUG = False' 'DEBUG = True'
 #	cat cbe/settings.py | findstr /C:"DEBUG ="
-	
-	Write-Host "`n[$scriptName] Cleanup any previously failed smoke test`n"
-	executeExpression "`$env:CORE_IMAGE = '${SOLUTION}'"
-	executeExpression 'docker-compose down --remove-orphans'
-	executeExpression 'docker-compose rm'
-	
-	Write-Host "[$scriptName] Create Test Containers`n"
-	executeExpression "`$env:CORE_IMAGE = '${SOLUTION}:$BUILDNUMBER'"
-	executeExpression 'docker-compose up -d'
 
-	executeExpression './automation/remote/dockerLog.ps1 DOCKER-COMPOSE runserver 300' # wait up to 5 minutes for migrations
-
-	Write-Host "[$scriptName] Use shared test script, setting published port to that in the docker-compose.yml`n"
-	$publishedPort = 8001
-	executeExpression ".\automation-solution\customLocal\test.ps1 $publishedPort"
-
-	Write-Host "`n[$scriptName] Tear down`n"
-	executeExpression 'docker-compose down'
-	executeExpression 'docker-compose rm'
 }
 
 Write-Host "`n[$scriptName] ---------- stop ----------"

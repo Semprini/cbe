@@ -1,5 +1,5 @@
 Param (
-    [string]$container,
+    [string]$logFile,
     [string]$stringMatch,
     [string]$waitTime
 )
@@ -21,7 +21,7 @@ function executeExpression ($expression) {
 
 Write-Host "`n[$scriptName] --- start ---"
 if ($logFile) {
-    Write-Host "[$scriptName] logFile   : $logFile"
+    Write-Host "[$scriptName] logFile     : $logFile"
 } else {
     Write-Host "[$scriptName] logFile not supplied, exit with `$LASTEXITCODE = 101"; exit 101
 }
@@ -39,9 +39,6 @@ if ($waitTime) {
     Write-Host "[$scriptName] waitTime    : $waitTime (default)"
 }
 
-if ( Test-Path test.log ) { Remove-Item -Force test.log }
-if ( Test-Path prevtest.log ) { Remove-Item -Force prevtest.log }
-
 $wait = 5
 $retryMax = [int]( $waitTime / $wait )
 $retryCount = 0
@@ -49,23 +46,27 @@ $lastLineNumber = 0
 $exitCode = 4365
 while (( $retryCount -le $retryMax ) -and ($exitCode -ne 0)) {
 	sleep $wait
-	$output = $(cat $logFile)
-	if ( $output ) {
-		$lineCount = 1
-	    foreach ($line in $output -split "`r`n") {
-	    	if ( $lineCount -gt $lastLineNumber ) {
-				Write-Host "> $line"
-				$lastLineNumber = $lineCount
-			}
-			$lineCount += 1
-	    }
-	
-	    if ( Select-String -Pattern $stringMatch  -InputObject $output ) {
-			Write-Host "[$scriptName] stringMatch ($stringMatch) found."
-		    $exitCode = 0
+	if ( Test-Path $logFile ) {
+		$output = $(cat $logFile)
+		if ( $output ) {
+			$lineCount = 1
+		    foreach ($line in $output -split "`r`n") {
+		    	if ( $lineCount -gt $lastLineNumber ) {
+					Write-Host "> $line"
+					$lastLineNumber = $lineCount
+				}
+				$lineCount += 1
+		    }
+		
+		    if ( Select-String -Pattern $stringMatch  -InputObject $output ) {
+				Write-Host "[$scriptName] stringMatch ($stringMatch) found."
+			    $exitCode = 0
+		    }
+	    } else {
+			Write-Host "[$scriptName]   no output ..."
 	    }
     } else {
-		Write-Host "[$scriptName]   no output ..."
+		Write-Host "[$scriptName]   no output (log file does not exist) ..."
     }
 		
 	if ( $retryCount -ge $retryMax ) {

@@ -32,13 +32,13 @@ write-host "  PSVersion.Major         : $($PSVersionTable.PSVersion.Major)"
 
 #Write-Host "`n[$scriptName] List the enabled roles`n"
 #$tempFile = "$env:temp\tempName.log"
-#& dism.exe /online /get-features /format:table | out-file $tempFile -Force      
+#& dism.exe /online /get-features /format:table | out-file $tempFile -Force      
 #$WinFeatures = $((Import-CSV -Delim '|' -Path $tempFile -Header Name,state | Where-Object {$_.State -eq "Enabled "}) | Select Name)
 #Write-Host "$WinFeatures"
-#Remove-Item -Path $tempFile 
+#Remove-Item -Path $tempFile 
 
 if ( Test-Path "C:\windows-master\automation\CDAF.windows" ) {
-	$name = $(cat "C:\windows-master\automation\CDAF.windows" | findstr "productVersion")
+	$nameValue = $(cat "C:\windows-master\automation\CDAF.windows" | findstr "productVersion")
 	$name, $value = $nameValue -split '=', 2
 	write-host "  CDAF Box Version        : $value"
 }
@@ -147,6 +147,20 @@ if ($versionTest -like '*not recognized*') {
 } else {
 	$array = $versionTest.split(" ")
 	Write-Host "  PiP                     : $($array[1])"
+}
+
+$versionTest = cmd /c node --version 2`>`&1
+if ($versionTest -like '*not recognized*') {
+	Write-Host "  NodeJS                  : not installed"
+} else {
+	Write-Host "  NodeJS                  : $versionTest"
+}
+
+$versionTest = cmd /c npm --version 2`>`&1
+if ($versionTest -like '*not recognized*') {
+	Write-Host "  NPM                     : not installed"
+} else {
+	Write-Host "  NPM                     : $versionTest"
 }
 
 Write-Host "`n[$scriptName] List the build tools`n"

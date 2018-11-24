@@ -33,7 +33,7 @@ function MAKDIR ($itemPath) {
 		}	
 	} else {
 		mkdir $itemPath > $null
-		if(!$?) {taskFailure "[$scriptName (MAKDIR)] $itemPath Creation failed" }
+		if(!$?) { taskFailure "[$scriptName (MAKDIR)] $itemPath Creation failed" }
 	}
 }
 
@@ -42,7 +42,7 @@ function REMOVE ($itemPath) {
 	if ( Test-Path $itemPath ) {
 		write-host "[REMOVE] Delete $itemPath"
 		Remove-Item $itemPath -Recurse -Force
-		if(!$?) {taskFailure "[$scriptName (REMOVE)] Remove-Item $itemPath -Recurse -Force" }
+		if(!$?) { taskFailure "[$scriptName (REMOVE)] Remove-Item $itemPath -Recurse -Force" }
 	}
 }
 
@@ -377,33 +377,24 @@ Foreach ($line in get-content $TASK_LIST) {
 
 			# Perform no further processing if Feature is Property Loader
             if ( $feature -ne 'PROPLD ' ) {
-			
-		        # Do not echo line if it is an echo itself
-	            if (-not (($expression -match 'Write-Host') -or ($expression -match 'echo'))) {
-		            Write-Host "$expression"
-	            }
-	
-	            # Execute expression and trap powershell exceptions
-		        try {
-			        Invoke-Expression $expression
-			        if(!$?) { taskException "POWERSHELL_TRAP" $_ }
-		        } catch { taskException "POWERSHELL_EXCEPTION" $_ }
-	
-	            # Look for DOS exit codes
-		        $exitcode = $LASTEXITCODE
-		        if ( $exitcode -ne 0 ) { 
-			        Write-Host "`n[$scriptName] $expression failed with `$LASTEXITCODE $exitcode" -ForegroundColor Red
-			        exit $exitcode
-		        }
-	
-	            # Check for non-terminating errors, any error will terminate execution
-		        if ( $error[0] ) { 
-			        Write-Host "`n[$scriptName] $expression failed with ERROR[0] = $error[0], exit with LASTEXITCODE 9999" -ForegroundColor Red
-			        exit 9999
-		        }
+
+	            # Execute expression and trap powershell exceptions, do not use executeExpression function of variables will go out of scope
+            	$error.clear()
+            	
+			    # Do not echo line if it is an echo itself
+			    if (-not (($expression -match 'Write-Host') -or ($expression -match 'echo'))) {
+			    	$escapeAssign = $expression -replace '^\$', '`$'
+					$ExecutionContext.InvokeCommand.ExpandString($escapeAssign)
+			    }
+				try {
+					Invoke-Expression $expression
+				    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
+				} catch { echo $_.Exception|format-list -force; exit 2 }
+			    if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
+			    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 		    }
         }
     }
 }
-Write-Host
-Write-Host "~~~~~ Shutdown Execution Engine ~~~~~~"
+
+Write-Host "`n~~~~~ Shutdown Execution Engine ~~~~~~"

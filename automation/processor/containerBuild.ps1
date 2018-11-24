@@ -38,7 +38,6 @@ cmd /c "exit 0"
 Write-Host "`n[$scriptName] ---------- start ----------`n"
 if ( $imageName ) {
 	Write-Host "[$scriptName]   imageName    : ${imageName} (passed)"
-	$imageName = "${imageName}_container_build"
 	Write-Host "[$scriptName]   imageName    : ${imageName} (to be used in docker)"
 } else {
 	Write-Host "[$scriptName]   imageName not supplied, exit with code 99"; exit 99
@@ -53,7 +52,7 @@ if ( $buildNumber ) {
 if ( $revision ) { 
 	Write-Host "[$scriptName]   revision     : $revision"
 } else {
-	$revision = 'revision'
+	$revision = 'container_build'
 	Write-Host "[$scriptName]   revision     : $revision (not supplied, set to default)"
 }
 
@@ -71,25 +70,32 @@ if ( $rebuildImage ) {
 	Write-Host "[$scriptName]   rebuildImage : $rebuildImage (not supplied, so set to default)"
 }
 
+$imageName = "${imageName}_$($revision.ToLower())"
+Write-Host "[$scriptName]   imageName    : $imageName"
 Write-Host "[$scriptName]   DOCKER_HOST  : $env:DOCKER_HOST"
 Write-Host "[$scriptName]   pwd          : $(Get-Location)"
 Write-Host "[$scriptName]   hostname     : $(hostname)"
 Write-Host "[$scriptName]   whoami       : $(whoami)"
+Write-Host '$dockerStatus = ' -NoNewline 
 
 # Test Docker is running
-Write-Host '$dockerStatus = ' -NoNewline 
-$dockerStatus = executeReturn '(Get-Service Docker).Status'
-$dockerStatus
-if ( $dockerStatus -ne 'Running' ) {
-	Write-Host "[$scriptName] Docker service not running, `$dockerStatus = $dockerStatus"
-	executeExpression 'Start-Service Docker'
-	Write-Host '$dockerStatus = ' -NoNewline 
+If (Get-Service Docker -ErrorAction SilentlyContinue) {
 	$dockerStatus = executeReturn '(Get-Service Docker).Status'
 	$dockerStatus
 	if ( $dockerStatus -ne 'Running' ) {
-		Write-Host "[$scriptName] Unable to start Docker, `$dockerStatus = $dockerStatus"
-		exit 8910
+		Write-Host "[$scriptName] Docker service not running, `$dockerStatus = $dockerStatus"
+		executeExpression 'Start-Service Docker'
+		Write-Host '$dockerStatus = ' -NoNewline 
+		$dockerStatus = executeReturn '(Get-Service Docker).Status'
+		$dockerStatus
+		if ( $dockerStatus -ne 'Running' ) {
+			Write-Host "[$scriptName] Unable to start Docker, `$dockerStatus = $dockerStatus"
+			exit 8910
+		}
 	}
+} else {
+	Write-Host "service not installed, assuming Windows 10, switch to Windows Containers to proceed."
+	exit 8911
 }
 
 Write-Host "[$scriptName] List all current images"
@@ -105,6 +111,7 @@ if ( $imageTag ) {
 	$imageTag = 0
 	Write-Host "[$scriptName] No existing images, new image will be $($imageTag + 1)"
 }
+
 executeExpression "cat Dockerfile"
 	
 if ( $rebuildImage -eq 'yes') {

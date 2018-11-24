@@ -1,6 +1,0 @@
-echo "Perform example activity, file copy"
-REMOVE $TMPDIR/manifest.txt
-VECOPY manifest.txt $TMPDIR
-
-echo "List host capabilities"
-INVOKE capabilities

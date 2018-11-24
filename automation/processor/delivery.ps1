@@ -8,6 +8,11 @@ Param (
 	[string]$BUILDNUMBER
 )
 
+# Initialise
+cmd /c "exit 0"
+$exitStatus = 0
+$scriptName = 'delivery.ps1'
+
 # Common expression logging and error handling function, copied, not referenced to ensure atomic process
 function executeExpression ($expression) {
 	$error.clear()
@@ -64,16 +69,6 @@ function itemRemove ($itemPath) {
 	}
 }
 
-function removeTempFiles { 
-    if (Test-Path projectsToBuild.txt) {
-        Remove-Item projectsToBuild.txt -recurse
-    }
-
-    if (Test-Path projectDirectories.txt) {
-        Remove-Item projectDirectories.txt -recurse
-    }
-}
-
 function pathTest ($pathToTest) { 
 	if ( Test-Path $pathToTest ) {
 		Write-Host "found ($pathToTest)"
@@ -107,9 +102,6 @@ function getFilename ($FullPathName) {
 	return $FILENAME
 
 }
-
-$exitStatus = 0
-$scriptName = 'delivery.ps1'
 
 if ( $ENVIRONMENT ) {
 	Write-Host "[$scriptName]   ENVIRONMENT      : $ENVIRONMENT"
