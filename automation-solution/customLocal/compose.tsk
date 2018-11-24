@@ -1,11 +1,11 @@
 $workspace = "$(pwd)"
 $env:CORE_IMAGE = "${SOLUTION}:$BUILDNUMBER"
 
-Write-Host "Transform developer settings`n"
-REPLAC docker-compose.yml '8001:8000' "${publishedPort}:8000"
-
 Write-Host "Each environment has it's own persistent store (/$SOLUTION/$environment) to ensure teardown based on the compose file they were created with`n"
 MAKDIR "/$SOLUTION/$environment"
+
+Write-Host "`n[$scriptName] Set port for testing`n"
+ASSIGN $env:CBE_PORT = ${publishedPort}
 
 Write-Host "Test for existing instance`n"
 cd "/$SOLUTION/$environment"

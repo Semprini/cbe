@@ -32,13 +32,13 @@ write-host "  PSVersion.Major         : $($PSVersionTable.PSVersion.Major)"
 
 #Write-Host "`n[$scriptName] List the enabled roles`n"
 #$tempFile = "$env:temp\tempName.log"
-#& dism.exe /online /get-features /format:table | out-file $tempFile -Force      
+#& dism.exe /online /get-features /format:table | out-file $tempFile -Force      
 #$WinFeatures = $((Import-CSV -Delim '|' -Path $tempFile -Header Name,state | Where-Object {$_.State -eq "Enabled "}) | Select Name)
 #Write-Host "$WinFeatures"
-#Remove-Item -Path $tempFile 
+#Remove-Item -Path $tempFile 
 
 if ( Test-Path "C:\windows-master\automation\CDAF.windows" ) {
-	$name = $(cat "C:\windows-master\automation\CDAF.windows" | findstr "productVersion")
+	$nameValue = $(cat "C:\windows-master\automation\CDAF.windows" | findstr "productVersion")
 	$name, $value = $nameValue -split '=', 2
 	write-host "  CDAF Box Version        : $value"
 }

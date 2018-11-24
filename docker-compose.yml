@@ -3,7 +3,7 @@ services:
     web:
         image: "${CORE_IMAGE}"
         ports:
-            - "8001:8000"
+            - "${CBE_PORT}:8000"
 networks:
   default:
     external:
