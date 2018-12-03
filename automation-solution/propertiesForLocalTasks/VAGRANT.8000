@@ -1,4 +1,6 @@
 # Run as child process
 deployTaskOverride=startAsChild.tsk
-publishedPort=8000
 environment=prod
+
+publishEnabled=ports:
+publishPortDefine=- "8000:8000"
