@@ -5,7 +5,7 @@ Write-Host "Each environment has it's own persistent store (/$SOLUTION/$environm
 MAKDIR "/$SOLUTION/$environment"
 
 Write-Host "`n[$scriptName] Set port for testing`n"
-ASSIGN $env:CBE_PORT = ${publishedPort}
+$env:CBE_PORT = ./nextFreePort.ps1 ${publishedPort}
 
 Write-Host "Test for existing instance`n"
 cd "/$SOLUTION/$environment"

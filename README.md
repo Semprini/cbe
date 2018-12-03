@@ -67,6 +67,11 @@ If you have Docker for Windows installed, switch to Windows Containers and run d
 
     ./automation/cdEmulate.bat
 
+To execute the docker-compose tests, set the environment variable
+
+    $env:environmentDelivery = 'DOCKER'
+    ./automation/cdEmulate.bat
+
 Note: If Docker is not available, the emulation will fall back to using native Python on the host
 
 ## Direct PowerShell Access
