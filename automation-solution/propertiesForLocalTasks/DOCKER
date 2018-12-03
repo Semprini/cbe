@@ -1,6 +1,3 @@
 # Launch instances, need to set DOCKER_HOST if remote containers
 deployTaskOverride=compose.tsk
 environment=prod
-
-publishEnabled=ports:
-publishPortDefine=- "8000:8000"

@@ -3,15 +3,16 @@ $workspace = "$(pwd)"
 Write-Host "Each environment has it's own persistent store (/$SOLUTION/$environment) to ensure teardown based on the compose file they were created with`n"
 MAKDIR "/$SOLUTION/$environment"
 
+Write-Host "`n[$scriptName] Set port for testing`n"
+if ( ! ( $publishedPort )) { $publishedPort = 8000 }
+$env:CBE_PORT = ./nextFreePort.ps1 $publishedPort
+
 Write-Host "Test for existing instance`n"
 cd "/$SOLUTION/$environment"
 
 Write-Host "Place the current version of compose file to persistent store (/$SOLUTION/$environment)`n"
 VECOPY ${workspace}\docker-compose.yml "/$SOLUTION/$environment/docker-compose.yml"
 
-Write-Host "Disable port forwarding in container test environments`n"
-REPLAC ./docker-compose.yml '- "8000:8000"' $publishEnabled
-REPLAC ./docker-compose.yml 'ports:' $publishPortDefine
 cat "/$SOLUTION/$environment/docker-compose.yml"
 
 $env:CORE_IMAGE = "${SOLUTION}"
@@ -24,8 +25,8 @@ docker-compose up -d
 Write-Host "Wait up to 5 minutes for migrations`n"
 & ${workspace}\dockerLog.ps1 DOCKER-COMPOSE runserver 300
 
-Write-Host "Test on `$publishedPort $publishedPort`n"
-& ${workspace}\test.ps1 $publishedPort
+Write-Host "Test on `$env:CBE_PORT $env:CBE_PORT`n"
+& ${workspace}\test.ps1 $env:CBE_PORT
 
 Write-Host "Return to `$workspace $workspace`n"
 cd $workspace

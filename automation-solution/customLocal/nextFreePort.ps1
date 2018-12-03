@@ -10,11 +10,11 @@ Write-Host "`n[$scriptName] ---------- start ----------`n"
 Write-Host "[$scriptName]   localPort : $localPort"
 
 while ($localPort -lt 65535) {
-	if (Get-NetTCPConnection -State Listen | Where LocalPort -eq $localPort ) {
+	if (Get-NetTCPConnection | Where LocalPort -eq $localPort ) {
+		$localPort += 1
+	} else {
 		Write-Host "[$scriptName] free port is $localPort"
 		return $localPort
-	} else {
-		$localPort += 1
 	}
 }
 
