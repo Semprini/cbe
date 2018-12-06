@@ -1,4 +1,7 @@
 start powershell .\start.ps1
 
+Write-Host "`n[$scriptName] Set port for testing`n"
+if ( ! ( $publishedPort )) { $publishedPort = 8000 }
+
 Write-Host "Test on `$publishedPort $publishedPort`n"
 .\test.ps1 $publishedPort
