@@ -22,13 +22,13 @@ node {
 
       checkout scm
   
-      bat "cat Jenkinsfile"
+      bat "type Jenkinsfile"
       bat "git checkout -b local_branch"
       bat "RMDIR /S /Q automation"
       bat "curl -o windows-master.zip https://codeload.github.com/cdaf/windows/zip/master"
       bat "unzip windows-master.zip"
       bat "echo d | XCOPY %CD%\\windows-master\\automation %CD%\\automation /S /E"
-      bat "cat automation/CDAF.windows | grep productVersion"
+      bat 'type automation/CDAF.windows | findstr "productVersion"'
     }
 
     stage ('Get latest image and Test using Docker') {
@@ -37,7 +37,7 @@ node {
     }
 
     stage ('Test Using Vagrant') {
-      bat "cat Vagrantfile"
+      bat "type Vagrantfile"
       bat "vagrant destroy -f & verify >nul"
       bat "vagrant box list & verify >nul"
       bat "vagrant up"
