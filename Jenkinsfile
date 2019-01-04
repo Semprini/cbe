@@ -28,7 +28,7 @@ node {
       bat "curl -o windows-master.zip https://codeload.github.com/cdaf/windows/zip/master"
       bat "unzip windows-master.zip"
       bat "echo d | XCOPY %CD%\\windows-master\\automation %CD%\\automation /S /E"
-      bat 'type automation/CDAF.windows | findstr "productVersion"'
+      bat 'type automation\\CDAF.windows | findstr "productVersion"'
     }
 
     stage ('Get latest image and Test using Docker') {
