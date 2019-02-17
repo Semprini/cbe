@@ -20,9 +20,10 @@ if ($AUTOMATIONROOT) {
 	Write-Host "[$scriptName]   AUTOMATIONROOT      : $AUTOMATIONROOT (default)"
 }
 
-# Use a simple text file (buildnumber.counter) for incrimental build number
-if ( Test-Path "$env:USERPROFILE\buildnumber.counter" ) {
-	$buildNumber = Get-Content "$env:USERPROFILE\buildnumber.counter"
+$counterFile = "$env:USERPROFILE\buildnumber.counter"
+# Use a simple text file ($counterFile) for incrimental build number
+if ( Test-Path "$counterFile" ) {
+	$buildNumber = Get-Content "$counterFile"
 } else {
 	$buildNumber = 0
 }
@@ -30,7 +31,7 @@ if ( Test-Path "$env:USERPROFILE\buildnumber.counter" ) {
 if ( $ACTION -ne "cdonly" ) { # Do not incriment when just deploying
 	$buildNumber += 1
 }
-Out-File "$env:USERPROFILE\buildnumber.counter" -InputObject $buildNumber
+Set-Content "$counterFile" "$buildNumber"
 Write-Host "[$scriptName]   buildNumber         : $buildNumber"
 $revision = 'master'
 Write-Host "[$scriptName]   revision            : $revision"
@@ -78,7 +79,11 @@ if (Test-Path "$solutionRoot\delivery.bat") {
 $cdInstruction="delivery.bat"
 
 # If environment variable over-rides all other determinations
-$environmentDelivery = "$Env:environmentDelivery"
+if ($environmentDelivery) { # check for DOS variable and load as PowerShell environment variable
+	$Env:environmentDelivery = "$environmentDelivery"
+} else {
+	$environmentDelivery = "$Env:environmentDelivery"
+}
 if ($environmentDelivery ) {
 	Write-Host "[$scriptName]   environmentDelivery : $environmentDelivery (loaded from `$Env:environmentDelivery)"
 } else {

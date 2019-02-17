@@ -1,7 +1,9 @@
 Param (
 	[string]$install,
 	[string]$mediaDir,
-	[string]$proxy
+	[string]$proxy,
+	[string]$version,
+	[string]$checksum
 )
 
 cmd /c "exit 0"
@@ -18,7 +20,7 @@ function executeExpression ($expression) {
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
     if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) {
 		Write-Host "[$scriptName] `$LASTEXITCODE = ${LASTEXITCODE}, listing log file contents ..."
-		cat C:\ProgramData\chocolatey\logs\chocolatey.log
+		cat C:\ProgramData\chocolatey\logs\chocolatey.log | findstr 'ERROR'
 		exit $LASTEXITCODE
 	}
 }
@@ -40,12 +42,35 @@ if ($mediaDir) {
 
 if ($proxy) {
     Write-Host "[$scriptName] proxy      : $proxy`n"
-    executeExpression "[system.net.webrequest]::defaultwebproxy = new-object system.net.webproxy('$proxy')"
-    executeExpression "`$env:chocolateyProxyLocation = '$proxy'"
-    executeExpression "`$env:http_proxy = '$proxy'"
 } else {
     Write-Host "[$scriptName] proxy      : (not supplied)"
 }
+
+if ($version) {
+    Write-Host "[$scriptName] version    : $version`n"
+    $version = "--version $version"
+} else {
+    Write-Host "[$scriptName] version    : (not supplied)"
+}
+
+if ($checksum) {
+    Write-Host "[$scriptName] checksum   : $checksum`n"
+	if ( $checksum -eq 'ignore' ) {
+		$checksum = "--ignorechecksum -y"
+	} else {
+	    $checksum = "--checksum $checksum"
+    }
+} else {
+    Write-Host "[$scriptName] checksum   : (not supplied)"
+}
+
+if ($proxy) {
+    Write-Host "`n[$scriptName] Load common proxy settings`n"
+    executeExpression "[system.net.webrequest]::defaultwebproxy = new-object system.net.webproxy('$proxy')"
+    executeExpression "`$env:chocolateyProxyLocation = '$proxy'"
+    executeExpression "`$env:http_proxy = '$proxy'"
+}
+
 
 $versionTest = cmd /c choco --version 2`>`&1
 if ($versionTest -like '*not recognized*') {
@@ -76,8 +101,8 @@ if ($versionTest -like '*not recognized*') {
 	
 	try {
 		$argList = @("$fullpath")
-		Write-Host "[$scriptName] Start-Process -FilePath 'powershell' -ArgumentList $argList -PassThru -Wait"
-		$proc = Start-Process -FilePath 'powershell' -ArgumentList $argList -PassThru -Wait
+		Write-Host "[$scriptName] Start-Process -FilePath 'powershell' -ArgumentList $argList -PassThru -Wait -NoNewWindow"
+		$proc = Start-Process -FilePath 'powershell' -ArgumentList $argList -PassThru -Wait -NoNewWindow
 	} catch {
 		Write-Host "[$scriptName] $file Install Exception : $_" -ForegroundColor Red
 		exit 200
@@ -96,7 +121,7 @@ if ($versionTest -like '*not recognized*') {
 Write-Host "[$scriptName] Chocolatey : $versionTest"
 
 Write-Host
-executeExpression "choco install -y $install --no-progress --fail-on-standard-error"
+executeExpression "choco install -y $install --no-progress --fail-on-standard-error $checksum $version"
 
 Write-Host "`n[$scriptName] Reload the path`n"
 executeExpression '$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")'
