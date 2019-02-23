@@ -5,7 +5,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
 from cbe.party.models import PartyRole, Individual, Organisation
-from cbe.project.models import Project
 
 # def increment_id():
     # last = IdentificationType.objects.all().order_by('id').last()
@@ -77,7 +76,6 @@ class Timesheet(models.Model):
     
 class TimesheetEntry(models.Model):
     timesheet = models.ForeignKey(Timesheet, on_delete=django.db.models.deletion.CASCADE, related_name="timesheet_entries")
-    project = models.ForeignKey(Project, on_delete=django.db.models.deletion.CASCADE)
     start = models.DateTimeField()
     end = models.DateTimeField()
     duration = models.DurationField()
