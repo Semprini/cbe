@@ -14,7 +14,6 @@ from . import views
 
 import cbe.views as CBEViews
 import cbe.party.views as PartyViews
-import cbe.location.views as LocationViews
 import cbe.customer.views as CustomerViews
 import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
@@ -25,6 +24,9 @@ import cbe.information_technology.views as ITViews
 import cbe.project.views as ProjectViews
 import cbe.credit.views as CreditViews
 import cbe.accounts_receivable.views as ARViews
+
+from cbe.location.urls import urlpatterns as LocationUrls
+
 
 admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
@@ -40,14 +42,6 @@ partyrouter.register(r'generic_party_role', PartyViews.GenericPartyRoleViewSet)
 partyrouter.register(r'telephone_number', PartyViews.TelephoneNumberViewSet)
 partyrouter.register(r'owner', PartyViews.OwnerViewSet)
 partyrouter.register(r'party_role_association', PartyViews.PartyRoleAssociationViewSet)
-
-locationrouter = AppRouter(root_view_name='app-location')
-locationrouter.register(r'geographic_area', LocationViews.GeographicAreaViewSet)
-locationrouter.register(r'country', LocationViews.CountryViewSet)
-locationrouter.register(r'city', LocationViews.CityViewSet)
-locationrouter.register(r'urban_property_address', LocationViews.UrbanPropertyAddressViewSet)
-locationrouter.register(r'po_box_address', LocationViews.PoBoxAddressViewSet)
-locationrouter.register(r'location', LocationViews.LocationViewSet)
 
 humanresourcesrouter = AppRouter(root_view_name='app-human_resources')
 humanresourcesrouter.register(r'staff', HumanResourcesViews.StaffViewSet)
@@ -114,7 +108,6 @@ router.register(r'content_types', CBEViews.ContentTypeViewSet)
 appurlpatterns = [
     url(r'^api/party/', include(partyrouter.urls)),
     url(r'^api/accounts_receivable/', include(arrouter.urls)),
-    url(r'^api/location/', include(locationrouter.urls)),
     url(r'^api/human_resources/', include(humanresourcesrouter.urls)),
     url(r'^api/resource/', include(resourcerouter.urls)),
     url(r'^api/customer/', include(customerrouter.urls)),
@@ -124,7 +117,7 @@ appurlpatterns = [
     url(r'^api/supplier_partner/', include(supplierpartnerrouter.urls)),
     url(r'^api/project/', include(projectrouter.urls)),
     url(r'^api/information_technology/', include(informationtechnologyrouter.urls)),
-]
+] + LocationUrls
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
