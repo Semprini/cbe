@@ -13,43 +13,25 @@ from drf_nest.routers import AppRouter
 from . import views
 
 import cbe.views as CBEViews
-import cbe.party.views as PartyViews
-import cbe.customer.views as CustomerViews
 import cbe.trouble.views as TroubleViews
 import cbe.physical_object.views as PhysicalObjectViews
 import cbe.supplier_partner.views as SupplierPartnerViews
-import cbe.human_resources.views as HumanResourcesViews
 import cbe.resource.views as ResourceViews
 import cbe.information_technology.views as ITViews
 import cbe.project.views as ProjectViews
 import cbe.credit.views as CreditViews
-import cbe.accounts_receivable.views as ARViews
 
 from cbe.party.urls import urlpatterns as PartyUrls
 from cbe.location.urls import urlpatterns as LocationUrls
-
+from cbe.accounts_receivable.urls import urlpatterns as ARUrls
+from cbe.human_resources.urls import urlpatterns as HRUrls
+from cbe.customer.urls import urlpatterns as CustomerUrls
 
 admin.site.site_title = 'CBE'
 admin.site.site_header = 'Common Business Entities'
 
-arrouter = AppRouter(root_view_name='app-accounts_receivable')
-arrouter.register(r'customer_payment', ARViews.CustomerPaymentViewSet)
-arrouter.register(r'payment_channel', ARViews.PaymentChannelViewSet)
-
-humanresourcesrouter = AppRouter(root_view_name='app-human_resources')
-humanresourcesrouter.register(r'staff', HumanResourcesViews.StaffViewSet)
-humanresourcesrouter.register(r'identification', HumanResourcesViews.IdentificationViewSet)
-humanresourcesrouter.register(r'identification_type', HumanResourcesViews.IdentificationTypeViewSet)
-humanresourcesrouter.register(r'timesheet', HumanResourcesViews.TimesheetViewSet)
-humanresourcesrouter.register(r'timesheet_entries', HumanResourcesViews.TimesheetEntryViewSet)
-
 resourcerouter = AppRouter(root_view_name='app-resource')
 resourcerouter.register(r'physical_resource', ResourceViews.PhysicalResourceViewSet)
-
-customerrouter = AppRouter(root_view_name='app-customer')
-customerrouter.register(r'customer', CustomerViews.CustomerViewSet, base_name='customer')
-customerrouter.register(r'account', CustomerViews.CustomerAccountViewSet)
-customerrouter.register(r'customer_account_contact', CustomerViews.CustomerAccountContactViewSet)
 
 creditrouter = AppRouter(root_view_name='app-credit')
 creditrouter.register(r'credit', CreditViews.CreditViewSet)
@@ -99,17 +81,14 @@ router.register(r'auth/users', CBEViews.UserViewSet)
 router.register(r'content_types', CBEViews.ContentTypeViewSet)
 
 appurlpatterns = [
-    url(r'^api/accounts_receivable/', include(arrouter.urls)),
-    url(r'^api/human_resources/', include(humanresourcesrouter.urls)),
     url(r'^api/resource/', include(resourcerouter.urls)),
-    url(r'^api/customer/', include(customerrouter.urls)),
     url(r'^api/credit/', include(creditrouter.urls)),
     url(r'^api/trouble/', include(troublerouter.urls)),
     url(r'^api/physical_object/', include(physicalobjectrouter.urls)),
     url(r'^api/supplier_partner/', include(supplierpartnerrouter.urls)),
     url(r'^api/project/', include(projectrouter.urls)),
     url(r'^api/information_technology/', include(informationtechnologyrouter.urls)),
-] + PartyUrls + LocationUrls
+] + PartyUrls + LocationUrls + ARUrls + HRUrls + CustomerUrls
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
