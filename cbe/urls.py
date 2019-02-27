@@ -25,6 +25,7 @@ import cbe.project.views as ProjectViews
 import cbe.credit.views as CreditViews
 import cbe.accounts_receivable.views as ARViews
 
+from cbe.party.urls import urlpatterns as PartyUrls
 from cbe.location.urls import urlpatterns as LocationUrls
 
 
@@ -34,14 +35,6 @@ admin.site.site_header = 'Common Business Entities'
 arrouter = AppRouter(root_view_name='app-accounts_receivable')
 arrouter.register(r'customer_payment', ARViews.CustomerPaymentViewSet)
 arrouter.register(r'payment_channel', ARViews.PaymentChannelViewSet)
-
-partyrouter = AppRouter(root_view_name='app-party')
-partyrouter.register(r'individual', PartyViews.IndividualViewSet)
-partyrouter.register(r'organisation', PartyViews.OrganisationViewSet)
-partyrouter.register(r'generic_party_role', PartyViews.GenericPartyRoleViewSet)
-partyrouter.register(r'telephone_number', PartyViews.TelephoneNumberViewSet)
-partyrouter.register(r'owner', PartyViews.OwnerViewSet)
-partyrouter.register(r'party_role_association', PartyViews.PartyRoleAssociationViewSet)
 
 humanresourcesrouter = AppRouter(root_view_name='app-human_resources')
 humanresourcesrouter.register(r'staff', HumanResourcesViews.StaffViewSet)
@@ -106,7 +99,6 @@ router.register(r'auth/users', CBEViews.UserViewSet)
 router.register(r'content_types', CBEViews.ContentTypeViewSet)
 
 appurlpatterns = [
-    url(r'^api/party/', include(partyrouter.urls)),
     url(r'^api/accounts_receivable/', include(arrouter.urls)),
     url(r'^api/human_resources/', include(humanresourcesrouter.urls)),
     url(r'^api/resource/', include(resourcerouter.urls)),
@@ -117,7 +109,7 @@ appurlpatterns = [
     url(r'^api/supplier_partner/', include(supplierpartnerrouter.urls)),
     url(r'^api/project/', include(projectrouter.urls)),
     url(r'^api/information_technology/', include(informationtechnologyrouter.urls)),
-] + LocationUrls
+] + PartyUrls + LocationUrls
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
