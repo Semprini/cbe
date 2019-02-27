@@ -1,0 +1,7 @@
+# Template Solution Properties file
+# Is using symantic versioning, substitute build number at the end of version
+productVersion=0.3.0
+productName=Common Business Entities
+solutionName=cbe
+# containerBuild=automation/processor/containerBuild.ps1 ${SOLUTION} $BUILDNUMBER
+# imageBuild=.cdaf/imageBuild.ps1 ${SOLUTION} $BUILDNUMBER
