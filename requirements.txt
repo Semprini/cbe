@@ -1,3 +1,4 @@
+requests
 django>=2
 djangorestframework>=3.7.7
 markdown>=2.6.7
