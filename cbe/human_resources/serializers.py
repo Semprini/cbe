@@ -56,7 +56,7 @@ class TimesheetEntrySerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = TimesheetEntry
-        fields = ('type', 'url', 'timesheet', 'project', 'start', 'end', 'duration', 'notes' )  
+        fields = ('type', 'url', 'timesheet', 'start', 'end', 'duration', 'notes' )  
         
         
 class TimesheetSerializer(serializers.HyperlinkedModelSerializer):

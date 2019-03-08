@@ -65,12 +65,12 @@ To use a virtual environment requires VirtualBox and Vagrant, from the workspace
 
 If you have Docker for Windows installed, switch to Windows Containers and run delivery emulation:
 
-    ./automation/cdEmulate.bat
+    cdEmulate test ..\venv\Scripts\automation
 
 To execute the docker-compose tests, set the environment variable
 
     $env:environmentDelivery = 'DOCKER'
-    ./automation/cdEmulate.bat
+    cdEmulate test ..\venv\Scripts\automation
 
 Note: If Docker is not available, the emulation will fall back to using native Python on the host
 
@@ -87,7 +87,7 @@ Once delegation configured, the build emulation can be executed.
     $cred = New-Object System.Management.Automation.PSCredential ('vagrant', $securePassword)
     enter-pssession 127.0.0.1 -port 15985 -Auth CredSSP -credential $cred
     cd C:\vagrant
-	.\automation\cdEmulate.bat
+	cdEmulate test ..\venv\Scripts\automation
 
 # Make your own fork
 
