@@ -32,7 +32,6 @@ node {
     }
 
     stage ('Get latest image and Test using Docker') {
-      bat "docker pull microsoft/windowsservercore"
       bat "automation\\cdEmulate.bat"
     }
 

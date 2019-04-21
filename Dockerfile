@@ -1,5 +1,5 @@
 # DOCKER-VERSION 1.2.0
-FROM microsoft/windowsservercore
+FROM FROM microsoft/windowsservercore@sha256:05de0a0ac13d3652bd1f2281b8589459ebb611092e3fe4d8f1be91f1f6984266
 
 MAINTAINER Jules Clements
 
