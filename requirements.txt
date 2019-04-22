@@ -9,3 +9,4 @@ django-gm2m
 djangorestframework-csv
 pika
 git+https://github.com/Semprini/drf-nest.git
+git+https://github.com/Semprini/py-cdaf.git
