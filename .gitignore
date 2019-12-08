@@ -121,3 +121,4 @@ web.config
 /storeForRemote_manifest.txt
 /propertiesForLocalTasks/
 /propertiesForRemoteTasks/
+/automation/
