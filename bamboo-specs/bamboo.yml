@@ -1,0 +1,47 @@
+---
+version: 2
+
+plan:
+  project-key: PYT
+  key: CBE
+  name: Common Business Entities
+
+stages:
+  - Build Stage:
+    - Build Job
+
+Build Job:
+  tasks:
+    - script:
+        - "%USERPROFILE%\\.cdaf\\processor\\entry.bat ${bamboo.buildNumber} ${bamboo.repository.branch.name}"
+
+  artifacts:
+    - name: Package
+      pattern: '*.zip'
+      shared: true
+    - name: TasksLocal
+      pattern: 'TasksLocal/**'
+      shared: true
+
+---
+version: 2
+
+deployment:
+  name: WU-CDM
+  source-plan: PYT-CBE
+
+release-naming:
+  next-version-name: ${bamboo.buildNumber}
+
+environments:
+  - BAMBOO_FORK
+
+BAMBOO_FORK:
+  triggers:
+    - build-success
+  tasks:
+    - clean
+    - artifact-download:
+        destination: ${bamboo.working.directory}
+    - script:
+        - "${bamboo.build.working.directory}\\TasksLocal\\delivery.bat ${bamboo.deploy.environment} ${bamboo.deploy.release}"
