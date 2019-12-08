@@ -23,7 +23,7 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Customer
         fields = ('type', 'url', 'customer_number', 'managed_by',
-                  'customer_status', 'party', 'customer_accounts', 'associations_from', 'associations_to',)
+                  'customer_status', 'party', 'customer_accounts', 'physical_contacts', 'telephone_numbers', 'associations_from', 'associations_to',)
 
     def create(self, validated_data):
         validated_data.pop('customer_accounts', None)
@@ -36,6 +36,8 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
         validated_data.pop('customer_accounts', None)
         validated_data.pop('associations_from', None)
         validated_data.pop('associations_to', None)
+        validated_data.pop('physical_contacts', None)
+        validated_data.pop('telephone_numbers', None)
         
         for key, value in validated_data.items():
             setattr( instance, key, value )

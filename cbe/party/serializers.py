@@ -63,12 +63,12 @@ class OrganisationSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerial
         
 class TelephoneNumberSerializer(serializers.HyperlinkedModelSerializer):
     type = TypeField()
-    party_role = serializers.HyperlinkedRelatedField(
-        view_name='genericpartyrole-detail', queryset=GenericPartyRole.objects.all())
+    #party_role = serializers.HyperlinkedRelatedField(
+    #    view_name='genericpartyrole-detail', queryset=GenericPartyRole.objects.all())
 
     class Meta:
         model = TelephoneNumber
-        fields = ('type', 'url', 'party_role', 'number')
+        fields = ('type', 'url', 'number')
         
         
 class OwnerSerializer(LimitDepthMixin, serializers.HyperlinkedModelSerializer):

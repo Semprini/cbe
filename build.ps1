@@ -93,8 +93,12 @@ if ($versionTest -like '*not recognized*') {
 	
 	Write-Host "`n[$scriptName] Create the base image, relying on docker cache to avoid unnecessary reprovisioning"
 	cat Dockerfile
-	
-	executeExpression "automation/remote/dockerBuild.ps1 $SOLUTION $BUILDNUMBER"
+
+	if ( Test-Path "automation" ) {
+		executeExpression "Remove-Item -Recurse automation"
+	}
+	executeExpression "Copy-Item -Recurse $AUTOMATIONROOT automation"
+	executeExpression "& $AUTOMATIONROOT/remote/dockerBuild.ps1 $SOLUTION $BUILDNUMBER"
 	
 #	Write-Host "`nRe-enable debug"
 #	REPLAC cbe/settings.py 'DEBUG = False' 'DEBUG = True'

@@ -1,3 +1,4 @@
+requests
 django>=2
 djangorestframework>=3.7.7
 markdown>=2.6.7
@@ -8,3 +9,4 @@ django-gm2m
 djangorestframework-csv
 pika
 git+https://github.com/Semprini/drf-nest.git
+git+https://github.com/Semprini/py-cdaf.git

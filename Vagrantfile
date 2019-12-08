@@ -47,7 +47,7 @@ Vagrant.configure(2) do |config|
   config.winrm.username = "vagrant" # Making defaults explicit
   config.winrm.password = "vagrant" # Making defaults explicit
   config.vm.graceful_halt_timeout = 180 # 3 minutes
-  config.vm.provision 'shell', path: './automation-solution/bootstrapAgent.ps1'
+  config.vm.provision 'shell', path: './.cdaf/bootstrapAgent.ps1'
   config.vm.provision 'shell', path: './automation/remote/capabilities.ps1'
   config.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
   config.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', privileged: false

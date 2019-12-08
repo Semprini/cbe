@@ -3,6 +3,9 @@ FROM microsoft/windowsservercore@sha256:05de0a0ac13d3652bd1f2281b8589459ebb61109
 
 MAINTAINER Jules Clements
 
+ARG proxy
+ENV http_proxy=$proxy
+
 ENV PYTHONIOINPUT=UTF-8
 
 EXPOSE 8000
@@ -12,10 +15,10 @@ WORKDIR solution
 
 COPY automation/provisioning automation/provisioning
 COPY requirements.txt requirements.txt
-COPY automation-solution/bootstrapAgent.ps1 automation-solution/bootstrapAgent.ps1
+COPY .cdaf/bootstrapAgent.ps1 .cdaf/bootstrapAgent.ps1
 
 # Provision Build Dependancies
-RUN automation\provisioning\runner.bat automation-solution\bootstrapAgent.ps1
+RUN automation\provisioning\runner.bat .cdaf\bootstrapAgent.ps1
 
 # Copy the solution (do this last to utilise cache of provisioning steps)
 COPY cbe cbe
