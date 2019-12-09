@@ -24,7 +24,7 @@ node {
   
       bat "type Jenkinsfile"
       bat "git checkout -b local_branch"
-      bat "RMDIR /S /Q automation"
+      bat "IF EXIST automation RMDIR /S /Q automation"
       bat "curl -o windows-master.zip https://codeload.github.com/cdaf/windows/zip/master"
       bat "unzip windows-master.zip"
       bat "echo d | XCOPY %CD%\\windows-master\\automation %CD%\\automation /S /E"
