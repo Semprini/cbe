@@ -110,4 +110,4 @@ Install CDAF from GitHub
 
 Run from installed CDAF
 
-    ~/.cdaf/cdEmulate.bat
+    ~/.cdaf/processor/entry.bat
