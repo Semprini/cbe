@@ -46,7 +46,7 @@ DOCKER:
 
 BAMBOO_FORK:
   triggers:
-    - DOCKER
+    - environment-success: DOCKER
   tasks:
     - clean
     - artifact-download:
