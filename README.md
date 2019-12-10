@@ -99,3 +99,15 @@ Once established, use the following to synchronise
 
     git fetch upstream
     git pull upstream master
+
+Install CDAF from GitHub
+
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    (New-Object System.Net.WebClient).DownloadFile("https://codeload.github.com/cdaf/windows/zip/master", "$PWD\cdaf.zip")
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\cdaf.zip", "$PWD")
+    Move-Item .\windows-master\automation\ ~/.cdaf
+
+Run from installed CDAF
+
+    ~/.cdaf/cdEmulate.bat
