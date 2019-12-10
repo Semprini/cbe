@@ -14,6 +14,10 @@ function executeExpression ($expression) {
 
 # Use the CDAF provisioning helpers
 Write-Host "`n[$scriptName] ---------- start ----------`n"
+if ( $env:http_proxy ) {
+	Write-Host "[$scriptName] Set HTTPS proxy for Python Package Manager (PiP)`n"
+	executeExpression "`$env:https_proxy = '$env:http_proxy'"
+}
 
 if ( Test-Path "c:\vagrant" ) {
 	executeExpression 'cd c:\vagrant'
