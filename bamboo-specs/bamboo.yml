@@ -16,9 +16,6 @@ Build Job:
         - "%USERPROFILE%\\.cdaf\\processor\\entry.bat ${bamboo.buildNumber} ${bamboo.repository.branch.name}"
 
   artifacts:
-    - name: Package
-      pattern: '*.zip'
-      shared: true
     - name: TasksLocal
       pattern: 'TasksLocal/**'
       shared: true
