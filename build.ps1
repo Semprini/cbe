@@ -99,6 +99,9 @@ if ($versionTest -like '*not recognized*') {
 	}
 	executeExpression "Copy-Item -Recurse $AUTOMATIONROOT automation"
 	executeExpression "& $AUTOMATIONROOT/remote/dockerBuild.ps1 $SOLUTION $BUILDNUMBER"
+	if ( Test-Path "automation" ) {
+		executeExpression "Remove-Item -Recurse automation"
+	}
 	
 #	Write-Host "`nRe-enable debug"
 #	REPLAC cbe/settings.py 'DEBUG = False' 'DEBUG = True'
