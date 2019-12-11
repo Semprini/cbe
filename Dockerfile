@@ -1,7 +1,10 @@
 # DOCKER-VERSION 1.2.0
-FROM FROM microsoft/windowsservercore@sha256:05de0a0ac13d3652bd1f2281b8589459ebb611092e3fe4d8f1be91f1f6984266
+FROM mcr.microsoft.com/windows/servercore:ltsc2016@sha256:a8bc031f38ad457c3a04fcf72c7773014c6960978299c3dfe3e1c4d133f35190
 
 MAINTAINER Jules Clements
+
+ARG proxy
+ENV http_proxy=$proxy
 
 ENV PYTHONIOINPUT=UTF-8
 

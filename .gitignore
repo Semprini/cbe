@@ -119,3 +119,7 @@ web.config
 /build.tsk
 /storeForLocal_manifest.txt
 /storeForRemote_manifest.txt
+/propertiesForLocalTasks/
+/propertiesForRemoteTasks/
+/automation/
+/windows-master/

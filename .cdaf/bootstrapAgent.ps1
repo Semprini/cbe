@@ -14,16 +14,20 @@ function executeExpression ($expression) {
 
 # Use the CDAF provisioning helpers
 Write-Host "`n[$scriptName] ---------- start ----------`n"
+if ( $env:http_proxy ) {
+	Write-Host "[$scriptName] Set HTTPS proxy for Python Package Manager (PiP)`n"
+	executeExpression "`$env:https_proxy = '$env:http_proxy'"
+}
 
 if ( Test-Path "c:\vagrant" ) {
 	executeExpression 'cd c:\vagrant'
 }
 
 Write-Host "[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
-executeExpression "./automation/provisioning/base.ps1 'python3 git'"
+executeExpression "./automation/provisioning/base.ps1 'python git'"
 
 Write-Host "[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
-cat requirements.txt
+executeExpression "cat requirements.txt"
 
 Write-Host
 executeExpression 'pip install -r requirements.txt' 
