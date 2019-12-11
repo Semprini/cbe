@@ -19,14 +19,31 @@ if ( $env:http_proxy ) {
 	executeExpression "`$env:https_proxy = '$env:http_proxy'"
 }
 
-if ( Test-Path "c:\vagrant" ) {
-	executeExpression 'cd c:\vagrant'
+$env:CDAF_PATH = ".\automation"
+if ( Test-Path $env:CDAF_PATH ) {
+	Write-Host "[$scriptName] Using `$env:CDAF_PATH = $env:CDAF_PATH (existing)`n"
+} else {
+	Write-Host "[$scriptName] Install CDAF to user directory`n"
+	executeExpression '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12'
+	executeExpression '(New-Object System.Net.WebClient).DownloadFile("https://codeload.github.com/cdaf/windows/zip/master", "$PWD\cdaf.zip")'
+	executeExpression 'Add-Type -AssemblyName System.IO.Compression.FileSystem'
+	executeExpression '[System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\cdaf.zip", "$PWD")'
+	$env:CDAF_PATH = "~/.cdaf"
+	executeExpression "Move-Item .\windows-master\automation\ $env:CDAF_PATH"
+	Write-Host "[$scriptName] Using `$env:CDAF_PATH = $env:CDAF_PATH (downloaded from GitHub)"
 }
 
-Write-Host "[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
-executeExpression "./automation/provisioning/base.ps1 'python git'"
+Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
+executeExpression "$env:CDAF_PATH\provisioning\base.ps1 'python git'"
 
-Write-Host "[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
+if ( Test-Path "c:\vagrant" ) {
+	Write-Host "`n[$scriptName] Vagrant environment`n"
+	executeExpression 'cd c:\vagrant'
+	executeExpression "$env:CDAF_PATH\provisioning\setenv.ps1 CDAF_DELIVERY VAGRANT Machine"
+	executeExpression "$env:CDAF_PATH\provisioning\setenv.ps1 CDAF_PATH $env:CDAF_PATH Machine"
+}
+
+Write-Host "`n[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
 executeExpression "cat requirements.txt"
 
 Write-Host
