@@ -94,9 +94,6 @@ if ($versionTest -like '*not recognized*') {
 	Write-Host "`n[$scriptName] Create the base image, relying on docker cache to avoid unnecessary reprovisioning"
 	cat Dockerfile
 
-	if ( Test-Path "automation" ) {
-		executeExpression "Remove-Item -Recurse automation"
-	}
 	executeExpression "Copy-Item -Recurse $AUTOMATIONROOT automation"
 	executeExpression "& $AUTOMATIONROOT/remote/dockerBuild.ps1 $SOLUTION $BUILDNUMBER"
 	if ( Test-Path "automation" ) {
