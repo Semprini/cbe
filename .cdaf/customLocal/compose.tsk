@@ -1,32 +1,35 @@
 $workspace = "$(pwd)"
+if ( $retain ) { $env:COMPOSE_KEEP = $retain }
 
-Write-Host "Each environment has it's own persistent store (/$SOLUTION/$environment) to ensure teardown based on the compose file they were created with`n"
-MAKDIR "/$SOLUTION/$environment"
+$composePersist = "/$SOLUTION/$environment"
+Write-Host "Each environment has it's own persistent store (${composePersist}) to ensure teardown based on the compose file they were created with`n"
+MAKDIR "${composePersist}"
 
 Write-Host "`n[$scriptName] Set port for testing`n"
 if ( ! ( $publishedPort )) { $publishedPort = 8000 }
 $env:CBE_PORT = ./nextFreePort.ps1 $publishedPort
 
-Write-Host "Test for existing instance`n"
-cd "/$SOLUTION/$environment"
+VECOPY .\compose.ps1 $composePersist
+cd "${composePersist}"
 
-Write-Host "Place the current version of compose file to persistent store (/$SOLUTION/$environment)`n"
-VECOPY ${workspace}\docker-compose.yml "/$SOLUTION/$environment/docker-compose.yml"
+Write-Host "Place the current version of compose file to persistent store (${composePersist})`n"
+VECOPY ${workspace}\docker-compose.yml "${composePersist}/docker-compose.yml"
 
-cat "/$SOLUTION/$environment/docker-compose.yml"
+cat "${composePersist}/docker-compose.yml"
 
 $env:CORE_IMAGE = "${SOLUTION}"
-docker-compose down
-docker-compose rm
+.\compose.ps1
 
 $env:CORE_IMAGE = "${SOLUTION}:$BUILDNUMBER"
-docker-compose up -d
+.\compose.ps1 'docker-compose up -d'
 
 Write-Host "Wait up to 5 minutes for migrations`n"
 & ${workspace}\dockerLog.ps1 DOCKER-COMPOSE runserver 300
 
 Write-Host "Test on `$env:CBE_PORT $env:CBE_PORT`n"
 & ${workspace}\test.ps1 $env:CBE_PORT
+
+if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { .\compose.ps1 }
 
 Write-Host "Return to `$workspace $workspace`n"
 cd $workspace
