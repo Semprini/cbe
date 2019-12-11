@@ -6,10 +6,10 @@ function executeExpression ($expression) {
 	Write-Host "[$scriptName] $expression"
 	try {
 		Invoke-Expression $expression
-	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
-	} catch { echo $_.Exception|format-list -force; exit 2 }
-    if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
-    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
+	    if(!$?) { Write-Host "[$scriptName][CDAF_DELIVERY_FAILURE.FAILURE] `$? = $?"; exit 1 }
+	} catch { Write-Host "[$scriptName][CDAF_DELIVERY_FAILURE.EXCEPTION] Details follow ..." ; echo $_.Exception|format-list -force; exit 2 }
+    if ( $error[0] ) { Write-Host "[$scriptName][CDAF_DELIVERY_FAILURE.ERROR] `$error[0] = $error"; exit 3 }
+    if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName][CDAF_DELIVERY_FAILURE.EXIT] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
 
 Write-Host "`n[$scriptName] ---------- start ----------`n"
