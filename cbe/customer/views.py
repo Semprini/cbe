@@ -1,7 +1,6 @@
 from django.db.models import Q
 
 from rest_framework import permissions, renderers, viewsets
-from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 #from cbe.permissions import IsOwnerOrReadOnly

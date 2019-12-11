@@ -1,5 +1,4 @@
 from rest_framework import permissions, renderers, viewsets
-from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from cbe.location.models import GeographicArea, UrbanPropertyAddress, UrbanPropertySubAddress, RuralPropertyAddress, PoBoxAddress, Location, Country, City
