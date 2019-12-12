@@ -48,10 +48,8 @@ Vagrant.configure(2) do |config|
   config.winrm.password = "vagrant" # Making defaults explicit
   config.vm.graceful_halt_timeout = 180 # 3 minutes
   config.vm.provision 'shell', path: './.cdaf/bootstrapAgent.ps1'
-  config.vm.provision 'shell', path: './automation/remote/capabilities.ps1'
-  config.vm.provision 'shell', path: './automation/provisioning/setenv.ps1', args: 'environmentDelivery VAGRANT Machine'
-  config.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', privileged: false
-  config.vm.provision 'shell', path: './automation/provisioning/CDAF.ps1', privileged: false # Execute twice to verify rebuild works
+  config.vm.provision 'shell', inline: 'cd c:/vagrant ; & $env:CDAF_PATH/provisioning/CDAF.ps1', privileged: false
+  config.vm.provision 'shell', inline: 'cd c:/vagrant ; & $env:CDAF_PATH/provisioning/CDAF.ps1', privileged: false # Execute twice to verify rebuild works
     
   # Oracle VirtualBox, cannot use 172.0.0.0/8 range, as that is allocated to Windows Container network
   config.vm.provider 'virtualbox' do |virtualbox, override|
