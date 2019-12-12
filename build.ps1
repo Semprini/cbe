@@ -90,11 +90,28 @@ if ($versionTest -like '*not recognized*') {
 #	Write-Host "`nDisable debug"
 #	REPLAC cbe/settings.py 'DEBUG = True' 'DEBUG = False'
 #	cat cbe/settings.py | findstr /C:"DEBUG ="
-	
-	Write-Host "`n[$scriptName] Create the base image, relying on docker cache to avoid unnecessary reprovisioning"
-	cat Dockerfile
 
-	executeExpression "Copy-Item -Recurse $AUTOMATIONROOT automation"
+	Write-Host "`n[$scriptName] Create the base image, relying on docker cache to avoid unnecessary reprovisioning"
+	executeExpression "cat Dockerfile"
+
+	if ( Test-Path ".\automation" ) {
+		if ( (Get-Item $env:CDAF_AUTOMATION_ROOT).FullName -ne "$($(pwd).Path)\automation" ) {
+			executeExpression "Remove-Item -Recurse .\automation"
+			executeExpression "Copy-Item -Recurse -Force $env:CDAF_AUTOMATION_ROOT .\automation"
+			$cleanupCDAF = 'yes'
+		} else {
+			Write-Host "[$scriptName]   automationroot : .\automation`n"
+		}
+	} else {
+		if ( ((Get-Item $env:CDAF_AUTOMATION_ROOT).Parent).FullName -ne $(pwd).Path ) {
+			Write-Host "[$scriptName]   automationroot : ${env:CDAF_AUTOMATION_ROOT} (copy to .\automation in workspace for docker)`n"
+			executeExpression "Copy-Item -Recurse -Force $env:CDAF_AUTOMATION_ROOT .\automation"
+			$cleanupCDAF = 'yes'
+		} else {
+			Write-Host "[$scriptName]   automationroot : ${env:CDAF_AUTOMATION_ROOT}`n"
+		}
+	}
+
 	executeExpression "& $AUTOMATIONROOT/remote/dockerBuild.ps1 $SOLUTION $BUILDNUMBER"
 	if ( Test-Path "automation" ) {
 		executeExpression "Remove-Item -Recurse automation"
@@ -104,6 +121,10 @@ if ($versionTest -like '*not recognized*') {
 #	REPLAC cbe/settings.py 'DEBUG = False' 'DEBUG = True'
 #	cat cbe/settings.py | findstr /C:"DEBUG ="
 
+}
+
+if ( $cleanupCDAF ) {
+	executeExpression "Remove-Item -Recurse .\automation"
 }
 
 Write-Host "`n[$scriptName] ---------- stop ----------"
