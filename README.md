@@ -53,7 +53,13 @@ Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data m
 
 # Virtual Desktop Environment
 
-The following delivery emulations are available for Windows
+Docker and Vagrant are supported. For Vagrant install to workspace
+
+    $env:CDAF_PATH = '.\automation'
+
+Install CDAF
+
+    curl 'https://raw.githubusercontent.com/cdaf/windows/master/installCDAF.ps1' -UseBasicParsing  | Select-Object -Expand Content  | PowerShell
 
 ## Windows Virtual Machine
 
