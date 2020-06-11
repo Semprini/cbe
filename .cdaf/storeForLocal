@@ -5,3 +5,4 @@ manage.py
 setup.py
 start.ps1
 docker-compose.yml
+$AUTOMATIONROOT\remote\logWatch.ps1 -Flat

@@ -1,4 +1,11 @@
-start powershell .\start.ps1
+foreach ($proc in Get-Process *python*) { Stop-Process $proc -Force }
+
+$work = "$env:TEMP\cbe"
+REFRSH $(pwd) $work
+
+Start-Process -FilePath "powershell" -ArgumentList ".\start.ps1" -RedirectStandardOutput "$work\cbe-output.log" -RedirectStandardError "$work\cbe-error.log" -WorkingDirectory "$work"
+
+.\logWatch.ps1 $work\cbe-output.log runserver 300
 
 Write-Host "`n[$scriptName] Set port for testing`n"
 if ( ! ( $publishedPort )) { $publishedPort = 8000 }

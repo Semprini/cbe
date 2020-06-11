@@ -13,10 +13,10 @@ WORKDIR C:\\solution
 
 COPY automation/provisioning automation/provisioning
 COPY requirements.txt requirements.txt
-COPY .cdaf/bootstrapAgent.ps1 .cdaf/bootstrapAgent.ps1
+COPY .cdaf/bootstrap.ps1 .cdaf/bootstrap.ps1
 
 # Provision Build Dependancies
-RUN automation\provisioning\runner.bat .cdaf\bootstrapAgent.ps1
+RUN automation\provisioning\runner.bat .cdaf\bootstrap.ps1
 
 # Copy the solution (do this last to utilise cache of provisioning steps)
 COPY cbe cbe
