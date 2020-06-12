@@ -41,6 +41,12 @@ Vagrant.configure(2) do |cbe|
   cbe.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
   cbe.vm.hostname = 'cbe' # In Hyper-V this is automatically addressable from the host as cbe.mshome.net
   cbe.vm.provision 'shell', path: './.cdaf/bootstrap.ps1'
+  cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\mkdir.ps1 C:\cbe $env:COMPUTERNAME\vagrant'
+  cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 "nssm"'
+  cbe.vm.provision 'shell', inline: 'nssm install cbe C:\cbe\runner.bat start.ps1'
+  cbe.vm.provision 'shell', inline: 'nssm set cbe AppDirectory C:\cbe'
+  cbe.vm.provision 'shell', inline: 'nssm set cbe AppStdout C:\\cbe\\cbe.log'
+  cbe.vm.provision 'shell', inline: 'nssm set cbe AppStderr C:\\cbe\\cbe.log'
 
   # Oracle VirtualBox, cannot use 172.0.0.0/8 range, as that is allocated to Windows Container network
   cbe.vm.provider 'virtualbox' do |virtualbox, override|
