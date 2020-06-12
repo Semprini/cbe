@@ -1,4 +1,4 @@
-nssm stop cbe
+cmd /c "nssm stop cbe 2> nul"
 
 REFRSH $(pwd) C:\cbe
 
