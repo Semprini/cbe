@@ -53,15 +53,23 @@ Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data m
 
 # Virtual Desktop Environment
 
-The following delivery emulations are available for Windows
+Vagrant will self-install CDAF, where-as docker requires CDAF to be installed on the host
 
 ## Windows Virtual Machine
 
-To use a virtual environment requires VirtualBox and Vagrant, from the workspace run:
+To use a virtual environment requires Vagrant and VirtualBox or Hyper-V, from the workspace run:
 
     vagrant up
 
 ## Windows Containers
+
+Docker and Vagrant are supported. For Vagrant install to workspace
+
+    $env:CDAF_PATH = '.\automation'
+
+Install CDAF
+
+    curl 'https://raw.githubusercontent.com/cdaf/windows/master/installCDAF.ps1' -UseBasicParsing  | Select-Object -Expand Content  | PowerShell
 
 If you have Docker for Windows installed, switch to Windows Containers and run delivery emulation:
 

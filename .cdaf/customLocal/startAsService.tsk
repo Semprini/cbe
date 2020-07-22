@@ -1,4 +1,10 @@
-start powershell .\start.ps1
+cmd /c "nssm stop cbe 2> nul"
+
+REFRSH $(pwd) C:\cbe
+
+nssm start cbe
+
+.\logWatch.ps1 C:\cbe\cbe.log runserver 180
 
 Write-Host "`n[$scriptName] Set port for testing`n"
 if ( ! ( $publishedPort )) { $publishedPort = 8000 }

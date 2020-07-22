@@ -36,40 +36,38 @@ else
   synchedFolder = '../.provision'
 end
 
-Vagrant.configure(2) do |config|
-  config.vm.box = "#{vagrantBox}"
-  config.vm.box_check_update = false
-  config.vm.guest = :windows
-  config.vm.communicator = 'winrm'
-  config.vm.boot_timeout = 600 # 10 minutes
-  config.winrm.timeout =   1800 # 30 minutes
-  config.winrm.retry_limit = 10
-  config.winrm.username = "vagrant" # Making defaults explicit
-  config.winrm.password = "vagrant" # Making defaults explicit
-  config.vm.graceful_halt_timeout = 180 # 3 minutes
-  config.vm.provision 'shell', path: './.cdaf/bootstrapAgent.ps1'
-  config.vm.provision 'shell', inline: 'cd c:/vagrant ; & $env:CDAF_PATH/provisioning/CDAF.ps1', privileged: false
-  config.vm.provision 'shell', inline: 'cd c:/vagrant ; & $env:CDAF_PATH/provisioning/CDAF.ps1', privileged: false # Execute twice to verify rebuild works
-    
+Vagrant.configure(2) do |cbe|
+  cbe.vm.box = "#{vagrantBox}"
+  cbe.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
+  cbe.vm.hostname = 'cbe' # In Hyper-V this is automatically addressable from the host as cbe.mshome.net
+  cbe.vm.provision 'shell', path: './.cdaf/bootstrap.ps1'
+  cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\mkdir.ps1 C:\cbe $env:COMPUTERNAME\vagrant'
+  cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 "nssm"'
+  cbe.vm.provision 'shell', inline: 'nssm install cbe C:\cbe\runner.bat start.ps1'
+  cbe.vm.provision 'shell', inline: 'nssm set cbe AppDirectory C:\cbe'
+  cbe.vm.provision 'shell', inline: 'nssm set cbe AppStdout C:\\cbe\\cbe.log'
+  cbe.vm.provision 'shell', inline: 'nssm set cbe AppStderr C:\\cbe\\cbe.log'
+
   # Oracle VirtualBox, cannot use 172.0.0.0/8 range, as that is allocated to Windows Container network
-  config.vm.provider 'virtualbox' do |virtualbox, override|
+  cbe.vm.provider 'virtualbox' do |virtualbox, override|
     virtualbox.gui = false
     virtualbox.memory = "#{vRAM}"
     virtualbox.cpus = "#{vCPU}"
     override.vm.synced_folder "#{synchedFolder}", '/.provision'
     override.vm.network 'private_network', ip: '10.10.8.101'
-    override.vm.network 'forwarded_port', guest: 3389, host: 13389 # Remote Desktop
-    override.vm.network 'forwarded_port', guest: 5985, host: 15985 # WinRM HTTP
-    override.vm.network 'forwarded_port', guest: 5986, host: 15986 # WinRM HTTPS
-    override.vm.network 'forwarded_port', guest: 8000, host: 8000 # WinRM HTTPS
+    override.vm.network 'forwarded_port', guest: 8000, host: 8000, auto_correct: true
+    override.vm.provision 'shell', inline: 'cd c:/vagrant ; & $env:CDAF_AUTOMATION_ROOT/provisioning/addHOSTS.ps1 10.10.8.101 cbe.mshome.net'
+    override.vm.provision 'shell', inline: 'cd c:/vagrant ; & $env:CDAF_AUTOMATION_ROOT/provisioning/CDAF.ps1', privileged: false
+    override.vm.provision 'shell', inline: 'cd c:/vagrant ; & $env:CDAF_AUTOMATION_ROOT/provisioning/CDAF.ps1', privileged: false # Execute twice to verify rebuild works
   end
   
-  # Microsoft Hyper-V does not support NAT or setting hostname: vagrant up target --provider hyperv
-  config.vm.provider 'hyperv' do |hyperv, override|
+  # Microsoft Hyper-V does not support port forwarding: vagrant up target --provider hyperv
+  cbe.vm.provider 'hyperv' do |hyperv, override|
     hyperv.memory = "#{vRAM}"
     hyperv.cpus = "#{vCPU}"
-    hyperv.ip_address_timeout = 420 # 7 minutes, default is 2 minutes (120 seconds)
     override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
     override.vm.synced_folder "#{synchedFolder}", "/.provision", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
+    override.vm.provision 'shell', inline: 'cd c:/vagrant ; & $env:CDAF_AUTOMATION_ROOT/provisioning/CDAF.ps1', privileged: false
+    override.vm.provision 'shell', inline: 'cd c:/vagrant ; & $env:CDAF_AUTOMATION_ROOT/provisioning/CDAF.ps1', privileged: false # Execute twice to verify rebuild works
   end
 end
