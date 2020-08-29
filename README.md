@@ -118,4 +118,4 @@ Install CDAF from GitHub
 
 Run from installed CDAF
 
-    ~/.cdaf/processor/entry.bat
+    ~/.cdaf/entry.bat

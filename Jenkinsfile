@@ -32,7 +32,7 @@ node {
     }
 
     stage ('Get latest image and Test using Docker') {
-      bat "automation\\processor\\entry.bat"
+      bat "automation\\entry.bat"
     }
 
     stage ('Test Using Vagrant') {
