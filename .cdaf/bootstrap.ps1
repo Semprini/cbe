@@ -45,6 +45,7 @@ if ( Test-Path "c:\vagrant" ) {
 }
 
 Write-Host "`n[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
+executeExpression "cd cbe"
 executeExpression "cat requirements.txt"
 
 Write-Host
