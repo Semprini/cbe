@@ -29,6 +29,7 @@ Vagrant.configure(2) do |allhosts|
   allhosts.vm.define 'cbe' do |cbe|
     cbe.vm.box = "#{OVERRIDE_IMAGE}"
     cbe.vm.hostname = 'cbe' # In Hyper-V this is automatically addressable from the host as cbe.mshome.net
+    cbe.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
 
     cbe.vm.provision 'shell', path: '.\.cdaf\bootstrapPython.ps1', args: 'cbe'
     cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\mkdir.ps1 C:\cbe $env:COMPUTERNAME\vagrant'
@@ -59,6 +60,7 @@ Vagrant.configure(2) do |allhosts|
 
   allhosts.vm.define 'build' do |build|
     build.vm.box = "#{OVERRIDE_IMAGE}"
+    build.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
 
     build.vm.provision 'shell', path: './.cdaf/bootstrapAgent.ps1', args: 'C:\vagrant\cbe'
 

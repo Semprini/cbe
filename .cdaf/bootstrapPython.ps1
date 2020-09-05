@@ -43,8 +43,6 @@ if ( $env:http_proxy ) {
 	executeExpression "`$env:https_proxy = '$env:http_proxy'"
 }
 
-executeExpression 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
-
 $env:CDAF_AUTOMATION_ROOT = ".\automation"
 if ( Test-Path $env:CDAF_AUTOMATION_ROOT ) {
 	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (existing)`n"
