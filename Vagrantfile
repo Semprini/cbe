@@ -60,7 +60,7 @@ Vagrant.configure(2) do |allhosts|
   allhosts.vm.define 'build' do |build|
     build.vm.box = "#{OVERRIDE_IMAGE}"
     build.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
-    build.vm.provision 'shell', path: './.cdaf/bootstrapAgent.ps1', args: 'cbe'
+    build.vm.provision 'shell', path: './.cdaf/bootstrapAgent.ps1', args: 'C:\vagrant\cbe'
 
     # Vagrant specific for WinRM
     build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\CredSSP.ps1', args: 'client'

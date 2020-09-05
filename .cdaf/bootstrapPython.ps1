@@ -29,13 +29,13 @@ function executeExpression ($expression) {
 	}
 }
 
-$scriptName = 'addComputerDelegation.ps1'
+$scriptName = 'bootstrapAgent.ps1'
 Write-Host "`n[$scriptName] ---------- start ----------"
 if ($project) {
-    Write-Host "[$scriptName] project           : $project (change to this directory)"
+    Write-Host "[$scriptName] project : $project (change to this directory)"
 	executeExpression "cd $project"
 } else {
-    Write-Host "[$scriptName] project           : (not supplied, no directory change)"
+    Write-Host "[$scriptName] project : (not supplied, no directory change)"
 }
 
 if ( $env:http_proxy ) {
@@ -58,7 +58,7 @@ if ( Test-Path $env:CDAF_AUTOMATION_ROOT ) {
 }
 
 Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
-executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python git'"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python'"
 
 if ( Test-Path "c:\vagrant" ) {
 	Write-Host "`n[$scriptName] Vagrant environment`n"
@@ -67,11 +67,5 @@ if ( Test-Path "c:\vagrant" ) {
 	executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT User"
 	executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT User"
 }
-
-Write-Host "`n[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
-executeExpression "cat requirements.txt"
-
-Write-Host
-executeExpression 'pip install -r requirements.txt' 
 
 Write-Host "`n[$scriptName] ---------- stop ----------`n"
