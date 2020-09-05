@@ -11,14 +11,13 @@ EXPOSE 8000
 # Copy solution, provision and then build
 WORKDIR C:\\solution
 
-COPY automation/provisioning automation/provisioning
-COPY requirements.txt requirements.txt
-COPY .cdaf/bootstrap.ps1 .cdaf/bootstrap.ps1
-
 COPY cbe cbe
+
 WORKDIR C:\\solution\\cbe
 
+COPY automation/provisioning .
+COPY .cdaf/bootstrap.ps1 .
 # Provision Build Dependancies
-RUN ..\automation\provisioning\runner.bat .cdaf\bootstrap.ps1
+RUN runner.bat bootstrap.ps1
 
-CMD ..\automation\provisioning\runner.bat start.ps1
+CMD runner.bat start.ps1
