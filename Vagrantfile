@@ -28,8 +28,8 @@ Vagrant.configure(2) do |allhosts|
 
   allhosts.vm.define 'cbe' do |cbe|
     cbe.vm.box = "#{OVERRIDE_IMAGE}"
-    cbe.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
     cbe.vm.hostname = 'cbe' # In Hyper-V this is automatically addressable from the host as cbe.mshome.net
+
     cbe.vm.provision 'shell', path: '.\.cdaf\bootstrapPython.ps1', args: 'cbe'
     cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\mkdir.ps1 C:\cbe $env:COMPUTERNAME\vagrant'
     cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 "nssm"'
@@ -59,16 +59,16 @@ Vagrant.configure(2) do |allhosts|
 
   allhosts.vm.define 'build' do |build|
     build.vm.box = "#{OVERRIDE_IMAGE}"
-    build.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
+
     build.vm.provision 'shell', path: './.cdaf/bootstrapAgent.ps1', args: 'C:\vagrant\cbe'
 
     # Vagrant specific for WinRM
-    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\CredSSP.ps1', args: 'client'
-    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\trustedHosts.ps1', args: '*'
-    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1', args: 'interactive yes User'
-    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1', args: 'CDAF_DELIVERY VAGRANT Machine'
-    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1', args: 'CDAF_PS_USERNAME vagrant'
-    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1', args: 'CDAF_PS_USERPASS vagrant'
+    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\CredSSP.ps1 client'
+    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\trustedHosts.ps1 *'
+    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 interactive yes User'
+    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_DELIVERY VAGRANT Machine'
+    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_PS_USERNAME vagrant'
+    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_PS_USERPASS vagrant'
 
     # Oracle VirtualBox, relaxed configuration for Desktop environment
     build.vm.provider 'virtualbox' do |virtualbox, override|

@@ -43,6 +43,8 @@ if ( $env:http_proxy ) {
 	executeExpression "`$env:https_proxy = '$env:http_proxy'"
 }
 
+executeExpression 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
+
 $env:CDAF_AUTOMATION_ROOT = ".\automation"
 if ( Test-Path $env:CDAF_AUTOMATION_ROOT ) {
 	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (existing)`n"
@@ -57,16 +59,11 @@ if ( Test-Path $env:CDAF_AUTOMATION_ROOT ) {
 	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (downloaded from GitHub)"
 }
 
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT"
+
 Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python git'"
-
-if ( Test-Path "c:\vagrant" ) {
-	Write-Host "`n[$scriptName] Vagrant environment`n"
-	executeExpression 'cd c:\vagrant'
-	executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_DELIVERY VAGRANT Machine"
-	executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT User"
-	executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT User"
-}
 
 Write-Host "`n[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
 executeExpression "cat requirements.txt"
