@@ -16,8 +16,9 @@ COPY cbe cbe
 WORKDIR C:\\solution\\cbe
 
 COPY automation/provisioning .
-COPY .cdaf/bootstrap.ps1 .
-# Provision Build Dependancies
-RUN runner.bat bootstrap.ps1
+COPY .cdaf/bootstrapAgent.ps1 .
+
+# Provision Build Dependancies into base image, i.e. cache
+RUN runner.bat bootstrapAgent.ps1
 
 CMD runner.bat start.ps1

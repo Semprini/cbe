@@ -44,8 +44,8 @@ Vagrant.configure(2) do |allhosts|
       virtualbox.memory = "#{vRAM}"
       virtualbox.cpus = "#{vCPU}"
       override.vm.synced_folder "#{synchedFolder}", '/.provision'
-      override.vm.network 'private_network', ip: '172.16.17.101'
-      override.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\addHOSTS.ps1 172.16.17.101 cbe.mshome.net'
+      override.vm.network 'private_network', ip: '172.16.17.90'
+      override.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\addHOSTS.ps1 172.16.17.90 cbe.mshome.net'
     end
     
     # Microsoft Hyper-V does not support port forwarding: vagrant up target --provider hyperv
@@ -76,7 +76,7 @@ Vagrant.configure(2) do |allhosts|
       virtualbox.memory = "#{vRAM}"
       virtualbox.cpus = "#{vCPU}"
       override.vm.network 'private_network', ip: '172.16.17.100'
-      override.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\addHOSTS.ps1 172.16.17.101 cbe.mshome.net'
+      override.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\addHOSTS.ps1 172.16.17.90 cbe.mshome.net'
       override.vm.provision 'shell', inline: 'cdEmulate', privileged: false
     end
 
