@@ -78,8 +78,6 @@ Write-Host "[$scriptName]   PROJECT     : $PROJECT"
 Write-Host "[$scriptName]   ENVIRONMENT : $ENVIRONMENT"
 Write-Host "[$scriptName]   ACTION      : $ACTION"
 
-executeExpression "cd cbe" 
-
 $versionTest = cmd /c docker --version 2`>`&1
 cmd /c "exit 0"
 if ($versionTest -like '*not recognized*') {
