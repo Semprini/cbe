@@ -17,19 +17,6 @@ Industry Specific Extension Projects
 
 Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 
-## To run
-
-```shell
-git clone https://github.com/Semprini/cbe.git
-cd cbe
-pip install -r requirements.txt
-python manage.py migrate (will use a default sqllite db)
-python manage.py createsuperuser <username> <email> <password>
-python manage.py runserver
-browse to http://localhost:8000/admin for the admin interface
-browse to http://localhost:8000/api for the api interface
-```
-
 # How is this different to an API from a product?
 
 It is the role of CBE to express relationships and provide consistent schema for use in multiple contexts. A product will rightly store data for it's own purpose and expose it's data through product oriented APIs, we then use integration architectures like SOA to expose and adjust the semantics for different contexts. 
@@ -46,10 +33,13 @@ Coming soon to a data model near you:
 - More roles for PartyRole and BusinessInteraction
 - Product
 
-
 The data model is designed to be extended for each industry. In Party, the PartyRole class is the main abstract entity from which concrete classes like Customer or Supplier should be derived.
 
 Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data model is held in the Docs folder as a Sparx EA model
+
+# Development Environment
+
+See cbe subdirectory
 
 # Virtual Desktop Environment
 
