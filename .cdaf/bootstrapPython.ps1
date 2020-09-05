@@ -59,9 +59,16 @@ if ( Test-Path $env:CDAF_AUTOMATION_ROOT ) {
 	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (downloaded from GitHub)"
 }
 
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT"
+
 Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python'"
 
 executeExpression 'pip install django<3'
+
+executeExpression 'pip show django'
+executeExpression 'python -m site'
+executeExpression 'python -m site --user-site'
 
 Write-Host "`n[$scriptName] ---------- stop ----------`n"
