@@ -13,13 +13,18 @@ will use a default sqllite db
 
 ```
 . { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex
-~\automation\provisioning\base.ps1 'git python'
+.\automation\provisioning\base.ps1 'git python'
 
 pip install -r requirements.txt
+pip show django
+
 python manage.py migrate
 python manage.py createsuperuser superuser super@hero.net passw0rd
-python manage.py runserver
 ```
+
+To run the development server
+    
+    python manage.py runserver
 
 browse to http://localhost:8000/admin for the admin interface
 browse to http://localhost:8000/api for the api interface
