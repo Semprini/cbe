@@ -12,13 +12,12 @@ Create a local copy
 will use a default sqllite db
 
 ```
-cd ~
 . { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex
-~\automation\provisioning\base.ps1 'python'
+~\automation\provisioning\base.ps1 'git python'
 
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py createsuperuser <username> <email> <password>
+python manage.py createsuperuser superuser super@hero.net passw0rd
 python manage.py runserver
 ```
 
