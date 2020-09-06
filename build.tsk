@@ -1,0 +1,2 @@
+tar -zcf cbe.tar.gz "cbe/cbe"
+tar -zcf site-packages.tar.gz "c:/python38/lib/site-packages"
