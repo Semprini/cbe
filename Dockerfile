@@ -1,5 +1,6 @@
 # DOCKER-VERSION 1.2.0
-FROM mcr.microsoft.com/windows/servercore:ltsc2016@sha256:5bd97dbab1afe8d3200f5d5c974df3b0130e74e8a69fddcd427699c4c8cb5037
+ARG CONTAINER_IMAGE
+FROM ${CONTAINER_IMAGE}
 
 ARG proxy
 ENV http_proxy=$proxy
@@ -11,14 +12,9 @@ EXPOSE 8000
 # Copy solution, provision and then build
 WORKDIR C:\\solution
 
-COPY cbe cbe
-
-WORKDIR C:\\solution\\cbe
-
-COPY automation/provisioning .
-COPY .cdaf/bootstrapAgent.ps1 .
-
 # Provision Build Dependancies into base image, i.e. cache
-RUN runner.bat bootstrapAgent.ps1
+COPY .cdaf/bootstrapAgent.ps1 .
+COPY cbe/requirements.txt .
+RUN call powershell -NoProfile -NonInteractive -ExecutionPolicy ByPass -command ./bootstrapAgent.ps1
 
-CMD runner.bat start.ps1
+CMD echo Usage: docker run --tty --volume ${workspace}\:C:/solution/workspace ${imageName}:${imageTag} automation\ci.bat $buildNumber revision containerbuild

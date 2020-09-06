@@ -4,6 +4,6 @@ productVersion=0.3.0
 productName=Common Business Entities
 solutionName=cbe
 containerBuild=& $AUTOMATIONROOT/processor/containerBuild.ps1 $SOLUTION $BUILDNUMBER $REVISION
-# containerImage=microsoft/windowsservercore@sha256:05de0a0ac13d3652bd1f2281b8589459ebb611092e3fe4d8f1be91f1f6984266
+containerImage=mcr.microsoft.com/windows/servercore:ltsc2016@sha256:e2c78f571777035a2886bc566fd73e8d441b11cc5babbcdc5fa0eb76aa7cb4f1
 # imageBuild=& $SOLUTIONROOT/imageBuild.ps1 $SOLUTION $BUILDNUMBER $REVISION $ACTION
 # processSequence=localTasks.ps1 remoteTasks.ps1
