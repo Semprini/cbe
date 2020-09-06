@@ -63,9 +63,7 @@ executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_
 Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python'"
 
-executeExpression 'pip install django<3'
-
-executeExpression 'pip show django'
+executeExpression 'pip show six'
 executeExpression 'python -m site'
 executeExpression 'python -m site --user-site'
 
