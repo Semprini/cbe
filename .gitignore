@@ -123,3 +123,5 @@ web.config
 /propertiesForRemoteTasks/
 /automation/
 /windows-master/
+cbe.tar.gz
+site-packages.tar.gz

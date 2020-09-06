@@ -43,8 +43,8 @@ if ( $env:http_proxy ) {
 	executeExpression "`$env:https_proxy = '$env:http_proxy'"
 }
 
-$env:CDAF_AUTOMATION_ROOT = ".\automation"
-if ( Test-Path $env:CDAF_AUTOMATION_ROOT ) {
+if ( Test-Path .\automation ) {
+	$env:CDAF_AUTOMATION_ROOT = (Get-Item .\automation).FullName
 	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (existing)`n"
 } else {
 	Write-Host "[$scriptName] Install CDAF to user directory`n"

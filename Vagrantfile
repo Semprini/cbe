@@ -31,10 +31,13 @@ Vagrant.configure(2) do |allhosts|
     cbe.vm.hostname = 'cbe' # In Hyper-V this is automatically addressable from the host as cbe.mshome.net
     cbe.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
 
-    cbe.vm.provision 'shell', path: '.\.cdaf\bootstrapPython.ps1', args: 'cbe'
+    # Generic provisioning, used for both in-situ and containers
+    cbe.vm.provision 'shell', path: '.\.cdaf\bootstrapPython.ps1', args: 'c:\vagrant\cbe'
+
+    # In-situ provisioning
     cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\mkdir.ps1 C:\cbe $env:COMPUTERNAME\vagrant'
     cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 "nssm"'
-    cbe.vm.provision 'shell', inline: 'nssm install cbe C:\cbe\runner.bat start.ps1'
+    cbe.vm.provision 'shell', inline: 'nssm install cbe python manage.py runserver 0.0.0.0:8000'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppDirectory C:\cbe'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppStdout C:\\cbe\\cbe.log'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppStderr C:\\cbe\\cbe.log'
@@ -67,7 +70,6 @@ Vagrant.configure(2) do |allhosts|
     # Vagrant specific for WinRM
     build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\CredSSP.ps1 client'
     build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\trustedHosts.ps1 *'
-    build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 interactive yes User'
     build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_DELIVERY VAGRANT Machine'
     build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_PS_USERNAME vagrant'
     build.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_PS_USERPASS vagrant'
@@ -79,7 +81,7 @@ Vagrant.configure(2) do |allhosts|
       virtualbox.cpus = "#{vCPU}"
       override.vm.network 'private_network', ip: '172.16.17.100'
       override.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\addHOSTS.ps1 172.16.17.90 cbe.mshome.net'
-      override.vm.provision 'shell', inline: 'cdEmulate', privileged: false
+      override.vm.provision 'shell', inline: 'cd C:\vagrant ; & $env:CDAF_AUTOMATION_ROOT\cdEmulate', privileged: false
     end
 
     # Set environment variable VAGRANT_DEFAULT_PROVIDER to 'hyperv'
@@ -88,7 +90,7 @@ Vagrant.configure(2) do |allhosts|
       hyperv.cpus = "#{vCPU}"
       override.vm.hostname = 'build'
       override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
-      override.vm.provision 'shell', inline: 'cdEmulate', privileged: false
+      override.vm.provision 'shell', inline: 'cd C:\vagrant ; & $env:CDAF_AUTOMATION_ROOT\cdEmulate', privileged: false
     end
   end
 

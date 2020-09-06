@@ -1,9 +1,1 @@
-cbe -Recurse
-requirements.txt
-deploy.py
-manage.py
-setup.py
-start.ps1
 docker-compose.yml
-$AUTOMATIONROOT\remote\logWatch.ps1 -Flat
-$AUTOMATIONROOT\provisioning\runner.bat -Flat

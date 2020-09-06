@@ -1,6 +1,13 @@
+$workspace = Get-Location
 cmd /c "nssm stop cbe 2> nul"
 
-REFRSH $(pwd) C:\cbe
+tar -xzf .\cbe.tar.gz -C C:\cbe --strip-components 2
+VECOPY runner.bat C:\cbe
+tar -xzf .\site-packages.tar.gz -C c:\python38\lib\site-packages --strip-components 3
+
+cd C:\cbe 
+python manage.py migrate
+cd $workspace
 
 nssm start cbe
 
