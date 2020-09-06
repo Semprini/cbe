@@ -60,19 +60,15 @@ if ( Test-Path .\automation ) {
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT"
 
-Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
-executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python git'"
-
 $versionTest = cmd /c tar --version 2`>`&1
 if ( $LASTEXITCODE -ne 0 ) {
-	cmd /c "exit 0"
-	executeExpression '(New-Object System.Net.WebClient).DownloadFile("https://versaweb.dl.sourceforge.net/project/gnuwin32/tar/1.13-1/tar-1.13-1-bin.zip", "$PWD\tar-1.13-1-bin.zip")'
-	executeExpression 'Add-Type -AssemblyName System.IO.Compression.FileSystem'
-	executeExpression '[System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\tar-1.13-1-bin.zip", "$PWD\tar-1.13-1")'
-	executeExpression 'Copy-Item tar-1.13-1\bin\tar.exe C:\Windows\System32'
-	$versionTest = cmd /c tar --version 2`>`&1
+	Write-Host "`n[$scriptName] Tar not installed!`n"
+	exit 6149
 }
 Write-Host "$versionTest"
+
+Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python git'"
 
 Write-Host "`n[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
 executeExpression "cat requirements.txt"
