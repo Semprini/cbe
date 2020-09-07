@@ -13,7 +13,6 @@ EXPOSE 8000
 WORKDIR C:\\solution
 
 # Provision Build Dependancies into base image, i.e. cache
-COPY .cdaf/custom/tar.exe /Windows/System32/tar.exe 
 COPY .cdaf/bootstrapAgent.ps1 .
 COPY cbe/requirements.txt .
 RUN call powershell -NoProfile -NonInteractive -ExecutionPolicy ByPass -command ./bootstrapAgent.ps1
