@@ -43,18 +43,22 @@ if ( $env:http_proxy ) {
 	executeExpression "`$env:https_proxy = '$env:http_proxy'"
 }
 
-$env:CDAF_AUTOMATION_ROOT = (Get-Item .\automation).FullName
-if ( Test-Path $env:CDAF_AUTOMATION_ROOT ) {
+if ( $env:CDAF_AUTOMATION_ROOT ) {
 	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (existing)`n"
 } else {
-	Write-Host "[$scriptName] Install CDAF to user directory`n"
-	executeExpression '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12'
-	executeExpression '(New-Object System.Net.WebClient).DownloadFile("https://codeload.github.com/cdaf/windows/zip/master", "$PWD\cdaf.zip")'
-	executeExpression 'Add-Type -AssemblyName System.IO.Compression.FileSystem'
-	executeExpression '[System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\cdaf.zip", "$PWD")'
-	$env:CDAF_AUTOMATION_ROOT = "$env:USERPROFILE\.cdaf"
-	executeExpression "Move-Item .\windows-master\automation\ $env:CDAF_AUTOMATION_ROOT"
-	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (downloaded from GitHub)"
+	if ( Test-Path .\automation ) {
+		$env:CDAF_AUTOMATION_ROOT = (Get-Item .\automation).FullName
+		Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (existing)`n"
+	} else {
+		Write-Host "[$scriptName] Install CDAF to user directory`n"
+		executeExpression '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12'
+		executeExpression '(New-Object System.Net.WebClient).DownloadFile("https://codeload.github.com/cdaf/windows/zip/master", "$PWD\cdaf.zip")'
+		executeExpression 'Add-Type -AssemblyName System.IO.Compression.FileSystem'
+		executeExpression '[System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\cdaf.zip", "$PWD")'
+		$env:CDAF_AUTOMATION_ROOT = "$env:USERPROFILE\.cdaf"
+		executeExpression "Move-Item .\windows-master\automation\ $env:CDAF_AUTOMATION_ROOT"
+		Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (downloaded from GitHub)"
+	}
 }
 
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
