@@ -17,13 +17,6 @@ end
 vRAM = 1024 * scale
 vCPU = scale
 
-# If this environment variable is set, then the location defined will be used for media, e.g. 'E:\.provision'
-if ENV['SYNCED_FOLDER']
-  synchedFolder = ENV['SYNCED_FOLDER']
-else
-  synchedFolder = '../.provision'
-end
-
 Vagrant.configure(2) do |allhosts|
 
   allhosts.vm.define 'cbe' do |cbe|
@@ -47,7 +40,9 @@ Vagrant.configure(2) do |allhosts|
       virtualbox.gui = false
       virtualbox.memory = "#{vRAM}"
       virtualbox.cpus = "#{vCPU}"
-      override.vm.synced_folder "#{synchedFolder}", '/.provision'
+      if ENV['SYNCED_FOLDER']
+        override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", '/.provision'
+      end
       override.vm.network 'private_network', ip: '172.16.17.90'
       override.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\addHOSTS.ps1 172.16.17.90 cbe.mshome.net'
     end
@@ -57,7 +52,9 @@ Vagrant.configure(2) do |allhosts|
       hyperv.memory = "#{vRAM}"
       hyperv.cpus = "#{vCPU}"
       override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
-      override.vm.synced_folder "#{synchedFolder}", "/.provision", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
+      if ENV['SYNCED_FOLDER']
+        override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", "/.provision", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
+      end
     end
   end
 
