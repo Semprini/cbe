@@ -48,6 +48,9 @@ if ( Test-Path .\automation ) {
 	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (existing)`n"
 } else {
 	Write-Host "[$scriptName] Install CDAF to user directory`n"
+	if ( Test-Path windows-master ) {
+		Remove-Item -Recurse -Force windows-master
+	}
 	executeExpression '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12'
 	executeExpression '(New-Object System.Net.WebClient).DownloadFile("https://codeload.github.com/cdaf/windows/zip/master", "$PWD\cdaf.zip")'
 	executeExpression 'Add-Type -AssemblyName System.IO.Compression.FileSystem'
