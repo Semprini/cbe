@@ -13,8 +13,8 @@ EXPOSE 8000
 WORKDIR C:\\solution
 
 # Provision Build Dependancies into base image, i.e. cache
-COPY .cdaf/bootstrapAgent.ps1 .
 COPY cbe/requirements.txt .
+COPY .cdaf/bootstrapAgent.ps1 .
 RUN call powershell -NoProfile -NonInteractive -ExecutionPolicy ByPass -command ./bootstrapAgent.ps1
 
 # Change workdir to the mapped folder so that the build artefacts are available on the host

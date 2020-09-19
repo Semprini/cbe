@@ -38,6 +38,9 @@ if ($project) {
     Write-Host "[$scriptName] project : (not supplied, no directory change)"
 }
 
+$workspace = Get-Location
+Write-Host "[$scriptName] pwd     : $workspace"
+
 if ( $env:http_proxy ) {
 	Write-Host "[$scriptName] Set HTTPS proxy for Python Package Manager (PiP)`n"
 	executeExpression "`$env:https_proxy = '$env:http_proxy'"
@@ -50,9 +53,11 @@ if ( Test-Path .\automation\remote\capabilities.ps1 ) {
 	Write-Host "[$scriptName] Install CDAF to user directory`n"
 	executeExpression "cd $env:USERPROFILE"
 	executeExpression '. { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex'
-	$env:CDAF_AUTOMATION_ROOT = "$env:USERPROFILE\automation\remote\capabilities.ps1"
+	$env:CDAF_AUTOMATION_ROOT = "$env:USERPROFILE\automation"
+	executeExpression "cd $workspace"
 }
 
+executeExpression "$env:CDAF_AUTOMATION_ROOT\remote\capabilities.ps1"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT"
 
