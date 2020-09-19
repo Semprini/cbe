@@ -53,22 +53,28 @@ To use a virtual environment requires Vagrant and VirtualBox or Hyper-V, from th
 
 ## Windows Containers
 
-Docker and Vagrant are supported. For Vagrant install to workspace
+Install CDAF in your user space
 
-    $env:CDAF_PATH = '.\automation'
+    cd ~
+    . { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex
 
-Install CDAF
+For Windows 10
 
-    curl 'https://raw.githubusercontent.com/cdaf/windows/master/installCDAF.ps1' -UseBasicParsing  | Select-Object -Expand Content  | PowerShell
+    ~\automation\provisioning\base.ps1 docker-desktop
 
-If you have Docker for Windows installed, switch to Windows Containers and run delivery emulation:
+For Windows Server
 
-    cdEmulate test ..\venv\Scripts\automation
+    ~\automation\provisioning\installDocker.ps1
 
-To execute the docker-compose tests, set the environment variable
+Clone the repository
 
-    $env:environmentDelivery = 'DOCKER'
-    cdEmulate test ..\venv\Scripts\automation
+    git clone https://github.com/cdaf/cbe.git
+    cd cbe
+
+Execute the end-to-end construction, note: if the COMPOSE_KEEP environment variable is not set, the environment will be destroyed automatically after testing is complete
+
+    $env:COMPOSE_KEEP = 'yes'
+    ~\automation\entry
 
 Note: If Docker is not available, the emulation will fall back to using native Python on the host
 
