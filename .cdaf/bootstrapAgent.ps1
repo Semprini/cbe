@@ -43,21 +43,14 @@ if ( $env:http_proxy ) {
 	executeExpression "`$env:https_proxy = '$env:http_proxy'"
 }
 
-if ( Test-Path .\automation ) {
+if ( Test-Path .\automation\remote\capabilities.ps1 ) {
 	$env:CDAF_AUTOMATION_ROOT = (Get-Item .\automation).FullName
 	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (existing)`n"
 } else {
 	Write-Host "[$scriptName] Install CDAF to user directory`n"
-	if ( Test-Path windows-master ) {
-		Remove-Item -Recurse -Force windows-master
-	}
-	executeExpression '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12'
-	executeExpression '(New-Object System.Net.WebClient).DownloadFile("https://codeload.github.com/cdaf/windows/zip/master", "$PWD\cdaf.zip")'
-	executeExpression 'Add-Type -AssemblyName System.IO.Compression.FileSystem'
-	executeExpression '[System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\cdaf.zip", "$PWD")'
-	$env:CDAF_AUTOMATION_ROOT = "$env:USERPROFILE\.cdaf"
-	executeExpression "Move-Item .\windows-master\automation\ $env:CDAF_AUTOMATION_ROOT"
-	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (downloaded from GitHub)"
+	executeExpression "cd $env:USERPROFILE"
+	executeExpression '. { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex'
+	$env:CDAF_AUTOMATION_ROOT = "$env:USERPROFILE\automation\remote\capabilities.ps1"
 }
 
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
