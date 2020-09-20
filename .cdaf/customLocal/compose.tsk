@@ -1,0 +1,51 @@
+Write-Host "`nLoad the branch (REVISION) and container image from the manifest, placed here by package.tsk`n"
+PROPLD manifest.txt
+
+ASSIGN $id = $("${SOLUTION}_${REVISION}").ToLower()
+$workspace = $(pwd)
+$env:WORK_SPACE = Split-Path -parent $workspace
+Write-host $env:WORK_SPACE
+
+# Copy any artefacts needed into specific images here
+
+cd compose
+..\imageBuild.ps1 ${id} ${BUILDNUMBER} ${containerImage} '--build-arg COMPOSE_KEEP=$env:COMPOSE_KEEP'
+cd ..
+
+ASSIGN $composePersist = "${env:TEMP}\${id}"
+MAKDIR $composePersist
+VECOPY compose\docker-compose.yml $composePersist
+cd $composePersist
+
+Write-Host "List containers current state`n"
+docker ps
+
+Write-Host "`nCleanup from previously test`n"
+ASSIGN $env:TARGET_TAG = "${id}_target"
+ASSIGN $env:TEST_TAG = "${id}_test"
+docker-compose down --remove-orphans
+docker-compose rm -f
+
+Write-Host "Set the build number to use`n"
+ASSIGN $env:TARGET_TAG = "${id}_target:${BUILDNUMBER}"
+ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
+
+docker-compose up -d target
+
+Write-Host "Deploy to target (allow up to 2 minutes)`n"
+ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
+& $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Watch log to keep container alive' 120
+
+docker-compose up -d test
+
+Write-Host "Execute tests (allow 5 minutes to complete)`n"
+ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
+& $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
+
+Write-Host "`nTear down if not explicit varaible to retain`n"
+if ( $env:COMPOSE_KEEP ) { docker ps } else { docker-compose down; docker-compose rm -f }
+
+& $env:WORK_SPACE\TasksLocal\dockerClean.ps1 ${id}_target ${BUILDNUMBER}
+& $env:WORK_SPACE\TasksLocal\dockerClean.ps1 ${id}_test ${BUILDNUMBER}
+
+cd $workspace

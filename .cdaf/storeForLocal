@@ -1,1 +1,11 @@
-docker-compose.yml
+# Only store provisioning scripts needed, not all
+automation\provisioning\runner.bat
+automation\remote\capabilities.ps1
+
+# For TargetlessCD
+compose
+
+# for imageBuild
+compose/runtime/Dockerfile -flat
+compose/runtime/keepAlive.ps1 -flat
+compose/runtime/bootstrapTarget.ps1 -flat
