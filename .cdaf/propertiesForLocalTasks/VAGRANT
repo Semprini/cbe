@@ -1,3 +1,0 @@
-# Run as child process
-deployTaskOverride=startAsService.tsk
-environment=prod

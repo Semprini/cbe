@@ -1,9 +1,6 @@
-cbe -Recurse
-requirements.txt
-deploy.py
-manage.py
-setup.py
-start.ps1
-docker-compose.yml
-$AUTOMATIONROOT\remote\logWatch.ps1 -Flat
-$AUTOMATIONROOT\provisioning\runner.bat -Flat
+# Only store provisioning scripts needed, not all
+automation\provisioning\runner.bat
+automation\remote\capabilities.ps1
+
+# For TargetlessCD
+compose

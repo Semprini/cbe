@@ -17,19 +17,6 @@ Industry Specific Extension Projects
 
 Sources: TM Fourum SID (Telco), IBM IFW (Finance/Banking), IAA (Insurance)
 
-## To run
-
-```shell
-git clone https://github.com/Semprini/cbe.git
-cd cbe
-pip install -r requirements.txt
-python manage.py migrate (will use a default sqllite db)
-python manage.py createsuperuser <username> <email> <password>
-python manage.py runserver
-browse to http://localhost:8000/admin for the admin interface
-browse to http://localhost:8000/api for the api interface
-```
-
 # How is this different to an API from a product?
 
 It is the role of CBE to express relationships and provide consistent schema for use in multiple contexts. A product will rightly store data for it's own purpose and expose it's data through product oriented APIs, we then use integration architectures like SOA to expose and adjust the semantics for different contexts. 
@@ -46,10 +33,13 @@ Coming soon to a data model near you:
 - More roles for PartyRole and BusinessInteraction
 - Product
 
-
 The data model is designed to be extended for each industry. In Party, the PartyRole class is the main abstract entity from which concrete classes like Customer or Supplier should be derived.
 
 Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data model is held in the Docs folder as a Sparx EA model
+
+# Development Environment
+
+See cbe subdirectory
 
 # Virtual Desktop Environment
 
@@ -63,22 +53,28 @@ To use a virtual environment requires Vagrant and VirtualBox or Hyper-V, from th
 
 ## Windows Containers
 
-Docker and Vagrant are supported. For Vagrant install to workspace
+Install CDAF in your user space
 
-    $env:CDAF_PATH = '.\automation'
+    cd ~
+    . { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex
 
-Install CDAF
+For Windows 10
 
-    curl 'https://raw.githubusercontent.com/cdaf/windows/master/installCDAF.ps1' -UseBasicParsing  | Select-Object -Expand Content  | PowerShell
+    ~\automation\provisioning\base.ps1 docker-desktop
 
-If you have Docker for Windows installed, switch to Windows Containers and run delivery emulation:
+For Windows Server
 
-    cdEmulate test ..\venv\Scripts\automation
+    ~\automation\provisioning\installDocker.ps1
 
-To execute the docker-compose tests, set the environment variable
+Clone the repository
 
-    $env:environmentDelivery = 'DOCKER'
-    cdEmulate test ..\venv\Scripts\automation
+    git clone https://github.com/cdaf/cbe.git
+    cd cbe
+
+Execute the end-to-end construction, note: if the COMPOSE_KEEP environment variable is not set, the environment will be destroyed automatically after testing is complete
+
+    $env:COMPOSE_KEEP = 'yes'
+    ~\automation\entry
 
 Note: If Docker is not available, the emulation will fall back to using native Python on the host
 
@@ -118,4 +114,4 @@ Install CDAF from GitHub
 
 Run from installed CDAF
 
-    ~/.cdaf/processor/entry.bat
+    ~/.cdaf/entry.bat

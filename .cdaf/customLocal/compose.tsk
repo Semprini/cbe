@@ -1,35 +1,51 @@
-$workspace = "$(pwd)"
-if ( $retain ) { $env:COMPOSE_KEEP = $retain }
+Write-Host "`nLoad the branch (REVISION) and container image from the manifest, placed here by package.tsk`n"
+PROPLD manifest.txt
 
-$composePersist = "/$SOLUTION/$environment"
-Write-Host "Each environment has it's own persistent store (${composePersist}) to ensure teardown based on the compose file they were created with`n"
-MAKDIR "${composePersist}"
+ASSIGN $id = $("${SOLUTION}_${REVISION}").ToLower()
+$workspace = $(pwd)
+$env:WORK_SPACE = Split-Path -parent $workspace
+Write-host $env:WORK_SPACE
 
-Write-Host "`n[$scriptName] Set port for testing`n"
-if ( ! ( $publishedPort )) { $publishedPort = 8000 }
-$env:CBE_PORT = ./nextFreePort.ps1 $publishedPort
+# Copy any artefacts needed into specific images here
 
-VECOPY .\compose.ps1 $composePersist
-cd "${composePersist}"
+cd compose
+..\imageBuild.ps1 ${id} ${BUILDNUMBER} ${containerImage} '--build-arg COMPOSE_KEEP=$env:COMPOSE_KEEP'
+cd ..
 
-Write-Host "Place the current version of compose file to persistent store (${composePersist})`n"
-VECOPY ${workspace}\docker-compose.yml "${composePersist}/docker-compose.yml"
+ASSIGN $composePersist = "${env:TEMP}\${id}"
+MAKDIR $composePersist
+VECOPY compose\docker-compose.yml $composePersist
+cd $composePersist
 
-cat "${composePersist}/docker-compose.yml"
+Write-Host "List containers current state`n"
+docker ps
 
-$env:CORE_IMAGE = "${SOLUTION}"
-.\compose.ps1
+Write-Host "`nCleanup from previously test`n"
+ASSIGN $env:TARGET_TAG = "${id}_target"
+ASSIGN $env:TEST_TAG = "${id}_test"
+docker-compose down --remove-orphans
+docker-compose rm -f
 
-$env:CORE_IMAGE = "${SOLUTION}:$BUILDNUMBER"
-.\compose.ps1 'docker-compose up -d'
+Write-Host "Set the build number to use`n"
+ASSIGN $env:TARGET_TAG = "${id}_target:${BUILDNUMBER}"
+ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
 
-Write-Host "Wait up to 5 minutes for migrations`n"
-& ${workspace}\dockerLog.ps1 DOCKER-COMPOSE runserver 300
+docker-compose up -d target
 
-Write-Host "Test on `$env:CBE_PORT $env:CBE_PORT`n"
-& ${workspace}\test.ps1 $env:CBE_PORT
+Write-Host "Deploy to target (allow up to 2 minutes)`n"
+ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
+& $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Watch log to keep container alive' 120
 
-if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { .\compose.ps1 }
+docker-compose up -d test
 
-Write-Host "Return to `$workspace $workspace`n"
+Write-Host "Execute tests (allow 5 minutes to complete)`n"
+ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
+& $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
+
+Write-Host "`nTear down if not explicit varaible to retain`n"
+if ( $env:COMPOSE_KEEP ) { docker ps } else { docker-compose down; docker-compose rm -f }
+
+& $env:WORK_SPACE\TasksLocal\dockerClean.ps1 ${id}_target ${BUILDNUMBER}
+& $env:WORK_SPACE\TasksLocal\dockerClean.ps1 ${id}_test ${BUILDNUMBER}
+
 cd $workspace

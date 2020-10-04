@@ -32,14 +32,26 @@ node {
     }
 
     stage ('Get latest image and Test using Docker') {
-      bat "automation\\processor\\entry.bat"
+      bat "automation\\entry.bat"
     }
 
     stage ('Test Using Vagrant') {
-      bat "type Vagrantfile"
-      bat "vagrant destroy -f & verify >nul"
-      bat "vagrant box list & verify >nul"
-      bat "vagrant up"
+      bat '''
+        type Vagrantfile
+        vagrant destroy -f & verify >nul
+        vagrant box list & verify >nul
+        vagrant up
+      '''
+    }
+
+    stage ('Test Using Vagrant') {
+      bat '''
+        cd cbe
+        type Vagrantfile
+        vagrant destroy -f & verify >nul
+        vagrant box list & verify >nul
+        vagrant up
+      '''
     }
 
   } catch (e) {
@@ -51,10 +63,14 @@ node {
   } finally {
 
     stage ('Discard GitHub branch') {
-      bat "vagrant destroy -f & verify >nul"
-      bat "git checkout -- ."
-      bat "git checkout -f master"
-      bat "git branch -D local_branch"
+      bat '''
+        vagrant destroy -f & verify >nul
+        cd cbe
+        vagrant destroy -f & verify >nul
+        git checkout -- .
+        git checkout -f master
+        git branch -D local_branch
+      '''
     }
   }
 }

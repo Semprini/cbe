@@ -1,5 +1,6 @@
 # DOCKER-VERSION 1.2.0
-FROM mcr.microsoft.com/windows/servercore:ltsc2016@sha256:5bd97dbab1afe8d3200f5d5c974df3b0130e74e8a69fddcd427699c4c8cb5037
+ARG CONTAINER_IMAGE
+FROM ${CONTAINER_IMAGE}
 
 ARG proxy
 ENV http_proxy=$proxy
@@ -11,16 +12,12 @@ EXPOSE 8000
 # Copy solution, provision and then build
 WORKDIR C:\\solution
 
-COPY automation/provisioning automation/provisioning
-COPY requirements.txt requirements.txt
-COPY .cdaf/bootstrap.ps1 .cdaf/bootstrap.ps1
+# Provision Build Dependancies into base image, i.e. cache
+COPY cbe/requirements.txt .
+COPY .cdaf/bootstrapAgent.ps1 .
+RUN call powershell -NoProfile -NonInteractive -ExecutionPolicy ByPass -command ./bootstrapAgent.ps1
 
-# Provision Build Dependancies
-RUN automation\provisioning\runner.bat .cdaf\bootstrap.ps1
+# Change workdir to the mapped folder so that the build artefacts are available on the host
+WORKDIR C:\\solution\\workspace
 
-# Copy the solution (do this last to utilise cache of provisioning steps)
-COPY cbe cbe
-COPY start.ps1 start.ps1
-COPY *.py ./
-
-CMD automation\provisioning\runner.bat start.ps1
+CMD echo Usage: docker run --tty --volume ${workspace}\:C:/solution/workspace ${imageName}:${imageTag} automation\ci.bat $buildNumber revision containerbuild

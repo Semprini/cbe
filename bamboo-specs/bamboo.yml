@@ -13,7 +13,7 @@ stages:
 Build Job:
   tasks:
     - script:
-        - "%USERPROFILE%\\.cdaf\\processor\\entry.bat ${bamboo.buildNumber} ${bamboo.repository.branch.name}"
+        - "%USERPROFILE%\\.cdaf\\entry.bat ${bamboo.buildNumber} ${bamboo.repository.branch.name}"
 
   artifacts:
     - name: TasksLocal

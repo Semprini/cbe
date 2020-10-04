@@ -107,6 +107,8 @@ UpgradeLog.htm
 web.config
 web.debug.config
 web.config
+
+# CDAF
 /TasksLocal/
 /TasksRemote/
 /*.zip
@@ -116,10 +118,13 @@ web.config
 /.pydevproject
 /buildnumber.counter
 /imagenumber.counter
-/build.tsk
 /storeForLocal_manifest.txt
 /storeForRemote_manifest.txt
 /propertiesForLocalTasks/
 /propertiesForRemoteTasks/
 /automation/
 /windows-master/
+cbe.tar.gz
+site-packages.tar.gz
+/runtime
+.vscode/settings.json

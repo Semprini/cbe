@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |allhosts|
+
+  allhosts.vm.define 'build' do |build|
+    build.vm.box = 'cdaf/WindowsServerStandard'
+    build.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
+    build.vm.provision 'shell', inline: 'Write-Host "cd C:\vagrant\ ; .\executeReadme.ps1"'
+    build.vm.provision 'shell', inline: 'cd C:\vagrant\ ; .\executeReadme.ps1'
+    
+    # Oracle VirtualBox, relaxed configuration for Desktop environment
+    build.vm.provider 'virtualbox' do |virtualbox, override|
+      virtualbox.gui = false
+      virtualbox.memory = 4096
+      virtualbox.cpus = 4
+      override.vm.network 'private_network', ip: '172.16.17.100'
+    end
+
+    # Set environment variable VAGRANT_DEFAULT_PROVIDER to 'hyperv'
+    build.vm.provider 'hyperv' do |hyperv, override|
+      hyperv.memory = 4096
+      hyperv.cpus = 4
+      override.vm.hostname = 'build'
+      override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
+    end
+  end
+
+end
