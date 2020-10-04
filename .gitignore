@@ -107,6 +107,8 @@ UpgradeLog.htm
 web.config
 web.debug.config
 web.config
+
+# CDAF
 /TasksLocal/
 /TasksRemote/
 /*.zip
@@ -124,3 +126,4 @@ web.config
 /windows-master/
 cbe.tar.gz
 site-packages.tar.gz
+/runtime

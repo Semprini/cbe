@@ -25,7 +25,7 @@ Vagrant.configure(2) do |allhosts|
     cbe.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
 
     # Generic provisioning, used for both in-situ and containers
-    cbe.vm.provision 'shell', path: '.\.cdaf\bootstrapPython.ps1', args: 'c:\vagrant\cbe'
+    cbe.vm.provision 'shell', path: '.\.cdaf\imageBuild\bootstrapPython.ps1', args: 'c:\vagrant\cbe'
 
     # In-situ provisioning
     cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\provisioning\mkdir.ps1 C:\cbe $env:COMPUTERNAME\vagrant'

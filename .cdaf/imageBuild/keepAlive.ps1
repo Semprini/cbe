@@ -25,12 +25,9 @@ if ($ENVIRONMENT) {
     Write-Host "[$scriptName] ENVIRONMENT : (not supplied)" 
 }
 
-Write-Host "`n[$scriptName] Execute CDAF Delivery`n"
-executeExpression ".\TasksLocal\delivery.bat $ENVIRONMENT"
-
 $logFile = "$env:TEMP\psd.log"
 Add-Content $logFile '[START] ---------- Watch log to keep container alive ----------'
-Add-Content $logFile "[START] $(date)"
+Add-Content $logFile "[START] $(Get-date)"
 Write-Host "[$scriptName] Get-Content $logFile -Wait -Tail 1000"
 
 Get-Content $logFile -Wait -Tail 1000
