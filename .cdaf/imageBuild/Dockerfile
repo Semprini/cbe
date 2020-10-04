@@ -15,11 +15,14 @@ COPY automation automation
 COPY bootstrapPython.ps1 .
 RUN automation\provisioning\runner.bat bootstrapPython.ps1
 
-# Place entry script
-COPY keepAlive.ps1 .
+# Install runtime dependencies at System Level
+RUN RMDIR /Q/S C:\python38\lib\site-packages
+ADD site-packages.tar.gz /
 
-# Change workdir to an new (empty) folder for volume mount to work
-WORKDIR /solution/workspace
+# Install the application
 ADD cbe.tar.gz .
+COPY manage.py .
+RUN python manage.py migrate
+RUN python manage.py createsuperuser superuser super@hero.net passw0rd
 
-CMD ["C:/solution/automation/provisioning/runner.bat", "../keepAlive.ps1", "TARGETLESS"]
+CMD ["python", "manage.py", "runserver"]
