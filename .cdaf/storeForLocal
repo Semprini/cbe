@@ -1,6 +1,16 @@
 # Only store provisioning scripts needed, not all
-automation\provisioning\runner.bat
-automation\remote\capabilities.ps1
+$AUTOMATIONROOT\provisioning\runner.bat
+$AUTOMATIONROOT\remote\capabilities.ps1
 
 # For TargetlessCD
 compose
+
+# In-situ runtime
+cbe.tar.gz
+site-packages.tar.gz
+requirements.txt
+deploy.py
+manage.py
+setup.py
+$AUTOMATIONROOT\remote\logWatch.ps1 -Flat
+$AUTOMATIONROOT\provisioning\runner.bat -Flat
