@@ -72,7 +72,7 @@ Vagrant.configure(2) do |allhosts|
       end
       override.vm.network 'private_network', ip: '172.16.17.90'
       override.vm.provision 'shell', inline: "$env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
-      override.vm.provision 'shell', inline: 'cd /vagrant ; ./release.ps1 VAGRANT'
+      override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT'
     end
     
     # Microsoft Hyper-V does not support port forwarding: vagrant up target --provider hyperv
@@ -83,7 +83,7 @@ Vagrant.configure(2) do |allhosts|
       if ENV['SYNCED_FOLDER']
         override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", "/.provision", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
       end
-      override.vm.provision 'shell', inline: 'cd /vagrant ; ./release.ps1 VAGRANT'
+      override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT'
     end
   end
 
