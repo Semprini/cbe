@@ -9,8 +9,6 @@ compose
 cbe.tar.gz
 site-packages.tar.gz
 requirements.txt
-deploy.py
-manage.py
-setup.py
+cbe\manage.py -Flat
 $AUTOMATIONROOT\remote\logWatch.ps1 -Flat
 $AUTOMATIONROOT\provisioning\runner.bat -Flat

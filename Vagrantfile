@@ -57,7 +57,7 @@ Vagrant.configure(2) do |allhosts|
     # In-situ provisioning
     cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\\provisioning\\mkdir.ps1 C:\\cbe $env:COMPUTERNAME\\vagrant'
     cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\\provisioning\\base.ps1 "nssm"'
-    cbe.vm.provision 'shell', inline: 'nssm install cbe python manage.py runserver 0.0.0.0:8000'
+    cbe.vm.provision 'shell', inline: 'nssm install cbe python -u manage.py runserver 0.0.0.0:8000'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppDirectory C:\\cbe'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppStdout C:\\cbe\\cbe.log'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppStderr C:\\cbe\\cbe.log'
@@ -74,7 +74,7 @@ Vagrant.configure(2) do |allhosts|
       override.vm.provision 'shell', inline: "$env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
       override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT'
     end
-    
+
     # Microsoft Hyper-V does not support port forwarding: vagrant up target --provider hyperv
     cbe.vm.provider 'hyperv' do |hyperv, override|
       hyperv.memory = "#{vRAM}"
@@ -86,5 +86,4 @@ Vagrant.configure(2) do |allhosts|
       override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT'
     end
   end
-
 end
