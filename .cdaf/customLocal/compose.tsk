@@ -27,14 +27,14 @@ docker-compose down --remove-orphans
 docker-compose rm -f
 
 Write-Host "Set the build number to use`n"
-ASSIGN $env:TARGET_TAG = "${id}_runtime:${BUILDNUMBER}"
+if ( ${REVISION} -eq 'master') { $env:TARGET_TAG = "cdaf/${SOLUTION}:${BUILDNUMBER}" } else { $env:TARGET_TAG = "${id}_runtime:${BUILDNUMBER}" }
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
 
 docker-compose up -d runtime
 
 Write-Host "Deploy to runtime (allow up to 2 minutes)`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
-& $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Watch log to keep container alive' 120
+& $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader' 120
 
 docker-compose up -d test
 
