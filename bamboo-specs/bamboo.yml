@@ -32,21 +32,10 @@ release-naming:
 
 environments:
   - DOCKER
-  - BAMBOO_FORK
 
 DOCKER:
   triggers:
     - build-success
-  tasks:
-    - clean
-    - artifact-download:
-        destination: ${bamboo.working.directory}
-    - script:
-        - "${bamboo.build.working.directory}\\TasksLocal\\delivery.bat ${bamboo.deploy.environment} ${bamboo.deploy.release}"
-
-BAMBOO_FORK:
-  triggers:
-    - environment-success: DOCKER
   tasks:
     - clean
     - artifact-download:

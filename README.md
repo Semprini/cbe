@@ -45,7 +45,7 @@ Using Windows with either docker-desktop or windows containers, run the CBE
     $ip = ((docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $id).Split())[2]
     Write-Host "http://${ip}:8000/admin"
 
-Open the URL returned in your browser
+Open the URL returned in your browser and login with the following credentials superuser passw0rd
 
 To stop and remove
 
