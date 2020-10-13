@@ -89,7 +89,8 @@ if ( $LASTEXITCODE -ne 0 ) {
 Write-Host "$versionTest"
 
 Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
-executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python git'"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 git"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 python -version 3.8.6"
 
 Write-Host "`n[$scriptName] Use Python Package Manager (PiP) to install dependancies:`n"
 executeExpression "cat requirements.txt"

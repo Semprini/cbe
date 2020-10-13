@@ -1,0 +1,1 @@
+./test.ps1 http://${environment}:${testPort}/admin

@@ -1,8 +1,0 @@
-cbe.tar.gz
-site-packages.tar.gz
-requirements.txt
-deploy.py
-manage.py
-setup.py
-$AUTOMATIONROOT\remote\logWatch.ps1 -Flat
-$AUTOMATIONROOT\provisioning\runner.bat -Flat
