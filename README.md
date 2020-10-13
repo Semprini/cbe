@@ -111,7 +111,8 @@ Install CDAF from GitHub
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\cdaf.zip", "$PWD")
     Move-Item .\windows-master\automation\ ~/.cdaf
+    ~/.cdaf/automation/provisioning/addpath.ps1 ~/.cdaf/automation User
 
 Run from installed CDAF
 
-    ~/.cdaf/entry.bat
+    entry
