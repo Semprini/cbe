@@ -42,7 +42,7 @@ Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data m
 Using Windows with either docker-desktop or windows containers, run the CBE
 
     $id = docker run -d cdaf/cbe
-    $ip = ((docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $id).Split())[2]
+    $ip = (docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $id)
     Write-Host "http://${ip}:8000/admin"
 
 Open the URL returned in your browser and login with the following credentials superuser passw0rd
