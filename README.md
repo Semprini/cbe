@@ -41,7 +41,16 @@ Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data m
 
 Using Windows with either docker-desktop or windows containers, run the CBE
 
-    docker run -d cdaf/cbe
+    $id = docker run -d cdaf/cbe
+    $ip = ((docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $id).Split())[2]
+    Write-Host "http://${ip}:8000/admin"
+
+Open the URL returned in your browser
+
+To stop and remove
+
+    docker stop $id
+    docker rm $id
 
 # Development Environment
 
