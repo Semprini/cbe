@@ -33,6 +33,7 @@ Vagrant.configure(2) do |allhosts|
       virtualbox.cpus = "#{vCPU}"
       override.vm.network 'private_network', ip: '172.16.17.100'
       override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.100 build.mshome.net"
       override.vm.provision 'shell', inline: "cd /vagrant ; ci"
     end
 
@@ -71,7 +72,8 @@ Vagrant.configure(2) do |allhosts|
         override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", '/.provision'
       end
       override.vm.network 'private_network', ip: '172.16.17.90'
-      override.vm.provision 'shell', inline: "$env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.100 build.mshome.net"
       override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT'
     end
 
