@@ -1,5 +1,5 @@
 Param (
-	[string]$testPort
+	[string]$testURL
 )
 
 $scriptName = 'test.ps1'
@@ -12,7 +12,7 @@ function executeExpression ($expression) {
 	try {
 		Invoke-Expression $expression
 	    if(!$?) { Write-Host "[$scriptName] `$? = $?"; exit 1 }
-	} catch { echo $_.Exception|format-list -force; exit 2 }
+	} catch { Write-Host $_.Exception|format-list -force; exit 2 }
     if ( $error[0] ) { Write-Host "[$scriptName] `$error[0] = $error"; exit 3 }
     if (( $LASTEXITCODE ) -and ( $LASTEXITCODE -ne 0 )) { Write-Host "[$scriptName] `$LASTEXITCODE = $LASTEXITCODE "; exit $LASTEXITCODE }
 }
@@ -49,7 +49,7 @@ function executeRetry ($expression) {
 			} else {
 				$retryCount += 1
 				Write-Host "[$scriptName] Wait $wait seconds, then retry $retryCount of $retryMax"
-				sleep $wait
+				Start-Sleep $wait
 			}
 		}
     }
@@ -57,7 +57,7 @@ function executeRetry ($expression) {
 
 # Use the CDAF provisioning helpers
 Write-Host "`n[$scriptName] ---------- start ----------`n"
-Write-Host "[$scriptName]   testPort    : $testPort"
+Write-Host "[$scriptName]   testURL     : $testURL"
 Write-Host "[$scriptName]   SOLUTION    : $SOLUTION"
 Write-Host "[$scriptName]   BUILDNUMBER : $BUILDNUMBER"
 Write-Host "[$scriptName]   ENVIRONMENT : $ENVIRONMENT"
@@ -72,11 +72,10 @@ if ($versionTest -like '*not recognized*') {
 }
 
 Write-Host "Disable outbound proxy and test container"
-$url = "http://${env:COMPUTERNAME}:${testPort}/admin"
 Write-Host "`$webClient = New-Object System.Net.WebClient"
 $webClient = New-Object System.Net.WebClient
 executeExpression "`$webClient.Proxy = [System.Net.GlobalProxySelection]::GetEmptyWebProxy()"
-executeRetry "`$webClient.DownloadString('$url') | findstr /C:`"Common Business Entities`""
+executeRetry "`$webClient.DownloadString('$testURL') | findstr /C:`"Common Business Entities`""
 
 Write-Host "`n[$scriptName] ---------- stop ----------"
 $error.clear()

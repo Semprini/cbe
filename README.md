@@ -37,6 +37,21 @@ The data model is designed to be extended for each industry. In Party, the Party
 
 Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data model is held in the Docs folder as a Sparx EA model
 
+# Try it out!
+
+Using Windows with either docker-desktop or windows containers, run the CBE
+
+    $id = docker run -d cdaf/cbe
+    $ip = ((docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $id).Split())[2]
+    Write-Host "http://${ip}:8000/admin"
+
+Open the URL returned in your browser and login with the following credentials superuser passw0rd
+
+To stop and remove
+
+    docker stop $id
+    docker rm $id
+
 # Development Environment
 
 See cbe subdirectory
@@ -111,7 +126,8 @@ Install CDAF from GitHub
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\cdaf.zip", "$PWD")
     Move-Item .\windows-master\automation\ ~/.cdaf
+    ~/.cdaf/automation/provisioning/addpath.ps1 ~/.cdaf/automation User
 
 Run from installed CDAF
 
-    ~/.cdaf/entry.bat
+    entry
