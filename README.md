@@ -37,6 +37,12 @@ The data model is designed to be extended for each industry. In Party, the Party
 
 Check the [Wiki](https://github.com/Semprini/cbe/wiki) for more info. The data model is held in the Docs folder as a Sparx EA model
 
+# Try it out!
+
+Using Windows with either docker-desktop or windows containers, run the CBE
+
+    docker run -d cdaf/cbe
+
 # Development Environment
 
 See cbe subdirectory
