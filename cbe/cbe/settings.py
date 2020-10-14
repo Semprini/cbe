@@ -116,6 +116,7 @@ REST_FRAMEWORK = {
 }
 
 MQ_FRAMEWORK = {
+    'TYPE': 'stdout',
     'HOST': 'None',
     'USER': 'None',
     'PASSWORD': 'None',
