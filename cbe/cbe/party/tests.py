@@ -9,7 +9,6 @@ from django.core.checks import Error
 from django.forms.models import BaseModelFormSet
 from django.forms.widgets import Select
 from django.test import SimpleTestCase, TestCase
-from django.utils import six
 
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
