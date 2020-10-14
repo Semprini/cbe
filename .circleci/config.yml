@@ -21,6 +21,7 @@ jobs:
           name: run unit tests
           command: |
             . venv/bin/activate
+            cd cbe
             python manage.py test
       - store_test_results:
           path: test-results
