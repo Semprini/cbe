@@ -33,8 +33,11 @@ docker-compose up -d runtime
 
 Write-Host "Deploy to runtime (allow up to 2 minutes)`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
+
 # & $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader'
+
 $name,$discard,$ip = (docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID}).split(' ')
+docker logs $containerID
 & ${workspace}\executeRetry.ps1 "curl http://${ip}:8000/admin"
 docker logs $containerID
 
