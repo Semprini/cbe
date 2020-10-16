@@ -16,7 +16,7 @@ COPY bootstrapPython.ps1 .
 RUN automation\provisioning\runner.bat bootstrapPython.ps1
 
 # Install runtime dependencies at System Level
-RUN RMDIR /Q/S C:\python38\lib\site-packages
+RUN RMDIR /Q/S C:\python37\lib\site-packages
 ADD site-packages.tar.gz /
 
 # Install the application

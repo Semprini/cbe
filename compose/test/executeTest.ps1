@@ -61,7 +61,7 @@ Write-Host "`n[$scriptName] Automated Test Execution completed successfully."
 if ( $env:COMPOSE_KEEP -eq 'yes' ) {
 	$logFile = "$env:TEMP\psd.log"
 	Add-Content $logFile '[START] ---------- Watch log to keep container alive ----------'
-	Add-Content $logFile "[START] $(date)"
+	Add-Content $logFile "[START] $(Get-date)"
 	Write-Host "[$scriptName] Get-Content $logFile -Wait -Tail 1000"
 	
 	Get-Content $logFile -Wait -Tail 1000

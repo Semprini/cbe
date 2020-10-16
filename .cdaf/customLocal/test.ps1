@@ -75,7 +75,7 @@ Write-Host "Disable outbound proxy and test container"
 Write-Host "`$webClient = New-Object System.Net.WebClient"
 $webClient = New-Object System.Net.WebClient
 executeExpression "`$webClient.Proxy = [System.Net.GlobalProxySelection]::GetEmptyWebProxy()"
-executeRetry "`$webClient.DownloadString('${testURL}')"
+#executeRetry "`$webClient.DownloadString('${testURL}')"
 executeExpression "`$webClient.DownloadString('${testURL}/admin') | findstr /C:`"Common Business Entities`""
 
 Write-Host "`n[$scriptName] ---------- stop ----------"

@@ -38,7 +38,7 @@ ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
 
 $name,$discard,$ip = (docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID}).split(' ')
 docker logs $containerID
-& ${workspace}\executeRetry.ps1 "curl http://${ip}:8000"
+& ${workspace}\executeRetry.ps1 "curl http://${ip}:8000/admin"
 docker logs $containerID
 
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
