@@ -1,12 +1,12 @@
 $workspace = Get-Location
 cmd /c "nssm stop cbe 2> nul"
 
+tar -xzf .\site-packages.tar.gz -C c:\python37\lib\site-packages --strip-components 3
+
 REFRSH manage.py C:\cbe
 MAKDIR C:\cbe\cbe
 tar -xzf .\cbe.tar.gz -C C:\cbe\cbe --strip-components 2
 VECOPY runner.bat C:\cbe
-
-tar -xzf .\site-packages.tar.gz -C c:\python37\lib\site-packages --strip-components 3
 
 cd C:\cbe 
 python manage.py migrate
