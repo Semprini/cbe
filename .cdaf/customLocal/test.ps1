@@ -1,5 +1,6 @@
 Param (
-	[string]$testURL
+	[string]$testURL,
+	[string]$testString
 )
 
 $scriptName = 'test.ps1'
@@ -58,9 +59,7 @@ function executeRetry ($expression) {
 # Use the CDAF provisioning helpers
 Write-Host "`n[$scriptName] ---------- start ----------`n"
 Write-Host "[$scriptName]   testURL     : $testURL"
-Write-Host "[$scriptName]   SOLUTION    : $SOLUTION"
-Write-Host "[$scriptName]   BUILDNUMBER : $BUILDNUMBER"
-Write-Host "[$scriptName]   ENVIRONMENT : $ENVIRONMENT"
+Write-Host "[$scriptName]   testString  : $testString"
 
 $versionTest = cmd /c docker --version 2`>`&1
 cmd /c "exit 0"
@@ -75,8 +74,7 @@ Write-Host "Disable outbound proxy and test container"
 Write-Host "`$webClient = New-Object System.Net.WebClient"
 $webClient = New-Object System.Net.WebClient
 executeExpression "`$webClient.Proxy = [System.Net.GlobalProxySelection]::GetEmptyWebProxy()"
-#executeRetry "`$webClient.DownloadString('${testURL}')"
-executeExpression "`$webClient.DownloadString('${testURL}/admin') | findstr /C:`"Common Business Entities`""
+executeRetry "`$webClient.DownloadString('${testURL}') | findstr /C:`"$testString`""
 
 Write-Host "`n[$scriptName] ---------- stop ----------"
 $error.clear()
