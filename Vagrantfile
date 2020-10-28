@@ -32,8 +32,9 @@ Vagrant.configure(2) do |allhosts|
       virtualbox.memory = "#{vRAM}"
       virtualbox.cpus = "#{vCPU}"
       override.vm.network 'private_network', ip: '172.16.17.100'
-      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
       override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.100 build.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.102 test.mshome.net"
       override.vm.provision 'shell', inline: "cd /vagrant ; ci ; exit $LASTEXITCODE"
     end
 
@@ -71,9 +72,10 @@ Vagrant.configure(2) do |allhosts|
       if ENV['SYNCED_FOLDER']
         override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", '/.provision'
       end
-      override.vm.network 'private_network', ip: '172.16.17.90'
-      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
+      override.vm.network 'private_network', ip: '172.16.17.101'
       override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.100 build.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.102 test.mshome.net"
       override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT.deploy ; exit $LASTEXITCODE'
     end
 
@@ -100,9 +102,10 @@ Vagrant.configure(2) do |allhosts|
       virtualbox.gui = false
       virtualbox.memory = "#{vRAM}"
       virtualbox.cpus = "#{vCPU}"
-      override.vm.network 'private_network', ip: '172.16.17.100'
-      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
+      override.vm.network 'private_network', ip: '172.16.17.102'
       override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.100 build.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.102 test.mshome.net"
       override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT.test ; exit $LASTEXITCODE'
     end
 
