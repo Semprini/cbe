@@ -93,7 +93,7 @@ Vagrant.configure(2) do |allhosts|
     test.vm.box = "#{OVERRIDE_IMAGE}"
     test.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
 
-    test.vm.provision 'shell', path: '.\compoose\test\bootstrapTest.ps1'
+    test.vm.provision 'shell', path: '.\compose\test\bootstrapTest.ps1'
 
     # Oracle VirtualBox, relaxed configuration for Desktop environment
     test.vm.provider 'virtualbox' do |virtualbox, override|
