@@ -62,6 +62,7 @@ Vagrant.configure(2) do |allhosts|
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppDirectory C:\\cbe'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppStdout C:\\cbe\\cbe.log'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppStderr C:\\cbe\\cbe.log'
+    cbe.vm.provision 'shell', inline: '& $env:CDAF_AUTOMATION_ROOT\\provisioning\\openFirewallPort.ps1 "8000"'
 
     # Oracle VirtualBox, cannot use 172.0.0.0/8 range, as that is allocated to Windows Container network
     cbe.vm.provider 'virtualbox' do |virtualbox, override|
@@ -93,7 +94,7 @@ Vagrant.configure(2) do |allhosts|
     test.vm.box = "#{OVERRIDE_IMAGE}"
     test.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
 
-    test.vm.provision 'shell', path: '.\compoose\test\bootstrapTest.ps1'
+    test.vm.provision 'shell', path: '.\compose\test\bootstrapTest.ps1'
 
     # Oracle VirtualBox, relaxed configuration for Desktop environment
     test.vm.provider 'virtualbox' do |virtualbox, override|
