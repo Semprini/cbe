@@ -4,9 +4,8 @@ cmd /c "nssm stop cbe 2> nul"
 tar -xzf .\site-packages.tar.gz -C c:\python37\lib\site-packages --strip-components 3
 
 REFRSH manage.py C:\cbe
-MAKDIR C:\cbe\cbe
-tar -xzf .\cbe.tar.gz -C C:\cbe\cbe --strip-components 2
 VECOPY runner.bat C:\cbe
+tar -xzf .\runtime\cbe.tar.gz -C C:\cbe
 
 cd C:\cbe 
 python manage.py migrate
@@ -15,9 +14,3 @@ cd $workspace
 nssm start cbe
 
 .\logWatch.ps1 C:\cbe\cbe.log 'Watching for file changes with StatReloader'
-
-Write-Host "`n[$scriptName] Set port for testing`n"
-if ( ! ( $publishedPort )) { $publishedPort = 8000 }
-
-Write-Host "Test on `$publishedPort $publishedPort`n"
-.\test.ps1 $publishedPort
