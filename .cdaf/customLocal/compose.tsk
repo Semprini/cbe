@@ -33,9 +33,12 @@ docker-compose up -d runtime
 
 Write-Host "Deploy to runtime (allow up to 2 minutes)`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
+
 # & $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader'
+
 $name,$discard,$ip = (docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID}).split(' ')
-& ${workspace}\executeRetry.ps1 "curl http://${ip}:8000/admin"
+docker logs $containerID
+& ${workspace}\executeRetry.ps1 "curl.exe http://${ip}:8000/admin"
 docker logs $containerID
 
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
@@ -47,20 +50,11 @@ ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
 & $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
 
 Write-Host "`nTear down if not explicit variable to retain`n"
-if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { docker-compose down; docker-compose rm -f }
-
-$env:CDAF_REGISTRY_USER = Invoke-Expression "Write-Output $CDAF_REGISTRY_USER"
-Write-Host "`$env:CDAF_REGISTRY_USER  = $env:CDAF_REGISTRY_USER"
-
-$env:CDAF_REGISTRY_TOKEN = Invoke-Expression "Write-Output $CDAF_REGISTRY_TOKEN"
-Write-Host "`$env:CDAF_REGISTRY_TOKEN = $env:CDAF_REGISTRY_TOKEN"
-
-if ( "$env:CDAF_REGISTRY_USER" ) { executeExpression "echo $env:CDAF_REGISTRY_TOKEN | docker login --username $env:CDAF_REGISTRY_USER --password-stdin" }
-
-if ( ${REVISION} -eq 'master') { docker tag cdaf/${SOLUTION}:${BUILDNUMBER} cdaf/${SOLUTION}:latest }
-if ( ${REVISION} -eq 'master') { docker push cdaf/${SOLUTION}:latest }
+if ( $env:CBE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { docker-compose down; docker-compose rm -f }
 
 & $env:WORK_SPACE\TasksLocal\dockerClean.ps1 ${id}_runtime ${BUILDNUMBER}
 & $env:WORK_SPACE\TasksLocal\dockerClean.ps1 ${id}_test ${BUILDNUMBER}
 
 cd $workspace
+
+if ( ${REVISION} -eq 'master') { ./imageBuild.ps1 cdaf/${SOLUTION}:${BUILDNUMBER} }

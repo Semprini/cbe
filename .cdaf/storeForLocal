@@ -6,9 +6,9 @@ $AUTOMATIONROOT\remote\capabilities.ps1
 compose
 
 # In-situ runtime
-cbe.tar.gz
-site-packages.tar.gz
-requirements.txt
+runtime\cbe.tar.gz
+runtime\site-packages.tar.gz -Flat
+cbe\requirements.txt -Flat
 cbe\manage.py -Flat
 $AUTOMATIONROOT\remote\logWatch.ps1 -Flat
 $AUTOMATIONROOT\provisioning\runner.bat -Flat

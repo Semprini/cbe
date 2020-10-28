@@ -1,1 +1,2 @@
-./test.ps1 http://${environment}:${testPort}/admin
+./test.ps1 http://${environment}:${testPort}/admin 'CBE'
+./test.ps1 http://${environment}:${testPort} 'Common Business Entities'

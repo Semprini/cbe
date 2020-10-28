@@ -34,7 +34,7 @@ Vagrant.configure(2) do |allhosts|
       override.vm.network 'private_network', ip: '172.16.17.100'
       override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
       override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.100 build.mshome.net"
-      override.vm.provision 'shell', inline: "cd /vagrant ; ci"
+      override.vm.provision 'shell', inline: "cd /vagrant ; ci ; exit $LASTEXITCODE"
     end
 
     # Set environment variable VAGRANT_DEFAULT_PROVIDER to 'hyperv'
@@ -43,7 +43,7 @@ Vagrant.configure(2) do |allhosts|
       hyperv.cpus = "#{vCPU}"
       override.vm.hostname = 'build'
       override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
-      override.vm.provision 'shell', inline: "cd /vagrant ; ci"
+      override.vm.provision 'shell', inline: "cd /vagrant ; ci ; exit $LASTEXITCODE"
     end
   end
 
@@ -74,7 +74,7 @@ Vagrant.configure(2) do |allhosts|
       override.vm.network 'private_network', ip: '172.16.17.90'
       override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
       override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.100 build.mshome.net"
-      override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT'
+      override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT.deploy ; exit $LASTEXITCODE'
     end
 
     # Microsoft Hyper-V does not support port forwarding: vagrant up target --provider hyperv
@@ -85,7 +85,34 @@ Vagrant.configure(2) do |allhosts|
       if ENV['SYNCED_FOLDER']
         override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", "/.provision", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
       end
-      override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT'
+      override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT.deploy ; exit $LASTEXITCODE'
+    end
+  end
+
+  allhosts.vm.define 'test' do |test|
+    test.vm.box = "#{OVERRIDE_IMAGE}"
+    test.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
+
+    test.vm.provision 'shell', path: '.\compoose\test\bootstrapTest.ps1'
+
+    # Oracle VirtualBox, relaxed configuration for Desktop environment
+    test.vm.provider 'virtualbox' do |virtualbox, override|
+      virtualbox.gui = false
+      virtualbox.memory = "#{vRAM}"
+      virtualbox.cpus = "#{vCPU}"
+      override.vm.network 'private_network', ip: '172.16.17.100'
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.90 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& $env:CDAF_AUTOMATION_ROOT\\provisioning\\addHOSTS.ps1 172.16.17.100 build.mshome.net"
+      override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT.test ; exit $LASTEXITCODE'
+    end
+
+    # Set environment variable VAGRANT_DEFAULT_PROVIDER to 'hyperv'
+    test.vm.provider 'hyperv' do |hyperv, override|
+      hyperv.memory = "#{vRAM}"
+      hyperv.cpus = "#{vCPU}"
+      override.vm.hostname = 'test'
+      override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
+      override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT.test ; exit $LASTEXITCODE'
     end
   end
 end

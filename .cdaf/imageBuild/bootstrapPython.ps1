@@ -78,7 +78,7 @@ executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMA
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT"
 
 Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
-executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python' -version 3.8.6"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python' -version 3.7.7"
 
 Write-Host "`n[$scriptName] List after install`n"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\remote\capabilities.ps1"
