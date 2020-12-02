@@ -42,6 +42,8 @@ function executeExpression ($expression) {
 }
 
 Write-Host "`n[$scriptName] ---------- start ----------`n"
+$workspace = Get-Location
+Write-Host "[$scriptName] pwd     : $workspace"
 
 if ( $env:http_proxy ) {
 	Write-Host "[$scriptName] Set HTTPS proxy for Python Package Manager (PiP)`n"
@@ -63,8 +65,6 @@ if ( $env:CDAF_AUTOMATION_ROOT ) {
 		executeExpression "cd $workspace"
 	}
 }
-
-Write-Host "[$scriptName] `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT"
 
 Write-Host "[$scriptName] List installed components`n"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\automation\remote\capabilities.ps1"

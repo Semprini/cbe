@@ -53,6 +53,9 @@ if ($project) {
     Write-Host "[$scriptName] project : (not supplied, no directory change)"
 }
 
+$workspace = Get-Location
+Write-Host "[$scriptName] pwd     : $workspace"
+
 if ( $env:http_proxy ) {
 	Write-Host "[$scriptName] Set HTTPS proxy for Python Package Manager (PiP)`n"
 	executeExpression "`$env:https_proxy = '$env:http_proxy'"
