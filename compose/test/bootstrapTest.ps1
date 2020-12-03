@@ -52,17 +52,17 @@ if ( $env:http_proxy ) {
 
 if ( Test-Path .\automation\remote\capabilities.ps1 ) {
 	$env:CDAF_AUTOMATION_ROOT = (Get-Item .\automation).FullName
-	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (default)`n"
+	Write-Host "[$scriptName] Found .\automation\remote\capabilities.ps1, set `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT`n"
 } else {
 	Write-Host "[$scriptName] Install CDAF to user directory`n"
 	executeExpression "cd $env:USERPROFILE"
 	executeExpression '. { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex'
 	$env:CDAF_AUTOMATION_ROOT = "$env:USERPROFILE\automation"
-	Write-Host "[$scriptName] Using `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT (installed)`n"
+	Write-Host "[$scriptName] Installed CDAF, set `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT`n"
 	executeExpression "cd $workspace"
 }
 
 Write-Host "[$scriptName] List installed components`n"
-executeExpression "$env:CDAF_AUTOMATION_ROOT\automation\remote\capabilities.ps1"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\remote\capabilities.ps1"
 
 Write-Host "`n[$scriptName] ---------- stop ----------"
