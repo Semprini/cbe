@@ -24,7 +24,7 @@ Vagrant.configure(2) do |allhosts|
     build.vm.provision 'shell', inline: 'Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose'
 
     build.vm.provision 'shell', path: '.\.cdaf\bootstrapAgent.ps1', args: 'C:\vagrant\cbe'
-    build.vm.provision 'shell', inline: "addPath.ps1 C:\\vagrant\\automation"
+    build.vm.provision 'shell', inline: "& addPath.ps1 C:\\vagrant\\automation"
 
     # Oracle VirtualBox, relaxed configuration for Desktop environment
     build.vm.provider 'virtualbox' do |virtualbox, override|
@@ -32,9 +32,9 @@ Vagrant.configure(2) do |allhosts|
       virtualbox.memory = "#{vRAM}"
       virtualbox.cpus = "#{vCPU}"
       override.vm.network 'private_network', ip: '172.16.17.100'
-      override.vm.provision 'shell', inline: "addHOSTS.ps1 172.16.17.100 build.mshome.net"
-      override.vm.provision 'shell', inline: "addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
-      override.vm.provision 'shell', inline: "addHOSTS.ps1 172.16.17.102 test.mshome.net"
+      override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.100 build.mshome.net"
+      override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.102 test.mshome.net"
       override.vm.provision 'shell', inline: "cd /vagrant ; ci ; exit $LASTEXITCODE"
     end
 
@@ -57,13 +57,13 @@ Vagrant.configure(2) do |allhosts|
     cbe.vm.provision 'shell', path: '.\.cdaf\imageBuild\bootstrapPython.ps1', args: 'c:\vagrant\cbe'
 
     # In-situ provisioning
-    cbe.vm.provision 'shell', inline: 'mkdir.ps1 C:\\cbe $env:COMPUTERNAME\\vagrant'
-    cbe.vm.provision 'shell', inline: 'base.ps1 "nssm"'
+    cbe.vm.provision 'shell', inline: '& mkdir.ps1 C:\\cbe $env:COMPUTERNAME\\vagrant'
+    cbe.vm.provision 'shell', inline: '& base.ps1 "nssm"'
     cbe.vm.provision 'shell', inline: 'nssm install cbe python -u manage.py runserver 0.0.0.0:8000'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppDirectory C:\\cbe'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppStdout C:\\cbe\\cbe.log'
     cbe.vm.provision 'shell', inline: 'nssm set cbe AppStderr C:\\cbe\\cbe.log'
-    cbe.vm.provision 'shell', inline: 'openFirewallPort.ps1 "8000"'
+    cbe.vm.provision 'shell', inline: '& openFirewallPort.ps1 "8000"'
 
     # Oracle VirtualBox, cannot use 172.0.0.0/8 range, as that is allocated to Windows Container network
     cbe.vm.provider 'virtualbox' do |virtualbox, override|
@@ -74,9 +74,9 @@ Vagrant.configure(2) do |allhosts|
         override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", '/.provision'
       end
       override.vm.network 'private_network', ip: '172.16.17.101'
-      override.vm.provision 'shell', inline: "addHOSTS.ps1 172.16.17.100 build.mshome.net"
-      override.vm.provision 'shell', inline: "addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
-      override.vm.provision 'shell', inline: "addHOSTS.ps1 172.16.17.102 test.mshome.net"
+      override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.100 build.mshome.net"
+      override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.102 test.mshome.net"
       override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT.deploy ; exit $LASTEXITCODE'
     end
 
@@ -104,9 +104,9 @@ Vagrant.configure(2) do |allhosts|
       virtualbox.memory = "#{vRAM}"
       virtualbox.cpus = "#{vCPU}"
       override.vm.network 'private_network', ip: '172.16.17.102'
-      override.vm.provision 'shell', inline: "addHOSTS.ps1 172.16.17.100 build.mshome.net"
-      override.vm.provision 'shell', inline: "addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
-      override.vm.provision 'shell', inline: "addHOSTS.ps1 172.16.17.102 test.mshome.net"
+      override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.100 build.mshome.net"
+      override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
+      override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.102 test.mshome.net"
       override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT.test ; exit $LASTEXITCODE'
     end
 
