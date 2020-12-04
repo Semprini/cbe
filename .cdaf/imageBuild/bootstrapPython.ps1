@@ -81,6 +81,7 @@ Write-Host "[$scriptName] `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT
 
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT\provisioning"
 
 Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python' -version 3.7.7"

@@ -62,6 +62,10 @@ if ( Test-Path .\automation\remote\capabilities.ps1 ) {
 	executeExpression "cd $workspace"
 }
 
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT\provisioning"
+
 Write-Host "[$scriptName] List installed components`n"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\remote\capabilities.ps1"
 
