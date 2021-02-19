@@ -38,19 +38,19 @@ node {
     stage ('Test Using Vagrant') {
       bat '''
         type Vagrantfile
-        vagrant destroy -f & verify >nul
-        vagrant box list & verify >nul
+        vagrant destroy -f
+        vagrant box list
         vagrant up
-        vagrant destroy -f & verify >nul
       '''
     }
 
     stage ('Development Workstation Using Vagrant') {
       bat '''
+        vagrant destroy -f
         cd cbe
         type Vagrantfile
-        vagrant destroy -f & verify >nul
-        vagrant box list & verify >nul
+        vagrant destroy -f
+        vagrant box list
         vagrant up
       '''
     }
@@ -65,9 +65,9 @@ node {
 
     stage ('Discard GitHub branch') {
       bat '''
-        vagrant destroy -f & verify >nul
+        vagrant destroy -f
         cd cbe
-        vagrant destroy -f & verify >nul
+        vagrant destroy -f
         git checkout -- .
         git checkout -f master
         git branch -D local_branch
