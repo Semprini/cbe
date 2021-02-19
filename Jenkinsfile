@@ -41,10 +41,11 @@ node {
         vagrant destroy -f & verify >nul
         vagrant box list & verify >nul
         vagrant up
+        vagrant destroy -f & verify >nul
       '''
     }
 
-    stage ('Test Using Vagrant') {
+    stage ('Development Workstation Using Vagrant') {
       bat '''
         cd cbe
         type Vagrantfile
