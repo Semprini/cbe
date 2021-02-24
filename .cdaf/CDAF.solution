@@ -2,7 +2,7 @@ productVersion=0.3.0
 productName=Common Business Entities
 solutionName=cbe
 containerBuild=& $AUTOMATIONROOT/processor/containerBuild.ps1 ${SOLUTION} ${BUILDNUMBER} ${REVISION}
-containerImage=mcr.microsoft.com/windows/servercore:ltsc2019@sha256:30f8f12fc7a3da27e2b9e8c6c7f564f78a7610594713ae49143e5808e1fe7b36
+containerImage=mcr.microsoft.com/windows/servercore:ltsc2019@sha256:1ed72e74ffe1fd07eef2df3eb9a5d57f64fdac099329a4a63aa1a99b4139ce5a
 
 imageBuild=& $AUTOMATIONROOT/remote/imageBuild.ps1 ${SOLUTION}_${REVISION} ${BUILDNUMBER} $runtimeImage runtime
 CDAF_REGISTRY_TAG=cdaf/${SOLUTION}:$BUILDNUMBER
