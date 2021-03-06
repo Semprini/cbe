@@ -31,12 +31,9 @@ node {
       bat 'type automation\\CDAF.windows | findstr "productVersion"'
     }
 
-    stage ('Get latest image and Test using Docker') {
-      bat "automation\\entry.bat"
-    }
-
-    stage ('Test Using Vagrant') {
+    stage ('Development Workstation Using Vagrant') {
       bat '''
+        cd cbe
         type Vagrantfile
         vagrant destroy -f
         vagrant box list
