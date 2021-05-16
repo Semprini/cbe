@@ -77,9 +77,12 @@ if ( $env:CDAF_AUTOMATION_ROOT ) {
 	}
 }
 
+Write-Host "[$scriptName] `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT"
+
 executeExpression "$env:CDAF_AUTOMATION_ROOT\remote\capabilities.ps1"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT\provisioning"
 
 $versionTest = cmd /c tar --version 2`>`&1
 if ( $LASTEXITCODE -ne 0 ) {

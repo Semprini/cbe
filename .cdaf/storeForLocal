@@ -1,6 +1,8 @@
 # Only store provisioning scripts needed, not all
 $AUTOMATIONROOT\provisioning\runner.bat
 $AUTOMATIONROOT\remote\capabilities.ps1
+$AUTOMATIONROOT\provisioning\setenv.ps1
+$AUTOMATIONROOT\provisioning\addPath.ps1
 
 # For TargetlessCD
 compose

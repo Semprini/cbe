@@ -6,7 +6,7 @@ node {
         $class: 'BuildDiscarderProperty',
         strategy: [$class: 'LogRotator', numToKeepStr: '10']
       ],
-        pipelineTriggers([cron('30 05 * * *')]),
+        pipelineTriggers([cron('55 23 * * *')]),
     ]
   )
 
@@ -31,12 +31,9 @@ node {
       bat 'type automation\\CDAF.windows | findstr "productVersion"'
     }
 
-    stage ('Get latest image and Test using Docker') {
-      bat "automation\\entry.bat"
-    }
-
-    stage ('Test Using Vagrant') {
+    stage ('Development Workstation Using Vagrant') {
       bat '''
+        cd cbe
         type Vagrantfile
         vagrant destroy -f
         vagrant box list

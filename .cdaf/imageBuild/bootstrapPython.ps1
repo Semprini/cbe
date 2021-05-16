@@ -53,6 +53,9 @@ if ($project) {
     Write-Host "[$scriptName] project : (not supplied, no directory change)"
 }
 
+$workspace = Get-Location
+Write-Host "[$scriptName] pwd     : $workspace"
+
 if ( $env:http_proxy ) {
 	Write-Host "[$scriptName] Set HTTPS proxy for Python Package Manager (PiP)`n"
 	executeExpression "`$env:https_proxy = '$env:http_proxy'"
@@ -74,8 +77,11 @@ if ( $env:CDAF_AUTOMATION_ROOT ) {
 	}
 }
 
+Write-Host "[$scriptName] `$env:CDAF_AUTOMATION_ROOT = $env:CDAF_AUTOMATION_ROOT"
+
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\setenv.ps1 CDAF_AUTOMATION_ROOT $env:CDAF_AUTOMATION_ROOT"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT"
+executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\addPath.ps1 $env:CDAF_AUTOMATION_ROOT\provisioning"
 
 Write-Host "`n[$scriptName] Install Chocolately, Python and Python Package Manager (PiP)`n"
 executeExpression "$env:CDAF_AUTOMATION_ROOT\provisioning\base.ps1 'python' -version 3.7.7"

@@ -58,7 +58,13 @@ See cbe subdirectory
 
 # Virtual Desktop Environment
 
-Vagrant will self-install CDAF, where-as docker requires CDAF to be installed on the host
+Vagrant will self-install CDAF, where-as docker requires CDAF to be installed on the host, install CDAF in your user space
+
+    cd ~
+    . { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex
+    ~/automation/provisioning/addpath.ps1 ~\automation User
+    ~/automation/provisioning/addpath.ps1 ~\automation\provisioning User
+
 
 ## Windows Virtual Machine
 
@@ -68,18 +74,13 @@ To use a virtual environment requires Vagrant and VirtualBox or Hyper-V, from th
 
 ## Windows Containers
 
-Install CDAF in your user space
-
-    cd ~
-    . { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex
-
 For Windows 10
 
-    ~\automation\provisioning\base.ps1 docker-desktop
+    base.ps1 docker-desktop
 
 For Windows Server
 
-    ~\automation\provisioning\installDocker.ps1
+    installDocker.ps1
 
 Clone the repository
 
@@ -89,7 +90,7 @@ Clone the repository
 Execute the end-to-end construction, note: if the COMPOSE_KEEP environment variable is not set, the environment will be destroyed automatically after testing is complete
 
     $env:COMPOSE_KEEP = 'yes'
-    ~\automation\entry
+    entry
 
 Note: If Docker is not available, the emulation will fall back to using native Python on the host
 
@@ -98,7 +99,7 @@ Note: If Docker is not available, the emulation will fall back to using native P
 To access the buildserver using native remote PowerShell.
 Allow credential delegation, one-off step needed on the host when using VirtualBox/Vagrant. 
 
-    ./automation/provisioning/runner.bat CredSSP.ps1 client
+    CredSSP.ps1 client
 
 Once delegation configured, the build emulation can be executed.
 
@@ -106,7 +107,7 @@ Once delegation configured, the build emulation can be executed.
     $cred = New-Object System.Management.Automation.PSCredential ('vagrant', $securePassword)
     enter-pssession 127.0.0.1 -port 15985 -Auth CredSSP -credential $cred
     cd C:\vagrant
-	cdEmulate test ..\venv\Scripts\automation
+    cdEmulate test ..\venv\Scripts\automation
 
 # Make your own fork
 
@@ -118,16 +119,3 @@ Once established, use the following to synchronise
 
     git fetch upstream
     git pull upstream master
-
-Install CDAF from GitHub
-
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    (New-Object System.Net.WebClient).DownloadFile("https://codeload.github.com/cdaf/windows/zip/master", "$PWD\cdaf.zip")
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD\cdaf.zip", "$PWD")
-    Move-Item .\windows-master\automation\ ~/.cdaf
-    ~/.cdaf/automation/provisioning/addpath.ps1 ~/.cdaf/automation User
-
-Run from installed CDAF
-
-    entry
