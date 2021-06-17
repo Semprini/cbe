@@ -8,15 +8,6 @@ else
   OVERRIDE_IMAGE = 'cdaf/WindowsServerStandard'
 end
 
-# If this environment variable is set, RAM and CPU allocations for virtual machines are increase by this factor, so must be an integer
-if ENV['SCALE_FACTOR']
-  scale = ENV['SCALE_FACTOR'].to_i
-else
-  scale = 1
-end
-vRAM = 1024 * scale
-vCPU = scale
-
 Vagrant.configure(2) do |allhosts|
 
   allhosts.vm.define 'build' do |build|
@@ -28,9 +19,6 @@ Vagrant.configure(2) do |allhosts|
 
     # Oracle VirtualBox, relaxed configuration for Desktop environment
     build.vm.provider 'virtualbox' do |virtualbox, override|
-      virtualbox.gui = false
-      virtualbox.memory = "#{vRAM}"
-      virtualbox.cpus = "#{vCPU}"
       override.vm.network 'private_network', ip: '172.16.17.100'
       override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.100 build.mshome.net"
       override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
@@ -40,8 +28,6 @@ Vagrant.configure(2) do |allhosts|
 
     # Set environment variable VAGRANT_DEFAULT_PROVIDER to 'hyperv'
     build.vm.provider 'hyperv' do |hyperv, override|
-      hyperv.memory = "#{vRAM}"
-      hyperv.cpus = "#{vCPU}"
       override.vm.hostname = 'build'
       override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
       override.vm.provision 'shell', inline: "cd /vagrant ; ci ; exit $LASTEXITCODE"
@@ -67,9 +53,6 @@ Vagrant.configure(2) do |allhosts|
 
     # Oracle VirtualBox, cannot use 172.0.0.0/8 range, as that is allocated to Windows Container network
     cbe.vm.provider 'virtualbox' do |virtualbox, override|
-      virtualbox.gui = false
-      virtualbox.memory = "#{vRAM}"
-      virtualbox.cpus = "#{vCPU}"
       if ENV['SYNCED_FOLDER']
         override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", '/.provision'
       end
@@ -82,8 +65,6 @@ Vagrant.configure(2) do |allhosts|
 
     # Microsoft Hyper-V does not support port forwarding: vagrant up target --provider hyperv
     cbe.vm.provider 'hyperv' do |hyperv, override|
-      hyperv.memory = "#{vRAM}"
-      hyperv.cpus = "#{vCPU}"
       override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
       if ENV['SYNCED_FOLDER']
         override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", "/.provision", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
@@ -100,9 +81,6 @@ Vagrant.configure(2) do |allhosts|
 
     # Oracle VirtualBox, relaxed configuration for Desktop environment
     test.vm.provider 'virtualbox' do |virtualbox, override|
-      virtualbox.gui = false
-      virtualbox.memory = "#{vRAM}"
-      virtualbox.cpus = "#{vCPU}"
       override.vm.network 'private_network', ip: '172.16.17.102'
       override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.100 build.mshome.net"
       override.vm.provision 'shell', inline: "& addHOSTS.ps1 172.16.17.101 cbe.mshome.net"
@@ -112,8 +90,6 @@ Vagrant.configure(2) do |allhosts|
 
     # Set environment variable VAGRANT_DEFAULT_PROVIDER to 'hyperv'
     test.vm.provider 'hyperv' do |hyperv, override|
-      hyperv.memory = "#{vRAM}"
-      hyperv.cpus = "#{vCPU}"
       override.vm.hostname = 'test'
       override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
       override.vm.provision 'shell', inline: 'cd /vagrant ; ./TasksLocal/delivery.bat VAGRANT.test ; exit $LASTEXITCODE'
