@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
     'django_nose',
     'rest_framework',
     'gm2m',
@@ -147,6 +148,8 @@ USE_TZ = False
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
