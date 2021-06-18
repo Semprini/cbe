@@ -65,6 +65,7 @@ Vagrant.configure(2) do |allhosts|
 
     # Microsoft Hyper-V does not support port forwarding: vagrant up target --provider hyperv
     cbe.vm.provider 'hyperv' do |hyperv, override|
+      override.vm.hostname = 'cbe'
       override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
       if ENV['SYNCED_FOLDER']
         override.vm.synced_folder "#{ENV['SYNCED_FOLDER']}", "/.provision", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
