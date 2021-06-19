@@ -11,7 +11,6 @@ Vagrant.configure(2) do |allhosts|
     
     # Oracle VirtualBox, relaxed configuration for Desktop environment
     dev.vm.provider 'virtualbox' do |virtualbox, override|
-      virtualbox.gui = false
       virtualbox.memory = 4096
       virtualbox.cpus = 4
       override.vm.network 'private_network', ip: '172.16.17.50'
@@ -19,9 +18,9 @@ Vagrant.configure(2) do |allhosts|
 
     # Set environment variable VAGRANT_DEFAULT_PROVIDER to 'hyperv'
     dev.vm.provider 'hyperv' do |hyperv, override|
+      override.vm.hostname = 'dev'
       hyperv.memory = 4096
       hyperv.cpus = 4
-      override.vm.hostname = 'dev'
       override.vm.synced_folder ".", "/vagrant", type: "smb", smb_username: "#{ENV['VAGRANT_SMB_USER']}", smb_password: "#{ENV['VAGRANT_SMB_PASS']}"
     end
   end
