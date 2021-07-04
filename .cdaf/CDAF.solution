@@ -1,8 +1,10 @@
-productVersion=0.3.0
 productName=Common Business Entities
 solutionName=cbe
+
 containerBuild=& $AUTOMATIONROOT/processor/containerBuild.ps1 ${SOLUTION} ${BUILDNUMBER} ${REVISION}
 containerImage=mcr.microsoft.com/windows/servercore:ltsc2019@sha256:1ed72e74ffe1fd07eef2df3eb9a5d57f64fdac099329a4a63aa1a99b4139ce5a
+
+artifactPrefix=0.4
 
 imageBuild=& $AUTOMATIONROOT/remote/imageBuild.ps1 ${SOLUTION}_${REVISION} ${BUILDNUMBER} $runtimeImage runtime
 CDAF_REGISTRY_TAG=cdaf/${SOLUTION}:$BUILDNUMBER
@@ -10,4 +12,3 @@ CDAF_REGISTRY_USER=$env:bamboo_DOCKER_HUB_USER
 CDAF_REGISTRY_TOKEN=$env:bamboo_DOCKER_HUB_PASSWORD
 
 processSequence=localTasks.ps1
-defaultBranch=none

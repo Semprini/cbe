@@ -5,10 +5,9 @@ local    WINDOWS.deploy    startAsService.tsk
 local    WINDOWS.test      test.tsk            localhost       8000
 local    WORKGROUP.deploy  startAsService.tsk
 local    WORKGROUP.test    test.tsk            localhost       8000
-local    BAMBOO_FORK       compose.tsk         prod
 
 local    DOCKER            compose.tsk         prod
 local    AUTO_TEST         test.tsk            runtime         8000
 
 local    CD                compose.tsk         cd
-local    PROD              helm.tsk            prod
+local    PUSH              push.tsk
