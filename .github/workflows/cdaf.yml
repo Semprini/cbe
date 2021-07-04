@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: deploy
-          path: ${env:GITHUB_WORKSPACE}\release.ps1
+          path: release.ps1
 
   deliver:
     if: github.ref == 'refs/heads/master'
