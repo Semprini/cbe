@@ -1,0 +1,2 @@
+Write-Host "`$env:DOCKERHUB_TOKEN = $(MD5MSK $env:DOCKERHUB_TOKEN) (MD5 Mask)`n"
+& .\dockerPush.ps1 $env:TARGET_TAG cdaf/${SOLUTION} $remoteTagList
