@@ -31,7 +31,7 @@ jobs:
 
   deliver:
     if: github.ref == 'refs/heads/master'
-    name: CD
+    name: Continuous Delivery
     needs: build
     runs-on: Windows-latest
     steps:
@@ -47,21 +47,23 @@ jobs:
           .\release.ps1 DOCKER
 
   registry:
-    if: ( github.ref == 'refs/heads/master' ) && ( secrets.DOCKERHUB_TOKEN != null )
+    if: github.ref == 'refs/heads/master'
     name: Push to Registry
     needs: build
     runs-on: Windows-latest
+    env:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     steps:
 
       - name: Login to Docker Hub
         uses: docker/login-action@v1
+	    if: ${{ env.DOCKERHUB_TOKEN }} != null
         with:
           username: cdaf
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: PUSH
-        env:
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+	    if: ${{ env.DOCKERHUB_TOKEN }} != null
         run: |
           cd ${GITHUB_WORKSPACE}/deploy
           chmod +x release.sh
