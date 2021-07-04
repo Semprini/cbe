@@ -49,11 +49,16 @@ jobs:
   registry:
     if: github.ref == 'refs/heads/master'
     name: Push to Registry
-    needs: build
+    needs: [build, deliver]
     runs-on: Windows-latest
     env:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v1
+        if: ${{ env.DOCKERHUB_TOKEN }} != null
+        with:
+          name: deploy
 
       - name: Login to Docker Hub
         uses: docker/login-action@v1
