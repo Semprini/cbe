@@ -43,6 +43,8 @@ docker logs $containerID
 & ${workspace}\executeRetry.ps1 "curl.exe http://${ip}:8000/admin"
 docker logs $containerID
 
+ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
+Write-Host "`$env:TEST_TAG = $env:TEST_TAG"
 docker-compose up -d test
 
 Write-Host "Execute tests (allow 5 minutes to complete)`n"
