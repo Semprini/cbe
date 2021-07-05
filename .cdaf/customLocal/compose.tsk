@@ -58,6 +58,3 @@ cd $WORKSPACE
 
 echo "Clean-up Transient Directory Created by imageBuild.sh"
 REMOVE $env:TEMP/${SOLUTION}
-
-Write-Host "`nConditional push when token is set, i.e. from CDAF only`n"
-if ( $env:DOCKERHUB_TOKEN ) { & .\dockerPush.ps1 $env:TARGET_TAG cdaf/${SOLUTION} $remoteTagList } 
