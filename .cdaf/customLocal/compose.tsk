@@ -25,7 +25,7 @@ Write-Host "List containers current state`n"
 docker ps
 
 Write-Host "`nCleanup from previously test`n"
-docker-compose down --remove-orphans
+try { docker-compose down --remove-orphans } catch {}
 docker-compose rm -f
 
 Write-Host "Set the build number to use`n"
