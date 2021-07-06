@@ -36,11 +36,4 @@ jobs:
         if: ${{ env.DOCKERHUB_TOKEN }} && ( github.ref == 'refs/heads/master' )
         run: |
           cd ${env:GITHUB_WORKSPACE}
-          .\release.ps1 PUSH
-
-      - name: Artifact Retention
-        uses: actions/upload-artifact@v1
-        if: github.ref == 'refs/heads/master'
-        with:
-          name: deploy
-          path: release.ps1
+          .\TasksLocal\delivery.bat PUSH
