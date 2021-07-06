@@ -8,6 +8,7 @@ jobs:
     runs-on: windows-latest
     env:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      COMPOSE_KEEP: yes
     steps:
       - name: Checkout
         uses: actions/checkout@v2
