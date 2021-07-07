@@ -33,15 +33,11 @@ $env:TARGET_TAG = "${id}_runtime:${BUILDNUMBER}"
 Write-Host "`$env:TARGET_TAG  = $env:TARGET_TAG"
 try { docker-compose up -d runtime } catch {}
 
-Write-Host "Deploy to runtime (allow up to 2 minutes)`n"
+Write-Host "Deploy to runtime`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
-
-# & $WORKSPACE\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader'
-
 $ip = (docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID})
-docker logs $containerID
-& $WORKSPACE\executeRetry.ps1 "curl.exe -s -v http://${ip}:8000/admin" -retryMax 10
-docker logs $containerID
+& $WORKSPACE\executeRetry.ps1 "curl.exe -s -v http://${ip}:8000/admin"
+& $WORKSPACE\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader'
 
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
 Write-Host "`$env:TEST_TAG = $env:TEST_TAG"
