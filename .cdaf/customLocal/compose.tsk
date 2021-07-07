@@ -31,7 +31,7 @@ docker-compose rm -f
 Write-Host "Set the build number to use`n"
 $env:TARGET_TAG = "${id}_runtime:${BUILDNUMBER}"
 Write-Host "`$env:TARGET_TAG  = $env:TARGET_TAG"
-docker-compose up -d runtime
+try { docker-compose up -d runtime } catch {}
 
 Write-Host "Deploy to runtime (allow up to 2 minutes)`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
@@ -45,14 +45,14 @@ docker logs $containerID
 
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
 Write-Host "`$env:TEST_TAG = $env:TEST_TAG"
-docker-compose up -d test
+try { docker-compose up -d test } catch {}
 
 Write-Host "Execute tests (allow 5 minutes to complete)`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
 & $WORKSPACE\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
 
 Write-Host "`nTear down if not explicit variable to retain`n"
-if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { docker-compose down; docker-compose rm -f }
+if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { try { docker-compose down } catch {}; docker-compose rm -f }
 
 cd $WORKSPACE
 
