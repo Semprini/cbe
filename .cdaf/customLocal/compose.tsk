@@ -40,7 +40,7 @@ ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
 
 $ip = (docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID})
 docker logs $containerID
-& $WORKSPACE\executeRetry.ps1 "curl.exe http://${ip}:8000/admin" -retryMax 10
+& $WORKSPACE\executeRetry.ps1 "curl.exe -s -v http://${ip}:8000/admin" -retryMax 10
 docker logs $containerID
 
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
