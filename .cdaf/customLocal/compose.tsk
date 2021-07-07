@@ -2,7 +2,7 @@ Write-Host "`nLoad the branch (REVISION) and container image from the manifest, 
 PROPLD manifest.txt
 
 ASSIGN $id = $("${SOLUTION}_${REVISION}").ToLower()
-$env:WORK_SPACE = Split-Path -parent $workspace
+$env:WORK_SPACE = Split-Path -parent $WORKSPACE
 Write-host $env:WORK_SPACE
 
 # Copy any artefacts needed into specific images here
@@ -38,9 +38,9 @@ ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
 
 # & $WORKSPACE\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader'
 
-$name,$discard,$ip = (docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID}).split(' ')
+$ip = (docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID})
 docker logs $containerID
-& ${workspace}\executeRetry.ps1 "curl.exe http://${ip}:8000/admin"
+& $WORKSPACE\executeRetry.ps1 "curl.exe http://${ip}:8000/admin" -retryMax 10
 docker logs $containerID
 
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
