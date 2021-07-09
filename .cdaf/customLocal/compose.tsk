@@ -1,3 +1,5 @@
+& $WORKSPACE\capabilities.ps1
+
 Write-Host "`nLoad the branch (REVISION) and container image from the manifest, placed here by package.tsk`n"
 PROPLD manifest.txt
 
@@ -36,6 +38,20 @@ try { docker-compose up -d runtime } catch {}
 Write-Host "Deploy to runtime`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
 $ip = (docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID})
+
+Write-Host "DIAG BEGIN`n"
+docker ps -a
+docker-compose logs --no-color
+
+try { curl.exe -s -v http://${ip}:8000/admin 2>&1 > .\curloutput.log } catch {}
+cat .\curloutput.log
+
+docker-compose logs --no-color
+docker ps -a
+
+Write-Host "DIAG END`n"
+
+
 # & $WORKSPACE\executeRetry.ps1 "curl.exe -s -v http://${ip}:8000/admin"
 & $WORKSPACE\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader'
 
