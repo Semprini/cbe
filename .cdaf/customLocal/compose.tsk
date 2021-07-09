@@ -25,30 +25,30 @@ Write-Host "List containers current state`n"
 docker ps
 
 Write-Host "`nCleanup from previously test`n"
-try { docker-compose down --remove-orphans } catch {}
+docker-compose down --remove-orphans
 docker-compose rm -f
 
 Write-Host "Set the build number to use`n"
 $env:TARGET_TAG = "${id}_runtime:${BUILDNUMBER}"
 Write-Host "`$env:TARGET_TAG  = $env:TARGET_TAG"
-try { docker-compose up -d runtime } catch {}
+docker-compose up -d runtime
 
 Write-Host "Deploy to runtime`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
 $ip = (docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID})
-& $WORKSPACE\executeRetry.ps1 "curl.exe -s -v http://${ip}:8000/admin"
+# & $WORKSPACE\executeRetry.ps1 "curl.exe -s -v http://${ip}:8000/admin"
 & $WORKSPACE\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader'
 
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
 Write-Host "`$env:TEST_TAG = $env:TEST_TAG"
-try { docker-compose up -d test } catch {}
+docker-compose up -d test
 
 Write-Host "Execute tests (allow 5 minutes to complete)`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
 & $WORKSPACE\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
 
 Write-Host "`nTear down if not explicit variable to retain`n"
-if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { try { docker-compose down } catch {}; docker-compose rm -f }
+if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { docker-compose down; docker-compose rm -f }
 
 cd $WORKSPACE
 
