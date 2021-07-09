@@ -35,6 +35,7 @@ jobs:
 
       - name: PUSH
         if: ${{ env.DOCKERHUB_TOKEN }} && ( github.ref == 'refs/heads/master' )
+        shell: powershell # pwsh for PowerShell Core
         run: |
           cd ${env:GITHUB_WORKSPACE}
           .\TasksLocal\delivery.bat PUSH
