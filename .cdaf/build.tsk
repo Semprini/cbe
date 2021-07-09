@@ -1,5 +1,3 @@
-& $AUTOMATIONROOT/remote/capabilities.ps1
-
 REMOVE ../*.tar.gz
 cat requirements.txt
 
