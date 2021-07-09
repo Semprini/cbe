@@ -1,3 +1,5 @@
+& $AUTOMATIONROOT/remote/capabilities.ps1
+
 REMOVE ../*.tar.gz
 cat requirements.txt
 
@@ -14,9 +16,12 @@ VECOPY $AUTOMATIONROOT/provisioning/runner.bat ../runtime/automation/provisionin
 MAKDIR ../runtime/automation/remote
 VECOPY $AUTOMATIONROOT/remote/capabilities.ps1 ../runtime/automation/remote
 
+cd ../cbe
 tar -zcf ../runtime/cbe.tar.gz "cbe" "templates"
 
 Write-Host "Package runtime components to avoid installing Git on the runtime image"
 tar -zcf ../runtime/site-packages.tar.gz "c:/python37/lib/site-packages"
 
 VECOPY manage.py ../runtime
+
+cd $WORKSPACE
