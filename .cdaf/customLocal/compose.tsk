@@ -43,6 +43,8 @@ Write-Host "DIAG BEGIN`n"
 docker ps -a
 docker-compose logs --no-color
 
+docker-compose logs --no-color 2>&1
+
 docker logs $containerID
 
 try { curl.exe -s -v http://${ip}:8000/admin 2>&1 > .\curloutput.log } catch { cmd /c "exit 0" }
@@ -58,7 +60,7 @@ Write-Host "DIAG END`n"
 
 
 # & $WORKSPACE\executeRetry.ps1 "curl.exe -s -v http://${ip}:8000/admin"
-& $WORKSPACE\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader'
+& $WORKSPACE\dockerLog.ps1 DOCKER-COMPOSE 'Watching for file changes with StatReloader'
 
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
 Write-Host "`$env:TEST_TAG = $env:TEST_TAG"
