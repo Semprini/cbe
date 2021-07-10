@@ -43,10 +43,15 @@ Write-Host "DIAG BEGIN`n"
 docker ps -a
 docker-compose logs --no-color
 
-try { curl.exe -s -v http://${ip}:8000/admin 2>&1 > .\curloutput.log } catch {}
+docker logs $containerID
+
+try { curl.exe -s -v http://${ip}:8000/admin 2>&1 > .\curloutput.log } catch { cmd /c "exit 0" }
 cat .\curloutput.log
 
 docker-compose logs --no-color
+
+docker logs $containerID
+
 docker ps -a
 
 Write-Host "DIAG END`n"
