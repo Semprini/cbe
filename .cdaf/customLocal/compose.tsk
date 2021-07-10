@@ -40,12 +40,12 @@ ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
 $ip = (docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID})
 
 Write-Host "DIAG BEGIN`n"
+
 docker ps -a
-docker-compose logs --no-color
 
 docker-compose logs --no-color 2>&1
 
-docker logs $containerID
+docker logs $containerID 2>&1
 
 try { curl.exe -s -v http://${ip}:8000/admin 2>&1 > .\curloutput.log } catch { cmd /c "exit 0" }
 cat .\curloutput.log
