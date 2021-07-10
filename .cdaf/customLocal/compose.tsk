@@ -45,14 +45,14 @@ docker ps -a
 
 docker-compose logs --no-color 2>&1
 
-docker logs $containerID 2>&1
+try { docker logs $containerID 2>&1 } catch {}
 
 try { curl.exe -s -v http://${ip}:8000/admin 2>&1 > .\curloutput.log } catch { cmd /c "exit 0" }
 cat .\curloutput.log
 
-docker-compose logs --no-color
+docker-compose logs --no-color 2>&1
 
-docker logs $containerID
+try { docker logs $containerID 2>&1 } catch {}
 
 docker ps -a
 
