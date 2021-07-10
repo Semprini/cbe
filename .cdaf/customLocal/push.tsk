@@ -1,2 +1,13 @@
 Write-Host "`$env:DOCKERHUB_TOKEN = $(MD5MSK $env:DOCKERHUB_TOKEN) (MD5 Mask)`n"
+
+Write-Host "Use the same logic as comose.tsk`n"
+ASSIGN $id = $("${SOLUTION}_${REVISION}").ToLower()
+ASSIGN $env:TARGET_TAG = "${id}_runtime:${BUILDNUMBER}"
+
+$remoteTagList = "$BUILDNUMBER $productVersion latest"
+
+Write-Host "`$env:TARGET_TAG = $env:TARGET_TAG"
+Write-Host "cdaf/`${SOLUTION} = cdaf/${SOLUTION}"
+Write-Host "`$remoteTagList = $remoteTagList"
+
 & .\dockerPush.ps1 $env:TARGET_TAG cdaf/${SOLUTION} $remoteTagList
