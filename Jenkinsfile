@@ -32,15 +32,9 @@ node {
     }
 
     stage ('Get latest image and Test using Docker') {
-      bat "automation\\entry.bat"
-    }
-
-    stage ('Test Using Vagrant') {
       bat '''
-        type Vagrantfile
-        vagrant destroy -f
-        vagrant box list
-        vagrant up
+      	SET CONTAINER_IMAGE=mcr.microsoft.com/windows/servercore:ltsc2019
+      	automation\\entry.bat
       '''
     }
 
@@ -54,7 +48,6 @@ node {
 
     stage ('Discard GitHub branch') {
       bat '''
-        vagrant destroy -f
         git checkout -- .
         git checkout -f master
         git branch -D local_branch

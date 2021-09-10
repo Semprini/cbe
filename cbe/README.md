@@ -37,24 +37,3 @@ browse to http://localhost:8000/api for the api interface
     code --install-extension felixfbecker.php-debug
 
 Within VSCode install PHP and PHP Debug
-
-# Vagrant
-
-To create a virtual machine for development VirtualBox and Hyper-V are supported
-
-    vagrant up
-
-The virtual machine is accessible as build.mshome.net on Hyper-V and 172.16.17.100 on VirtualBox. From within the machine run the dev server
-
-    cd \vagrant\var\www\tmobile_payment\
-    php -S localhost:8000
-
-# Docker
-
-If you just want the raw runtime in a windows container
-
-    docker build .
-
-Volume mount your workspace into the container and port forward to the local host
-
-   docker run --tty -p 8080:8080 --volume ${workspace}\var\www\tmobile_payment:C:/solution/workspace <container>
