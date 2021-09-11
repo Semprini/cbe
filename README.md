@@ -58,19 +58,12 @@ See cbe subdirectory
 
 # Virtual Desktop Environment
 
-Vagrant will self-install CDAF, where-as docker requires CDAF to be installed on the host, install CDAF in your user space
+Install CDAF in your user space
 
     cd ~
     . { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex
     ~/automation/provisioning/addpath.ps1 ~\automation User
     ~/automation/provisioning/addpath.ps1 ~\automation\provisioning User
-
-
-## Windows Virtual Machine
-
-To use a virtual environment requires Vagrant and VirtualBox or Hyper-V, from the workspace run:
-
-    vagrant up
 
 ## Windows Containers
 
@@ -93,21 +86,6 @@ Execute the end-to-end construction, note: if the COMPOSE_KEEP environment varia
     entry
 
 Note: If Docker is not available, the emulation will fall back to using native Python on the host
-
-## Direct PowerShell Access
-
-To access the buildserver using native remote PowerShell.
-Allow credential delegation, one-off step needed on the host when using VirtualBox/Vagrant. 
-
-    CredSSP.ps1 client
-
-Once delegation configured, the build emulation can be executed.
-
-    $securePassword = ConvertTo-SecureString 'vagrant' -asplaintext -force
-    $cred = New-Object System.Management.Automation.PSCredential ('vagrant', $securePassword)
-    enter-pssession 127.0.0.1 -port 15985 -Auth CredSSP -credential $cred
-    cd C:\vagrant
-    cdEmulate test ..\venv\Scripts\automation
 
 # Make your own fork
 

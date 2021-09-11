@@ -1,9 +1,10 @@
+& $WORKSPACE\capabilities.ps1
+
 Write-Host "`nLoad the branch (REVISION) and container image from the manifest, placed here by package.tsk`n"
 PROPLD manifest.txt
 
 ASSIGN $id = $("${SOLUTION}_${REVISION}").ToLower()
-$workspace = $(pwd)
-$env:WORK_SPACE = Split-Path -parent $workspace
+$env:WORK_SPACE = Split-Path -parent $WORKSPACE
 Write-host $env:WORK_SPACE
 
 # Copy any artefacts needed into specific images here
@@ -11,6 +12,11 @@ Write-host $env:WORK_SPACE
 cd compose
 ..\imageBuild.ps1 ${id} ${BUILDNUMBER} ${containerImage}
 cd ..
+
+ASSIGN $env:TARGET_TAG = "${id}_runtime"
+ASSIGN $env:TEST_TAG = "${id}_test"
+.\dockerClean.ps1 $env:TARGET_TAG ${BUILDNUMBER}
+.\dockerClean.ps1 $env:TEST_TAG ${BUILDNUMBER}
 
 ASSIGN $composePersist = "${env:TEMP}\${id}"
 MAKDIR $composePersist
@@ -21,40 +27,53 @@ Write-Host "List containers current state`n"
 docker ps
 
 Write-Host "`nCleanup from previously test`n"
-ASSIGN $env:TARGET_TAG = "${id}_runtime"
-ASSIGN $env:TEST_TAG = "${id}_test"
-docker-compose down --remove-orphans
+try { docker-compose down --remove-orphans } catch {}
 docker-compose rm -f
 
 Write-Host "Set the build number to use`n"
-if ( ${REVISION} -eq 'master') { $env:TARGET_TAG = "cdaf/${SOLUTION}:${BUILDNUMBER}" } else { $env:TARGET_TAG = "${id}_runtime:${BUILDNUMBER}" }
+$env:TARGET_TAG = "${id}_runtime:${BUILDNUMBER}"
 Write-Host "`$env:TARGET_TAG  = $env:TARGET_TAG"
-docker-compose up -d runtime
+try { docker-compose up -d runtime } catch {}
 
-Write-Host "Deploy to runtime (allow up to 2 minutes)`n"
+Write-Host "Deploy to runtime`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TARGET_TAG")
+$ip = (docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID})
 
-# & $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Watching for file changes with StatReloader'
+Write-Host "DIAG BEGIN`n"
 
-$name,$discard,$ip = (docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${containerID}).split(' ')
-docker logs $containerID
-& ${workspace}\executeRetry.ps1 "curl.exe http://${ip}:8000/admin"
-docker logs $containerID
+docker ps -a
+
+docker-compose logs --no-color 2>&1
+
+try { docker logs $containerID 2>&1 } catch {}
+
+try { curl.exe -s -v http://${ip}:8000/admin 2>&1 > .\curloutput.log } catch { cmd /c "exit 0" }
+cat .\curloutput.log
+
+docker-compose logs --no-color 2>&1
+
+try { docker logs $containerID 2>&1 } catch {}
+
+docker ps -a
+
+Write-Host "DIAG END`n"
+
+
+# & $WORKSPACE\executeRetry.ps1 "curl.exe -s -v http://${ip}:8000/admin"
+& $WORKSPACE\dockerLog.ps1 DOCKER-COMPOSE 'Watching for file changes with StatReloader'
 
 ASSIGN $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
 Write-Host "`$env:TEST_TAG = $env:TEST_TAG"
-docker-compose up -d test
+try { docker-compose up -d test } catch {}
 
 Write-Host "Execute tests (allow 5 minutes to complete)`n"
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
-& $env:WORK_SPACE\TasksLocal\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
+& $WORKSPACE\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
 
 Write-Host "`nTear down if not explicit variable to retain`n"
-if ( $env:CBE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { docker-compose down; docker-compose rm -f }
+if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { try { docker-compose down } catch {}; docker-compose rm -f }
 
-& $env:WORK_SPACE\TasksLocal\dockerClean.ps1 ${id}_runtime ${BUILDNUMBER}
-& $env:WORK_SPACE\TasksLocal\dockerClean.ps1 ${id}_test ${BUILDNUMBER}
+cd $WORKSPACE
 
-cd $workspace
-
-if ( ${REVISION} -eq 'master') { ./imageBuild.ps1 cdaf/${SOLUTION}:${BUILDNUMBER} }
+echo "Clean-up Transient Directory Created by imageBuild.sh"
+REMOVE $env:TEMP/${SOLUTION}
