@@ -1,14 +1,20 @@
+import os
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.http import JsonResponse
 
 from rest_framework import serializers, viewsets
 
 def index(request):
     return render(request, 'index.html', {
-        'foo': 'bar',
+        'build_number': f'{os.environ.get("GITHUB_RUN_NUMBER", "0")}',
     })
-    
+
+
+def heartbeat(request):
+    return JsonResponse({ 'build_number': f'{os.environ.get("GITHUB_RUN_NUMBER", "0")}' })
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
