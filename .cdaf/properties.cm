@@ -1,6 +1,4 @@
 context  target            deployTaskOverride  environment     testPort
-local    VAGRANT.deploy    startAsService.tsk
-local    VAGRANT.test      test.tsk            cbe.mshome.net  8000
 local    WINDOWS.deploy    startAsService.tsk
 local    WINDOWS.test      test.tsk            localhost       8000
 local    WORKGROUP.deploy  startAsService.tsk

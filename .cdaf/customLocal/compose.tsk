@@ -24,7 +24,7 @@ VECOPY compose\docker-compose.yml $composePersist
 cd $composePersist
 
 Write-Host "`nCleanup from previously test`n"
-docker-compose down --remove-orphans
+try { docker-compose down --remove-orphans } catch {}
 docker-compose rm -f
 
 Write-Host "Set the build number to use`n"
@@ -33,11 +33,11 @@ $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
 Write-Host "  `$env:TARGET_TAG = $env:TARGET_TAG"
 Write-Host "  `$env:TEST_TAG   = $env:TEST_TAG"
 
-docker-compose up -d runtime
+try { docker-compose up -d runtime } catch {}
 & $WORKSPACE\dockerLog.ps1 DOCKER-COMPOSE 'Watching for file changes with StatReloader'
 
 Write-Host "Execute tests (allow 5 minutes to complete)`n"
-docker-compose up -d test
+try { docker-compose up -d test } catch {}
 ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
 & $WORKSPACE\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
 

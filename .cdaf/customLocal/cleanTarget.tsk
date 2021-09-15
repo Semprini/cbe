@@ -1,2 +1,0 @@
-echo "Clean old images, i.e. older than current production"
-.\dockerClean.ps1 $SOLUTION $BUILDNUMBER

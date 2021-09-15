@@ -1,6 +1,6 @@
 # Developer Guidance
 
-To create a local development environment (note: code in tripple ` is executed from within the Vagrant and Docker instances, see executeReadme.ps1)
+To create a local development environment
 
 ## To run
 
