@@ -65,6 +65,7 @@ router.register(r'content_types', CBEViews.ContentTypeViewSet)
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^heartbeat', views.heartbeat, name='heartbeat'),
     url(r'^schema(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^schema/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),    url(r'^admin/', admin.site.urls),
