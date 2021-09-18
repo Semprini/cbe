@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
     name: Execute all steps on Single Agent
-    runs-on: windows-latest
+    runs-on: windows-2016
     env:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       COMPOSE_KEEP: yes
