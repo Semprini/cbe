@@ -1,9 +1,6 @@
 context  target            deployTaskOverride  environment     testPort
-local    WINDOWS.deploy    startAsService.tsk
-local    WINDOWS.test      test.tsk            localhost       8000
-local    WORKGROUP.deploy  startAsService.tsk
-local    WORKGROUP.test    test.tsk            localhost       8000
-
+local    WINDOWS           compose.tsk         prod
+local    WORKGROUP         compose.tsk         prod
 local    DOCKER            compose.tsk         prod
 local    AUTO_TEST         test.tsk            runtime         8000
 

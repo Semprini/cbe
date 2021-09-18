@@ -6,11 +6,3 @@ $AUTOMATIONROOT\provisioning\addPath.ps1
 
 # For TargetlessCD
 compose
-
-# In-situ runtime
-runtime\cbe.tar.gz
-runtime\site-packages.tar.gz -Flat
-cbe\requirements.txt -Flat
-cbe\manage.py -Flat
-$AUTOMATIONROOT\remote\logWatch.ps1 -Flat
-$AUTOMATIONROOT\provisioning\runner.bat -Flat
