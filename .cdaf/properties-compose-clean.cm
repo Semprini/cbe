@@ -1,3 +1,0 @@
-context  target         deployTaskOverride  retain
-local    BAMBOO_FORK.Z  cleanTarget.tsk     yes
-local    DOCKER.Z       cleanTarget.tsk

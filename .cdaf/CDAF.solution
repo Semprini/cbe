@@ -2,7 +2,7 @@ productName=Common Business Entities
 solutionName=cbe
 
 containerBuild=& $AUTOMATIONROOT/processor/containerBuild.ps1 ${SOLUTION} ${BUILDNUMBER} ${REVISION}
-containerImage=mcr.microsoft.com/windows/servercore:ltsc2019@sha256:1be9c8378b8c32d31538253a4b96169f5138a5f6d4c0a04e8d8f9a80b9ac8097
+containerImage=mcr.microsoft.com/windows/servercore:ltsc2016@sha256:ac71e33f27c2a6b5db30be0419458e0c4e926214bc9c85afd4d6d6f9028d7233
 productVersion=0.3.0
 defaultBranch=none
 

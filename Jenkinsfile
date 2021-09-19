@@ -33,7 +33,7 @@ node {
 
     stage ('Get latest image and Test using Docker') {
       bat '''
-      	SET CONTAINER_IMAGE=mcr.microsoft.com/windows/servercore:ltsc2019
+      	SET CONTAINER_IMAGE=mcr.microsoft.com/windows/servercore:ltsc2016
       	automation\\entry.bat
       '''
     }

@@ -114,7 +114,6 @@ web.config
 /*.zip
 /manifest.txt
 /projectDirectories.txt
-/.vagrant/
 /.pydevproject
 /buildnumber.counter
 /imagenumber.counter

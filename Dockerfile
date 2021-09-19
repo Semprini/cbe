@@ -2,9 +2,6 @@
 ARG CONTAINER_IMAGE
 FROM ${CONTAINER_IMAGE}
 
-ARG proxy
-ENV http_proxy=$proxy
-
 ENV PYTHONIOINPUT=UTF-8
 
 EXPOSE 8000
@@ -19,5 +16,8 @@ RUN call powershell -NoProfile -NonInteractive -ExecutionPolicy ByPass -command 
 
 # Change workdir to the mapped folder so that the build artefacts are available on the host
 WORKDIR C:\\solution\\workspace
+
+ARG GITHUB_RUN_NUMBER
+ENV GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER
 
 CMD echo Usage: docker run --tty --volume ${workspace}\:C:/solution/workspace ${imageName}:${imageTag} automation\ci.bat $buildNumber revision containerbuild

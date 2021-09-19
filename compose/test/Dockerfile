@@ -11,7 +11,6 @@ WORKDIR /solution
 # Copy entire directory (rely on storeForLocal to limit to only to required, unlike containerBuild)
 COPY automation automation
 
-# Shared bootstrap between Docker and Vagrant
 COPY bootstrapTest.ps1 .
 RUN automation\provisioning\runner.bat bootstrapTest.ps1
 
