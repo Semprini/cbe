@@ -14,21 +14,23 @@ node {
 
     stage ('Clean and get latest from GitHub') {
       bat '''
-        IF EXIST windows-master git checkout -- .
+      	IF EXIST windows-master git checkout -- .
         IF EXIST windows-master git checkout master
-        IF EXIST windows-master git branch -D local_branch
-        IF EXIST windows-master RMDIR /S /Q windows-master
+        IF EXIST windows-master git branch -D local_branch & cmd /c "exit 0"
+      	IF EXIST windows-master RMDIR /S /Q windows-master
       '''
 
       checkout scm
   
-      bat "type Jenkinsfile"
-      bat "git checkout -b local_branch"
-      bat "IF EXIST automation RMDIR /S /Q automation"
-      bat "curl -o windows-master.zip https://codeload.github.com/cdaf/windows/zip/master"
-      bat "unzip windows-master.zip"
-      bat "echo d | XCOPY %CD%\\windows-master\\automation %CD%\\automation /S /E"
-      bat 'type automation\\CDAF.windows | findstr "productVersion"'
+      bat '''
+        type Jenkinsfile
+        git checkout -b local_branch
+        RMDIR /S /Q automation
+        curl -o windows-master.zip https://codeload.github.com/cdaf/windows/zip/master
+        unzip windows-master.zip
+        echo d | XCOPY %CD%\\windows-master\\automation %CD%\\automation /S /E
+        type automation\\CDAF.windows | findstr "productVersion"
+      '''
     }
 
     stage ('Get latest image and Test using Docker') {
@@ -50,7 +52,7 @@ node {
       bat '''
         git checkout -- .
         git checkout -f master
-        git branch -D local_branch
+        IF EXIST windows-master git branch -D local_branch & cmd /c "exit 0"
       '''
     }
   }
