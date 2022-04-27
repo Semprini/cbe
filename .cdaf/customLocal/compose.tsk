@@ -3,7 +3,7 @@
 Write-Host "`nLoad the branch (REVISION) and container image from the manifest, placed here by package.tsk`n"
 PROPLD manifest.txt
 
-ASSIGN $id = $("${SOLUTION}_${REVISION}").ToLower()
+$id = $("${SOLUTION}_${REVISION}").ToLower()
 $env:WORK_SPACE = Split-Path -parent $WORKSPACE
 Write-host $env:WORK_SPACE
 
@@ -38,7 +38,7 @@ try { docker-compose up -d runtime } catch {}
 
 Write-Host "Execute tests (allow 5 minutes to complete)`n"
 try { docker-compose up -d test } catch {}
-ASSIGN $containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
+$containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
 & $WORKSPACE\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
 
 Write-Host "`nTear down if not explicit variable to retain`n"
