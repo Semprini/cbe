@@ -14,18 +14,11 @@ timeout(time: 3, unit: 'HOURS') {
     try {
 
       stage ('Clean and get latest from GitHub') {
-        bat '''
-          IF EXIST windows-master git checkout -- .
-          IF EXIST windows-master git checkout master
-          IF EXIST windows-master git branch -D local_branch & cmd /c "exit 0"
-          IF EXIST windows-master RMDIR /S /Q windows-master
-        '''
 
         checkout scm
     
         bat '''
           type Jenkinsfile
-          git checkout -b local_branch
           RMDIR /S /Q automation
           curl -o windows-master.zip https://codeload.github.com/cdaf/windows/zip/master
           unzip windows-master.zip
@@ -36,7 +29,7 @@ timeout(time: 3, unit: 'HOURS') {
 
       stage ('Get latest image and Test using Docker') {
         bat '''
-          SET CONTAINER_IMAGE=mcr.microsoft.com/windows/servercore:ltsc2016
+          SET CONTAINER_IMAGE=mcr.microsoft.com/windows/servercore:ltsc2019
           automation\\entry.bat
         '''
       }
@@ -51,9 +44,7 @@ timeout(time: 3, unit: 'HOURS') {
 
       stage ('Discard GitHub branch') {
         bat '''
-          git checkout -- .
-          git checkout -f master
-          IF EXIST windows-master git branch -D local_branch & cmd /c "exit 0"
+          RMDIR /S /Q automation
         '''
       }
     }
