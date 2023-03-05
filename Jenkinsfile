@@ -17,19 +17,16 @@ timeout(time: 3, unit: 'HOURS') {
 
         checkout scm
     
-        bat '''
-          type Jenkinsfile
-          RMDIR /S /Q automation
-          curl -o windows-master.zip https://codeload.github.com/cdaf/windows/zip/master
-          unzip windows-master.zip
-          echo d | XCOPY %CD%\\windows-master\\automation %CD%\\automation /S /E
-          type automation\\CDAF.windows | findstr "productVersion"
+        powershell '''
+          Get-Content Jenkinsfile
+          . { iwr -useb https://raw.githubusercontent.com/cdaf/windows/master/install.ps1 } | iex
         '''
       }
 
       stage ('Get latest image and Test using Docker') {
         bat '''
           SET CONTAINER_IMAGE=mcr.microsoft.com/windows/servercore:ltsc2019
+          docker pull %CONTAINER_IMAGE%
           automation\\entry.bat
         '''
       }
@@ -42,7 +39,7 @@ timeout(time: 3, unit: 'HOURS') {
 
     } finally {
 
-      stage ('Discard GitHub branch') {
+      stage ('Clean Workspace') {
         bat '''
           RMDIR /S /Q automation
         '''
