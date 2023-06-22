@@ -24,8 +24,7 @@ VECOPY compose\docker-compose.yml $composePersist
 cd $composePersist
 
 Write-Host "`nCleanup from previously test`n"
-try { docker-compose down --remove-orphans } catch {}
-docker-compose rm -f
+EXECMD 'docker-compose down --remove-orphans'
 
 Write-Host "Set the build number to use`n"
 $env:TARGET_TAG = "${id}_runtime:${BUILDNUMBER}"
@@ -33,18 +32,18 @@ $env:TEST_TAG = "${id}_test:${BUILDNUMBER}"
 Write-Host "  `$env:TARGET_TAG = $env:TARGET_TAG"
 Write-Host "  `$env:TEST_TAG   = $env:TEST_TAG"
 
-try { docker-compose up -d runtime } catch {}
+EXECMD 'docker-compose up -d runtime'
 & $WORKSPACE\dockerLog.ps1 DOCKER-COMPOSE 'Watching for file changes with StatReloader'
 
 Write-Host "Execute tests (allow 5 minutes to complete)`n"
-try { docker-compose up -d test } catch {}
+EXECMD 'docker-compose up -d test'
 $containerID = $(docker ps -aq --filter "ancestor=$env:TEST_TAG")
 & $WORKSPACE\dockerLog.ps1 $containerID 'Automated Test Execution completed successfully.' 300
 
 Write-Host "`nTear down if not explicit variable to retain`n"
-if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { try { docker-compose down } catch {}; docker-compose rm -f }
+if ( $env:COMPOSE_KEEP ) { docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) } else { EXECMD 'docker-compose down' }
 
 cd $WORKSPACE
 
 echo "Clean-up Transient Directory Created by imageBuild.sh"
-REMOVE $env:TEMP/${SOLUTION}
+REMOVE "$env:TEMP\${SOLUTION}"

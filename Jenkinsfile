@@ -25,9 +25,7 @@ timeout(time: 3, unit: 'HOURS') {
 
       stage ('Get latest image and Test using Docker') {
         bat '''
-          SET CONTAINER_IMAGE=mcr.microsoft.com/windows/servercore:ltsc2019
-          docker pull %CONTAINER_IMAGE%
-          automation\\entry.bat
+          automation\\cdEmulate.bat
         '''
       }
 
