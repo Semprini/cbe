@@ -61,9 +61,8 @@ See cbe subdirectory
 Install CDAF in your user space
 
     cd ~
-    . { iwr -useb http://cdaf.io/static/app/downloads/cdaf.ps1 } | iex
-    ~/automation/provisioning/addpath.ps1 ~\automation User
-    ~/automation/provisioning/addpath.ps1 ~\automation\provisioning User
+    $env:CDAF_INSTALL_PATH = $env:USERPROFILE\cdaf
+    . { iwr -useb https://raw.githubusercontent.com/cdaf/windows/master/install.ps1 } | iex
 
 ## Windows Containers
 

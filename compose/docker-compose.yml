@@ -10,8 +10,6 @@ services:
           - runtime:runtime
         depends_on:
           - runtime
-        environment:
-          COMPOSE_KEEP: ${COMPOSE_KEEP}
 
 networks:
   default:
